@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.project.Eparking.dao.UserMapper">
+
+    <select id="getAdminByAdminID" resultType="com.project.Eparking.domain.Admin">
+        SELECT
+            adminID,
+            role,
+            phoneNumber,
+            fullName,
+            password,
+            email,
+            status
+        FROM Admin
+        WHERE adminID = #{adminID};
+    </select>
+
+    <select id="getCustomerByCustomerID" resultType="com.project.Eparking.domain.Customer">
+        SELECT
+            customerID,
+            wallet_balance,
+            identify,
+            role,
+            phoneNumber,
+            fullName,
+            password,
+            email,
+            status,
+            registrationDate
+        FROM Customer
+        WHERE customerID = #{customerID};
+    </select>
+
+    <select id="getPLOByPLOID" resultType="com.project.Eparking.domain.PLO">
+        SELECT
+            ploID,
+            balance,
+            phoneNumber,
+            fullName,
+            password,
+            email,
+            status,
+            identify,
+            parkingName,
+            Description,
+            address,
+            latitude,
+            longtitude,
+            parkingStatusID,
+            slot,
+            role,
+            length,
+            width,
+            waitingTime,
+            cancelBookingTime,
+            contractLink,
+            registerContract,
+            browseContract,
+            contractDuration
+        FROM PLO
+        WHERE ploID = #{ploID};
+    </select>
+
+    <select id="getResponseCustomerByCustomerID" resultType="com.project.Eparking.domain.response.ResponseCustomer">
+        SELECT
+        customerID,
+        wallet_balance,
+        identify,
+        role,
+        phoneNumber,
+        fullName,
+        email,
+        status,
+        registrationDate
+        FROM Customer
+        WHERE customerID = #{customerID};
+    </select>
+
+    <select id="getPLOResponseByPLOID" resultType="com.project.Eparking.domain.response.ResponsePLO">
+        SELECT
+        ploID,
+        balance,
+        phoneNumber,
+        fullName,
+        email,
+        status,
+        identify,
+        parkingName,
+        Description,
+        address,
+        latitude,
+        longtitude,
+        parkingStatusID,
+        slot,
+        role,
+        length,
+        width,
+        waitingTime,
+        cancelBookingTime,
+        contractLink,
+        registerContract,
+        browseContract,
+        contractDuration
+        FROM PLO
+        WHERE ploID = #{ploID};
+    </select>
+
+    <select id="getAdminResponseByAdminID" resultType="com.project.Eparking.domain.response.ResponseAdmin">
+        SELECT
+        adminID,
+        role,
+        phoneNumber,
+        fullName,
+        email,
+        status
+        FROM Admin
+        WHERE adminID = #{adminID};
+    </select>
+</mapper>

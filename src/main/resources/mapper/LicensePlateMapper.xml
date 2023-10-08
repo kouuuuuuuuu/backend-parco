@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.project.Eparking.dao.LicensePlateMapper">
+
+    <resultMap id = "resultLicensePlate" type = "com.project.Eparking.domain.LicensePlate">
+        <result property = "licensePlateID" column = "licensePlateID"/>
+        <result property = "customerID" column = "customerID"/>
+        <result property = "licensePlate" column = "licensePlate"/>
+    </resultMap>
+
+    <select id="getListLicensePlateByCustomerID" resultMap="resultLicensePlate">
+        SELECT
+            licensePlateID,
+            customerID,
+            licensePlate
+        FROM Licenseplate
+        WHERE customerID = #{customerID};
+    </select>
+</mapper>
