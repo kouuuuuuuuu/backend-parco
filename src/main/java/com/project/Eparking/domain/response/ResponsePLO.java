@@ -12,26 +12,10 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 public class ResponsePLO {
     private String ploID;
-    private Double balance;
-    private String phoneNumber;
     private String fullName;
     private String email;
-    private int status;
-    private String identify;
-    private String parkingName;
-    private String Description;
     private String address;
-    private BigDecimal latitude;
-    private BigDecimal longtitude;
     private int parkingStatusID;
-    private int slot;
+    private String statusName;
     private String role;
-    private Double length;
-    private Double width;
-    private Time waitingTime;
-    private Time cancelBookingTime;
-    private String contractLink;
-    private Timestamp registerContract;
-    private Timestamp browseContract;
-    private Timestamp contractDuration;
 }

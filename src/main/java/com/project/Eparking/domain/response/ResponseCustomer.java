@@ -14,13 +14,8 @@ import java.util.List;
 @NoArgsConstructor
 public class ResponseCustomer {
     private String customerID;
-    private Double wallet_balance;
-    private String identify;
     private String role;
     private String phoneNumber;
     private String fullName;
     private String email;
-    private int status;
-    private Timestamp registrationDate;
-    private List<LicensePlate> licensePlateList;
 }

@@ -9,9 +9,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ResponseAdmin {
     private String adminID;
+    private String image;
     private String role;
     private String phoneNumber;
     private String fullName;
     private String email;
-    private int status;
 }
