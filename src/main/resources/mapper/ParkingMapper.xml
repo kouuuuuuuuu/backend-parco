@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.project.Eparking.dao.ParkingMapper">
+
+    <update id="registerParking" parameterType="com.project.Eparking.domain.request.RequestParking">
+        UPDATE PLO
+        SET parkingName = #{parkingName},
+        length = #{length},
+        width = #{width},
+        slot = #{slot},
+        address = #{address},
+        description = #{description},
+        imageLinkTransaction = #{imageLinkTransaction},
+        parkingStatusID = #{parkingStatusID}
+        WHERE ploID = #{ploID}
+    </update>
+
+    <insert id="addImage" parameterType="com.project.Eparking.domain.request.RequestImage" >
+        Insert into Image (ploID, imageLink)
+        values (#{ploID},#{imageLink})
+    </insert>
+
+    <select id="findParkingInformationByPLOID" resultType="java.util.Map">
+        SELECT
+        parkingName,
+        imageLink,
+        length,
+        width,
+        slot,
+        address,
+        description,
+        imageLinkTransaction,
+        ps.statusName
+        FROM
+        PLO p,
+        Image i,
+        ParkingStatus ps
+        Where
+        i.ploID = p.ploID and
+        ps.parkingStatusID = p.parkingStatusID and
+        p.ploID = #{ploID}
+    </select>
+
+    <select id="getParkingStatus" resultType="com.project.Eparking.domain.response.ResponseParkingStatus">
+        SELECT
+        ploID,
+        p.parkingStatusID,
+        ps.statusName
+        FROM
+        PLO p,
+        ParkingStatus ps
+        Where
+        ps.parkingStatusID = p.parkingStatusID and
+        p.ploID = #{ploID}
+    </select>
+
+    <update id="updateParkingStatusID" parameterType="com.project.Eparking.domain.response.ResponseParkingStatus">
+        UPDATE PLO
+        SET
+        parkingStatusID = #{parkingStatusID}
+        WHERE ploID = #{ploID}
+    </update>
+
+    <select id="getListParkingOngoing" resultType="com.project.Eparking.domain.response.ParkingComing">
+        Select reservationID, licensePlate, C.fullName, methodName from Reservation R, LicensePlate L, Customer C, ReservationMethod RM
+        WHERE R.customerID = C.customerID and R.customerID = L.customerID and R.methodID = RM.methodID and R.statusID = 1
+    </select>
+
+    <select id="showListVehicleInParking" resultType="com.project.Eparking.domain.response.ResponseShowVehicleInParking">
+        Select C.customerID, C.fullName, R.price, C.phoneNumber, licensePlate, R.startTime, R.endTime, RS.statusName, RM.methodName
+        FROM Customer C, Reservation R, LicensePlate L, ReservationStatus RS, ReservationMethod RM
+        WHERE R.customerID = C.customerID and R.customerID = L.customerID and R.methodID = RM.methodID and RS.statusID = R.statusID
+        and R.ploID = #{ploID} and R.statusID = #{statusID}
+    </select>
+
+
+
+</mapper>
