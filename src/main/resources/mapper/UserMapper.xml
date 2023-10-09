@@ -7,6 +7,7 @@
     <select id="getAdminByAdminID" resultType="com.project.Eparking.domain.Admin">
         SELECT
             adminID,
+            image,
             role,
             phoneNumber,
             fullName,
@@ -50,6 +51,7 @@
             longtitude,
             parkingStatusID,
             slot,
+            currentSlot,
             role,
             length,
             width,
@@ -66,14 +68,10 @@
     <select id="getResponseCustomerByCustomerID" resultType="com.project.Eparking.domain.response.ResponseCustomer">
         SELECT
         customerID,
-        wallet_balance,
-        identify,
         role,
         phoneNumber,
         fullName,
-        email,
-        status,
-        registrationDate
+        email
         FROM Customer
         WHERE customerID = #{customerID};
     </select>
@@ -81,41 +79,66 @@
     <select id="getPLOResponseByPLOID" resultType="com.project.Eparking.domain.response.ResponsePLO">
         SELECT
         ploID,
-        balance,
         phoneNumber,
         fullName,
         email,
-        status,
-        identify,
-        parkingName,
-        Description,
-        address,
-        latitude,
-        longtitude,
-        parkingStatusID,
-        slot,
-        role,
-        length,
-        width,
-        waitingTime,
-        cancelBookingTime,
-        contractLink,
-        registerContract,
-        browseContract,
-        contractDuration
-        FROM PLO
-        WHERE ploID = #{ploID};
+        PLO.parkingStatusID,
+        ParkingStatus.statusName,
+        role
+        FROM PLO,ParkingStatus
+        WHERE ploID = #{ploID} AND PLO.parkingStatusID = ParkingStatus.parkingStatusID;
     </select>
 
     <select id="getAdminResponseByAdminID" resultType="com.project.Eparking.domain.response.ResponseAdmin">
         SELECT
         adminID,
+        image,
         role,
         phoneNumber,
         fullName,
-        email,
-        status
+        email
         FROM Admin
         WHERE adminID = #{adminID};
     </select>
+
+    <select id="getCustomerResponseByPhonenumber" resultType="com.project.Eparking.domain.response.ResponseCustomer">
+        SELECT
+        customerID,
+        role,
+        phoneNumber,
+        fullName,
+        email
+        FROM Customer
+        WHERE phoneNumber = #{phoneNumber};
+    </select>
+    <select id="getPLOResponseByPhonenumber" resultType="com.project.Eparking.domain.response.ResponsePLO">
+        SELECT
+        ploID,
+        phoneNumber,
+        fullName,
+        email,
+        PLO.parkingStatusID,
+        ParkingStatus.statusName
+        FROM PLO,ParkingStatus
+        WHERE phoneNumber = #{phoneNumber} AND PLO.parkingStatusID = ParkingStatus.parkingStatusID;
+    </select>
+
+    <insert id="createPLO" parameterType="com.project.Eparking.domain.request.RequestRegisterUser" >
+        INSERT INTO PLO (ploID, balance, phoneNumber, fullName, password, status, parkingStatusID,role)
+        VALUES (#{ploID}, #{balance}, #{user.phoneNumber}, #{user.fullName}, #{user.password}, #{status}, #{parkingStatusID},#{user.role})
+    </insert>
+    <insert id="createCustomer" parameterType="com.project.Eparking.domain.request.RequestRegisterUser" >
+        INSERT INTO Customer (customerID, wallet_balance, role, phoneNumber, fullName, password,status)
+        VALUES (#{customerID}, #{wallet_balance}, #{user.role}, #{user.phoneNumber}, #{user.fullName}, #{user.password},#{status});
+    </insert>
+    <update id="updateStatusCustomerPhoneNumber" parameterType="com.project.Eparking.domain.Customer">
+        UPDATE Customer
+        SET status = #{status}
+        WHERE customerID = #{customerID}
+    </update>
+    <update id="updateStatusPLOPhoneNumber" parameterType="com.project.Eparking.domain.PLO">
+        UPDATE PLO
+        SET status = #{status}
+        WHERE ploID = #{ploID}
+    </update>
 </mapper>

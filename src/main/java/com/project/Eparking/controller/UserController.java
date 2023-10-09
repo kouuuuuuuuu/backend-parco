@@ -9,6 +9,8 @@ import com.project.Eparking.domain.Customer;
 import com.project.Eparking.domain.LicensePlate;
 import com.project.Eparking.domain.PLO;
 import com.project.Eparking.domain.request.LoginUser;
+import com.project.Eparking.domain.request.RequestConfirmOTP;
+import com.project.Eparking.domain.request.RequestRegisterUser;
 import com.project.Eparking.domain.response.ResponseAdmin;
 import com.project.Eparking.domain.response.ResponseCustomer;
 import com.project.Eparking.domain.response.ResponsePLO;
@@ -17,6 +19,7 @@ import com.project.Eparking.service.interf.LicensePlateService;
 import com.project.Eparking.service.interf.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -50,14 +53,14 @@ public class UserController {
                           HttpServletResponse response,
                           HttpServletRequest request) throws IOException {
         String username = loginUser.getID();
-        if(username.startsWith("CU") || username.startsWith("cu")){
+        if(username.startsWith("C") || username.startsWith("c")){
             try{
                 Algorithm algorithm = Algorithm.HMAC256(secret.getBytes());
                 Authentication authentication = authenticationManager.authenticate(
                         new UsernamePasswordAuthenticationToken(loginUser.getID(), loginUser.getPassword()));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
                 String name = authentication.getName();
-                Customer customer = userMapper.getCustomerByCustomerID(name);
+                Customer customer = userService.getCustomerByCustomerID(name);
                 if(customer.getStatus() == 2){
                     String access_token = JWT.create()
                             .withSubject(customer.getCustomerID())
@@ -65,9 +68,7 @@ public class UserController {
                             .withIssuer(request.getRequestURL().toString())
                             .withClaim("role", customer.getRole())
                             .sign(algorithm);
-                    ResponseCustomer responseCustomer = userMapper.getResponseCustomerByCustomerID(customer.getCustomerID());
-                    List<LicensePlate> licensePlates = licensePlateService.getListLicensePlateByCustomerID(responseCustomer.getCustomerID());
-                    responseCustomer.setLicensePlateList(licensePlates);
+                    ResponseCustomer responseCustomer = userService.getResponseCustomerByCustomerID(customer.getCustomerID());
                     Map<String, Object> tokens = new HashMap<>();
                     tokens.put("access_token", access_token);
                     tokens.put("Customer", responseCustomer);
@@ -85,7 +86,7 @@ public class UserController {
                 response.setContentType(MimeTypeUtils.APPLICATION_JSON_VALUE);
                 new ObjectMapper().writeValue(response.getOutputStream(), error);
             }
-        } else if (username.startsWith("PL") ||username.startsWith("pl")) {
+        } else if (username.startsWith("P") ||username.startsWith("p")) {
             try{
                 Algorithm algorithm = Algorithm.HMAC256(secret.getBytes());
                 Authentication authentication = authenticationManager.authenticate(
@@ -118,14 +119,14 @@ public class UserController {
                 response.setContentType(MimeTypeUtils.APPLICATION_JSON_VALUE);
                 new ObjectMapper().writeValue(response.getOutputStream(), error);
             }
-        } else if (username.startsWith("ad") || username.startsWith("AD")) {
+        } else if (username.startsWith("a") || username.startsWith("A")) {
             try{
                 Algorithm algorithm = Algorithm.HMAC256(secret.getBytes());
                 Authentication authentication = authenticationManager.authenticate(
                         new UsernamePasswordAuthenticationToken(loginUser.getID(), loginUser.getPassword()));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
                 String name = authentication.getName();
-                Admin admin = userMapper.getAdminByAdminID(name);
+                Admin admin = userService.getAdminByAdminID(name);
                 if(admin.getStatus() == 2){
                     String access_token = JWT.create()
                             .withSubject(admin.getAdminID())
@@ -133,10 +134,10 @@ public class UserController {
                             .withIssuer(request.getRequestURL().toString())
                             .withClaim("role", admin.getRole())
                             .sign(algorithm);
-                    ResponseAdmin responseAdmin = userMapper.getAdminResponseByAdminID(admin.getAdminID());
+                    ResponseAdmin responseAdmin = userService.getAdminResponseByAdminID(admin.getAdminID());
                     Map<String, Object> tokens = new HashMap<>();
                     tokens.put("access_token", access_token);
-                    tokens.put("Customer", responseAdmin);
+                    tokens.put("Admin", responseAdmin);
                     response.setContentType("application/json");
                     new ObjectMapper().writeValue(response.getOutputStream(), tokens);
                 }
@@ -153,9 +154,32 @@ public class UserController {
             }
         }
     }
-    @GetMapping("/getResponse")
-    public ResponseCustomer customer (String id){
-        return userService.getResponseCustomerByCustomerID(id);
+    @PostMapping("/regiterUser")
+    public ResponseEntity<String> registerUser(RequestRegisterUser user){
+        try{
+            if(user.getRole().equalsIgnoreCase("PLO")){
+                String responsePLO = userService.registerPLO(user);
+                if(responsePLO.equals("")){
+                    return ResponseEntity.ok("Register failed");
+                }
+            }
+            else if(user.getRole().equalsIgnoreCase("CUSTOMER")){
+                String responseCustomer = userService.registerCustomer(user);
+                if(responseCustomer.equals("")){
+                    return ResponseEntity.ok("Register failed");
+                }
+            }
+            return ResponseEntity.ok("Send OTP completed");
+        }catch (Exception e){
+            throw e;
+        }
     }
-
+    @PostMapping("/confirmRegisterOTP")
+    public ResponseEntity<String> confirmOTPassword(@RequestBody RequestConfirmOTP requestConfirmOTP) throws IOException {
+        try {
+            return ResponseEntity.ok(userService.registerConfirmOTPcode(requestConfirmOTP));
+        }catch (Exception e){
+            throw e;
+        }
+    }
 }

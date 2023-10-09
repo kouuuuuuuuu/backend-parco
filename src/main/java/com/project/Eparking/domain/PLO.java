@@ -26,6 +26,7 @@ public class PLO {
     private BigDecimal longtitude;
     private int parkingStatusID;
     private int slot;
+    private int currentSlot;
     private String role;
     private Double length;
     private Double width;
@@ -35,5 +36,4 @@ public class PLO {
     private Timestamp registerContract;
     private Timestamp browseContract;
     private Timestamp contractDuration;
-
 }

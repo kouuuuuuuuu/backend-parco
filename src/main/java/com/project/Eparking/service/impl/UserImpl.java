@@ -4,10 +4,11 @@ import com.project.Eparking.dao.UserMapper;
 import com.project.Eparking.domain.Admin;
 import com.project.Eparking.domain.Customer;
 import com.project.Eparking.domain.PLO;
-import com.project.Eparking.domain.response.ResponseAdmin;
-import com.project.Eparking.domain.response.ResponseCustomer;
-import com.project.Eparking.domain.response.ResponsePLO;
+import com.project.Eparking.domain.request.RequestConfirmOTP;
+import com.project.Eparking.domain.request.RequestRegisterUser;
+import com.project.Eparking.domain.response.*;
 import com.project.Eparking.exception.ApiRequestException;
+import com.project.Eparking.service.interf.ESMService;
 import com.project.Eparking.service.interf.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,10 +28,11 @@ import java.util.Collection;
 public class UserImpl implements UserService, UserDetailsService {
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
+    private final ESMService esmService;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        if(username.startsWith("cu") || username.startsWith("CU")){
+        if(username.startsWith("c") || username.startsWith("C")){
             Customer customer = userMapper.getCustomerByCustomerID(username);
             if(customer == null){
                 log.error("Customer not found in the database");
@@ -41,7 +43,7 @@ public class UserImpl implements UserService, UserDetailsService {
             Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
             authorities.add(new SimpleGrantedAuthority(customer.getRole()));
             return new org.springframework.security.core.userdetails.User(customer.getCustomerID(), customer.getPassword(), authorities);
-        }else if (username.startsWith("pl") ||username.startsWith("PL")){
+        }else if (username.startsWith("p") ||username.startsWith("P")){
             PLO plo = userMapper.getPLOByPLOID(username);
             if(plo == null){
                 log.error("plo not found in the database");
@@ -52,7 +54,7 @@ public class UserImpl implements UserService, UserDetailsService {
             Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
             authorities.add(new SimpleGrantedAuthority(plo.getRole()));
             return new org.springframework.security.core.userdetails.User(plo.getPloID(), plo.getPassword(), authorities);
-        }else if (username.startsWith("ad") ||username.startsWith("AD")){
+        }else if (username.startsWith("a") ||username.startsWith("A")){
             Admin Admin = userMapper.getAdminByAdminID(username);
             if(Admin == null){
                 log.error("Admin not found in the database");
@@ -117,6 +119,76 @@ public class UserImpl implements UserService, UserDetailsService {
             return userMapper.getAdminResponseByAdminID(adminID);
         }catch (Exception e){
             throw new ApiRequestException("Failed to get Admin Response by AdminID" +e.getMessage());
+        }
+    }
+
+    @Override
+    public String registerPLO(RequestRegisterUser user) {
+        String response = "";
+        if(user.getRole().equalsIgnoreCase("PLO")){
+            try{
+                ResponsePLO existingPLO = userMapper.getPLOResponseByPhonenumber(user.getPhoneNumber());
+                if(existingPLO != null){
+                    return response = "The PLO is already exists";
+                }
+                ResponseSendOTP responseSendOTP = esmService.sendOTP(user.getPhoneNumber());
+                if(!responseSendOTP.getCodeResult().equals("100")){
+                    return response = "Can not send OTP to user";
+                }
+                response = "Send OTP successfully";
+            }catch (Exception e){
+                throw new ApiRequestException("Failed to send OTP to phoneNumber plo: " + e.getMessage());
+            }
+        }
+        return response;
+    }
+
+    @Override
+    public String registerCustomer(RequestRegisterUser user) {
+        String response = "";
+        if(user.getRole().equalsIgnoreCase("CUSTOMER")){
+            try{
+                ResponseCustomer existingCustomer = userMapper.getCustomerResponseByPhonenumber(user.getPhoneNumber());
+                if(existingCustomer != null){
+                    return response = "The Customer is already exists";
+                }
+                ResponseSendOTP responseSendOTP = esmService.sendOTP(user.getPhoneNumber());
+                if(!responseSendOTP.getCodeResult().equals("100")){
+                    return response = "Can not send OTP to user";
+                }
+                response = "Send OTP successfully";
+            }catch (Exception e){
+                throw new ApiRequestException("Failed to send OTP to customer: " + e.getMessage());
+            }
+        }
+        return response;
+    }
+    @Override
+    public String registerConfirmOTPcode(RequestConfirmOTP requestConfirmOTP) {
+        try{
+            if(requestConfirmOTP.getRole().equalsIgnoreCase("CUSTOMER")){
+                ResponseCheckOTP responseCheckOTP = esmService.checkOTP(requestConfirmOTP.getPhoneNumber(), requestConfirmOTP.getOTPcode());
+                if (responseCheckOTP.getCodeResult().equalsIgnoreCase("100")) {
+                    requestConfirmOTP.setPassword(passwordEncoder.encode(requestConfirmOTP.getPassword()));
+                    userMapper.createCustomer(requestConfirmOTP,"CU"+requestConfirmOTP.getPhoneNumber(),0.0,2);
+                    return "Successful register account";
+                } else {
+                    return "OTP code is invalid";
+                }
+            } else if (requestConfirmOTP.getRole().equalsIgnoreCase("PLO")) {
+                ResponseCheckOTP responseCheckOTP = esmService.checkOTP(requestConfirmOTP.getPhoneNumber(), requestConfirmOTP.getOTPcode());
+                if (responseCheckOTP.getCodeResult().equalsIgnoreCase("100")) {
+                    requestConfirmOTP.setPassword(passwordEncoder.encode(requestConfirmOTP.getPassword()));
+                    userMapper.createPLO(requestConfirmOTP,"PL"+requestConfirmOTP.getPhoneNumber(),0.0,1,1);
+                    return "Successful register account";
+                } else {
+                    return "OTP code is invalid";
+                }
+            }else{
+                return "Cannot check OTP";
+            }
+        }catch (Exception e){
+            throw new ApiRequestException("Failed to confirm password" + e.getMessage());
         }
     }
 }
