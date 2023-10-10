@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.project.Eparking.dao.CustomerMapper">
+    
+    <select id="getCustomerById" resultType="com.project.Eparking.domain.Customer">
+        SELECT
+            customerID,
+            wallet_balance,
+            identify,
+            role,
+            phoneNumber,
+            fullName,
+            password,
+            email,
+            registrationDate,
+            status
+        FROM
+            Customer
+        WHERE
+            customerID = #{customerID};
+    </select>
+
+</mapper>

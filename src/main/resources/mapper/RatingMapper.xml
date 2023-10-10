@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.project.Eparking.dao.RatingMapper">
+
+    <select id="getWithPaginationByPloId" resultType="com.project.Eparking.domain.Rating">
+        SELECT
+            ratingID,
+            star,
+            content,
+            customerID,
+            ploID,
+            reservationID,
+            feedbackDate
+        FROM
+            rating
+        WHERE
+            ploID = #{ploId}
+        LIMIT
+            #{pageSize}
+        OFFSET
+            #{pageNum};
+    </select>
+
+
+</mapper>

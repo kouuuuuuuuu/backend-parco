@@ -36,4 +36,6 @@ public class PLO {
     private Timestamp registerContract;
     private Timestamp browseContract;
     private Timestamp contractDuration;
+    private int star;
+
 }
