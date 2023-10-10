@@ -8,9 +8,13 @@
     </settings>
 
     <mappers>
+
         <mapper resource="mapper/UserMapper.xml"></mapper>
 
         <mapper resource="mapper/LicensePlateMapper.xml"></mapper>
+
+        <mapper resource="mapper/ParkingMapper.xml"></mapper>
+
     </mappers>
 
 </configuration>

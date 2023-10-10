@@ -41,7 +41,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/user/updatePassword",
                         "/swagger-ui.html", "/webjars/**", "/v2/api-docs", "/swagger-resources/**").permitAll();
 
-        http.authorizeRequests().antMatchers(GET, "/user/getResponse").hasAnyAuthority("CUSTOMER");
+        http.authorizeRequests().antMatchers(POST, "/user/getResponse").hasAnyAuthority("CUSTOMER");
+        http.authorizeRequests().antMatchers(POST, "/parking/registerParking").hasAnyAuthority("PLO");
+        http.authorizeRequests().antMatchers(GET, "/parking/getParkingStatusID").hasAnyAuthority("PLO");
+        http.authorizeRequests().antMatchers(PUT, "/parking/updateParkingStatusID/**").hasAnyAuthority("PLO", "ADMIN");
+        http.authorizeRequests().antMatchers(GET, "/parking/showListVehicleInParking").hasAnyAuthority("PLO");
         http.authorizeRequests().anyRequest().authenticated();
         http.addFilter(customAuthenticationFilter);
         http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
