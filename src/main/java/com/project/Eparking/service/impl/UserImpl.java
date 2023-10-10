@@ -4,8 +4,7 @@ import com.project.Eparking.dao.UserMapper;
 import com.project.Eparking.domain.Admin;
 import com.project.Eparking.domain.Customer;
 import com.project.Eparking.domain.PLO;
-import com.project.Eparking.domain.request.RequestConfirmOTP;
-import com.project.Eparking.domain.request.RequestRegisterUser;
+import com.project.Eparking.domain.request.*;
 import com.project.Eparking.domain.response.*;
 import com.project.Eparking.exception.ApiRequestException;
 import com.project.Eparking.service.interf.ESMService;
@@ -163,6 +162,7 @@ public class UserImpl implements UserService, UserDetailsService {
         }
         return response;
     }
+
     @Override
     public String registerConfirmOTPcode(RequestConfirmOTP requestConfirmOTP) {
         try{
@@ -179,7 +179,7 @@ public class UserImpl implements UserService, UserDetailsService {
                 ResponseCheckOTP responseCheckOTP = esmService.checkOTP(requestConfirmOTP.getPhoneNumber(), requestConfirmOTP.getOTPcode());
                 if (responseCheckOTP.getCodeResult().equalsIgnoreCase("100")) {
                     requestConfirmOTP.setPassword(passwordEncoder.encode(requestConfirmOTP.getPassword()));
-                    userMapper.createPLO(requestConfirmOTP,"PL"+requestConfirmOTP.getPhoneNumber(),0.0,1,1);
+                    userMapper.createPLO(requestConfirmOTP,"PL"+requestConfirmOTP.getPhoneNumber(),0.0,2,1);
                     return "Successful register account";
                 } else {
                     return "OTP code is invalid";
@@ -189,6 +189,71 @@ public class UserImpl implements UserService, UserDetailsService {
             }
         }catch (Exception e){
             throw new ApiRequestException("Failed to confirm password" + e.getMessage());
+        }
+    }
+    @Override
+    public String checkPhoneNumber(RequestForgotPassword requestForgotPassword) {
+        String response = null;
+        try{
+            if(requestForgotPassword.getRole().equalsIgnoreCase("PLO")){
+                ResponsePLO responsePLO = userMapper.getPLOResponseByPhonenumber(requestForgotPassword.getPhoneNumber());
+                if(responsePLO == null){
+                    response =  "PLO is not exists!";
+                }else{
+                    ResponseSendOTP responseSendOTP = esmService.sendOTP(requestForgotPassword.getPhoneNumber());
+                    if(!responseSendOTP.getCodeResult().equals("100")){
+                        return response = "Can not send OTP to user";
+                    }
+                    response =  "PLO is exists!";
+                }
+            } else if (requestForgotPassword.getRole().equalsIgnoreCase("CUSTOMER")) {
+                ResponseCustomer responseCustomer = userMapper.getCustomerResponseByPhonenumber(requestForgotPassword.getPhoneNumber());
+                if(responseCustomer == null){
+                    response =  "CUSTOMER is not exists!";
+                }else {
+                    ResponseSendOTP responseSendOTP = esmService.sendOTP(requestForgotPassword.getPhoneNumber());
+                    if(!responseSendOTP.getCodeResult().equals("100")){
+                        return response = "Can not send OTP to user";
+                    }
+                    response = "CUSTOMER is exists!";
+                }
+            }
+            return response;
+        }catch (Exception e){
+            throw new ApiRequestException("Failed to check the phoneNumber" + e.getMessage());
+        }
+    }
+
+    @Override
+    public String forgotPasswordCheckOTP(RequestForgotPasswordOTPcode requestForgotPasswordOTPcode) {
+        try{
+            ResponseCheckOTP responseCheckOTP = esmService.checkOTP(requestForgotPasswordOTPcode.getPhoneNumber(), requestForgotPasswordOTPcode.getOTPcode());
+            if (responseCheckOTP.getCodeResult().equalsIgnoreCase("100")) {
+                return "OTP code is valid!";
+            } else {
+                return "OTP code is invalid";
+            }
+        }catch (Exception e){
+            throw new ApiRequestException("Failed to check the OTP code" + e.getMessage());
+        }
+    }
+
+    @Override
+    public String updatePasswordUser(RequestChangePassword password) {
+        String response = "Failed to update new password";
+        try{
+            if(password.getRole().equalsIgnoreCase("CUSTOMER")){
+                password.setPassword(passwordEncoder.encode(password.getPassword()));
+                userMapper.updateNewPasswordCustomer(password,"CU"+password.getPhoneNumber());
+                response = "update new password for customer successfully!";
+            } else if (password.getRole().equalsIgnoreCase("PLO")) {
+                password.setPassword(passwordEncoder.encode(password.getPassword()));
+                userMapper.updateNewPasswordPLO(password,"PL"+password.getPhoneNumber());
+                response = "update new password for PLO successfully!";
+            }
+            return response;
+        }catch (Exception e){
+            throw new ApiRequestException("Failed to update new password" + e.getMessage());
         }
     }
 }

@@ -3,8 +3,7 @@ package com.project.Eparking.service.interf;
 import com.project.Eparking.domain.Admin;
 import com.project.Eparking.domain.Customer;
 import com.project.Eparking.domain.PLO;
-import com.project.Eparking.domain.request.RequestConfirmOTP;
-import com.project.Eparking.domain.request.RequestRegisterUser;
+import com.project.Eparking.domain.request.*;
 import com.project.Eparking.domain.response.ResponseAdmin;
 import com.project.Eparking.domain.response.ResponseCustomer;
 import com.project.Eparking.domain.response.ResponsePLO;
@@ -19,4 +18,7 @@ public interface UserService {
     String registerPLO(RequestRegisterUser user);
     String registerCustomer(RequestRegisterUser user);
     String registerConfirmOTPcode(RequestConfirmOTP requestConfirmOTP);
+    String checkPhoneNumber(RequestForgotPassword requestForgotPassword);
+    String forgotPasswordCheckOTP(RequestForgotPasswordOTPcode requestForgotPasswordOTPcode);
+    String updatePasswordUser(RequestChangePassword password);
 }

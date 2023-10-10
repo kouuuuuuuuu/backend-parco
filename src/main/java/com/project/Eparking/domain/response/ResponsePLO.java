@@ -18,4 +18,5 @@ public class ResponsePLO {
     private int parkingStatusID;
     private String statusName;
     private String role;
+    private String phoneNumber;
 }
