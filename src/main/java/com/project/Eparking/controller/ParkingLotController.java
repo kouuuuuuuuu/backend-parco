@@ -1,5 +1,6 @@
 package com.project.Eparking.controller;
 
+import com.project.Eparking.domain.ParkingInformation;
 import com.project.Eparking.domain.request.RequestRegisterParking;
 import com.project.Eparking.domain.response.MessageResponse;
 import com.project.Eparking.domain.response.ResponseParkingStatus;
@@ -7,6 +8,7 @@ import com.project.Eparking.domain.response.ResponseRegisterParking;
 import com.project.Eparking.domain.response.ResponseShowVehicleInParking;
 import com.project.Eparking.exception.ApiRequestException;
 import com.project.Eparking.service.interf.ParkingService;
+import com.project.Eparking.service.interf.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +27,7 @@ import java.util.List;
 public class ParkingLotController {
 
     private final ParkingService parkingService;
+    private final UserService userService;
 
     @PostMapping("/registerParking")
     public ResponseEntity<MessageResponse> registerParking(@RequestBody RequestRegisterParking registerParking,
@@ -72,5 +75,12 @@ public class ParkingLotController {
             throw e;
         }
     }
-
+    @GetMapping("/getParkingInformation")
+    public ResponseEntity<ParkingInformation> getParkingInformation(){
+        try{
+            return ResponseEntity.ok(parkingService.getParkingInformation());
+        }catch (Exception e){
+            throw e;
+        }
+    }
 }

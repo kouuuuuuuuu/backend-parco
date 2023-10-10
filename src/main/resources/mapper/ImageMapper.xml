@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.project.Eparking.dao.ImageMapper">
+    <resultMap id = "listImage" type = "com.project.Eparking.domain.Image">
+        <result property = "imageID" column = "imageID"/>
+        <result property = "ploID" column = "ploID"/>
+        <result property = "imageLink" column = "imageLink"/>
+    </resultMap>
+    <select id="getImageListByPLOID" resultMap="listImage">
+        SELECT
+            imageID,
+            ploID,
+            imageLink
+        FROM Image
+        WHERE ploID = #{ploID}
+    </select>
+</mapper>

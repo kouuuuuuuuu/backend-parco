@@ -1,9 +1,11 @@
 package com.project.Eparking.service.impl;
 
+import com.project.Eparking.dao.ImageMapper;
 import com.project.Eparking.dao.UserMapper;
 import com.project.Eparking.domain.Admin;
 import com.project.Eparking.domain.Customer;
 import com.project.Eparking.domain.PLO;
+import com.project.Eparking.domain.ParkingInformation;
 import com.project.Eparking.domain.request.*;
 import com.project.Eparking.domain.response.*;
 import com.project.Eparking.exception.ApiRequestException;
@@ -11,7 +13,9 @@ import com.project.Eparking.service.interf.ESMService;
 import com.project.Eparking.service.interf.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -20,6 +24,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +33,7 @@ public class UserImpl implements UserService, UserDetailsService {
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
     private final ESMService esmService;
+
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -256,4 +262,73 @@ public class UserImpl implements UserService, UserDetailsService {
             throw new ApiRequestException("Failed to update new password" + e.getMessage());
         }
     }
+
+    @Override
+    public ResponsePLOProfile getPLOProfileResponseByPLOID() {
+        try{
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String id = authentication.getName();
+            return userMapper.getPLOProfileResponseByPLOID(id);
+        }catch (Exception e){
+            throw new ApiRequestException("Failed to get PLO profile" + e.getMessage());
+        }
+    }
+
+    @Override
+    public ResponsePLOProfile updatePLOprofile(RequestPLOupdateProfile profile) {
+        try{
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String id = authentication.getName();
+            userMapper.updatePLOprofile(profile,id);
+            return userMapper.getPLOProfileResponseByPLOID(id);
+        }catch (Exception e){
+            throw new ApiRequestException("Failed to update PLO profile" + e.getMessage());
+        }
+    }
+
+    @Override
+    public List<String> changePasswordUser(RequestChangePasswordUser password) {
+        List<String> response = new ArrayList<>();
+        try{
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String id = authentication.getName();
+            if(id.startsWith("cu") || id.startsWith("CU")){
+                boolean check = true;
+                Customer customer = userMapper.getCustomerByCustomerID(id);
+                if(!password.getCurrentPassword().equals(customer.getPassword())){
+                    check = false;
+                    response.add("The current password is wrong!");
+                } else if (!password.getNewPassword().equals(password.getReNewPassword())) {
+                    check = false;
+                    response.add("The new password is not match");
+                }
+                if(check){
+                    RequestChangePassword requestChangePassword = new RequestChangePassword();
+                    requestChangePassword.setPassword(passwordEncoder.encode(password.getNewPassword()));
+                    userMapper.updateNewPasswordCustomer(requestChangePassword,id);
+                    response.add("Update new password successfully");
+                }
+            } else if (id.startsWith("pl") || id.startsWith("PL")) {
+                boolean check = true;
+                PLO plo = userMapper.getPLOByPLOID(id);
+                if(!password.getCurrentPassword().equals(plo.getPassword())){
+                    check = false;
+                    response.add("The current password is wrong!");
+                } else if (!password.getNewPassword().equals(password.getReNewPassword())) {
+                    check = false;
+                    response.add("The new password is not match");
+                }
+                if(check){
+                    RequestChangePassword requestChangePassword = new RequestChangePassword();
+                    requestChangePassword.setPassword(passwordEncoder.encode(password.getNewPassword()));
+                    userMapper.updateNewPasswordPLO(requestChangePassword,id);
+                    response.add("Update new password successfully");
+                }
+            }
+        }catch (Exception e){
+            throw new ApiRequestException("Failed to change password user" + e.getMessage());
+        }
+        return response;
+    }
+
 }

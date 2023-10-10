@@ -15,6 +15,9 @@
 
         <mapper resource="mapper/ParkingMapper.xml"></mapper>
 
+        <mapper resource="mapper/ImageMapper.xml"></mapper>
+
+        <mapper resource="mapper/RatingMapper.xml"></mapper>
     </mappers>
 
 </configuration>

@@ -1,7 +1,10 @@
 package com.project.Eparking.service.impl;
 
 
+import com.project.Eparking.dao.ImageMapper;
 import com.project.Eparking.dao.ParkingMapper;
+import com.project.Eparking.dao.UserMapper;
+import com.project.Eparking.domain.ParkingInformation;
 import com.project.Eparking.domain.request.RequestImage;
 import com.project.Eparking.domain.request.RequestParking;
 import com.project.Eparking.domain.request.RequestRegisterParking;
@@ -22,7 +25,9 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class ParkingImpl implements ParkingService {
+    private final UserMapper userMapper;
     private final ParkingMapper parkingMapper;
+    private final ImageMapper imageMapper;
 
     @Override
     @Transactional
@@ -93,7 +98,18 @@ public class ParkingImpl implements ParkingService {
         }
     }
 
-
+    @Override
+    public ParkingInformation getParkingInformation() {
+        try{
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String id = authentication.getName();
+            ParkingInformation parkingInformation = userMapper.getParkingInformationByPLOID(id);
+            parkingInformation.setImage(imageMapper.getImageListByPLOID(id));
+            return parkingInformation;
+        }catch (Exception e){
+            throw new ApiRequestException("Failed to get parking information" + e.getMessage());
+        }
+    }
 }
 
 
