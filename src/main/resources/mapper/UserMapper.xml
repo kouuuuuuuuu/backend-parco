@@ -136,9 +136,15 @@
         SET status = #{status}
         WHERE customerID = #{customerID}
     </update>
-    <update id="updateStatusPLOPhoneNumber" parameterType="com.project.Eparking.domain.PLO">
+    <update id="updateNewPasswordPLO" parameterType="com.project.Eparking.domain.request.RequestChangePassword">
         UPDATE PLO
-        SET status = #{status}
-        WHERE ploID = #{ploID}
+        SET password = #{password.password}
+        WHERE ploID = #{ID}
     </update>
+    <update id="updateNewPasswordCustomer" parameterType="com.project.Eparking.domain.request.RequestChangePassword">
+        UPDATE Customer
+        SET password = #{password.password}
+        WHERE customerID = #{ID}
+    </update>
+
 </mapper>

@@ -8,9 +8,7 @@ import com.project.Eparking.domain.Admin;
 import com.project.Eparking.domain.Customer;
 import com.project.Eparking.domain.LicensePlate;
 import com.project.Eparking.domain.PLO;
-import com.project.Eparking.domain.request.LoginUser;
-import com.project.Eparking.domain.request.RequestConfirmOTP;
-import com.project.Eparking.domain.request.RequestRegisterUser;
+import com.project.Eparking.domain.request.*;
 import com.project.Eparking.domain.response.ResponseAdmin;
 import com.project.Eparking.domain.response.ResponseCustomer;
 import com.project.Eparking.domain.response.ResponsePLO;
@@ -162,12 +160,14 @@ public class UserController {
                 if(responsePLO.equals("")){
                     return ResponseEntity.ok("Register failed");
                 }
+                return ResponseEntity.ok(responsePLO);
             }
             else if(user.getRole().equalsIgnoreCase("CUSTOMER")){
                 String responseCustomer = userService.registerCustomer(user);
                 if(responseCustomer.equals("")){
                     return ResponseEntity.ok("Register failed");
                 }
+                return ResponseEntity.ok(responseCustomer);
             }
             return ResponseEntity.ok("Send OTP completed");
         }catch (Exception e){
@@ -178,6 +178,30 @@ public class UserController {
     public ResponseEntity<String> confirmOTPassword(@RequestBody RequestConfirmOTP requestConfirmOTP) throws IOException {
         try {
             return ResponseEntity.ok(userService.registerConfirmOTPcode(requestConfirmOTP));
+        }catch (Exception e){
+            throw e;
+        }
+    }
+    @PostMapping("/checkPhoneNumber")
+    public ResponseEntity<String> checkPhoneNumber(@RequestBody RequestForgotPassword requestForgotPassword){
+        try{
+            return  ResponseEntity.ok(userService.checkPhoneNumber(requestForgotPassword));
+        }catch (Exception e){
+            throw e;
+        }
+    }
+    @PostMapping("/checkOTPcode")
+    public ResponseEntity<String> checkOTPcode(@RequestBody RequestForgotPasswordOTPcode requestForgotPasswordOTPcode) {
+        try {
+            return ResponseEntity.ok(userService.forgotPasswordCheckOTP(requestForgotPasswordOTPcode));
+        } catch (Exception e) {
+            throw e;
+        }
+    }
+    @PutMapping("/updatePassword")
+    private ResponseEntity<String> updateNewPassword(@RequestBody RequestChangePassword password){
+        try{
+            return ResponseEntity.ok(userService.updatePasswordUser(password));
         }catch (Exception e){
             throw e;
         }

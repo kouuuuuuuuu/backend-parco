@@ -35,7 +35,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 .antMatchers("/user/loginUser/**",
                         "/user/regiterUser/**",
-                        "/user//confirmRegisterOTP",
+                        "/user/confirmRegisterOTP",
+                        "/user/checkPhoneNumber",
+                        "/user/checkOTPcode",
+                        "/user/updatePassword",
                         "/swagger-ui.html", "/webjars/**", "/v2/api-docs", "/swagger-resources/**").permitAll();
 
         http.authorizeRequests().antMatchers(GET, "/user/getResponse").hasAnyAuthority("CUSTOMER");
