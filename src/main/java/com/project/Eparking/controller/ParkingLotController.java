@@ -75,12 +75,4 @@ public class ParkingLotController {
             throw e;
         }
     }
-    @GetMapping("/getParkingInformation")
-    public ResponseEntity<ParkingInformation> getParkingInformation(){
-        try{
-            return ResponseEntity.ok(parkingService.getParkingInformation());
-        }catch (Exception e){
-            throw e;
-        }
-    }
 }
