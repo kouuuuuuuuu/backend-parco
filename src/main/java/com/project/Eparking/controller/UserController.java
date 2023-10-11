@@ -76,12 +76,14 @@ public class UserController {
                     throw new ApiRequestException("This customer is denied to login");
                 }
             }catch (Exception e){
-                response.setHeader("error", e.getMessage());
+                String cleanedErrorMessage = cleanString(e.getMessage());
+                response.setHeader("error", cleanedErrorMessage);
                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                 Map<String, String> error = new HashMap<>();
-                error.put("error_message", e.getMessage());
+                error.put("error_message", cleanedErrorMessage);
                 response.setContentType(MimeTypeUtils.APPLICATION_JSON_VALUE);
-                new ObjectMapper().writeValue(response.getOutputStream(), error);
+                ObjectMapper objectMapper = new ObjectMapper();
+                objectMapper.writeValue(response.getOutputStream(), error);
             }
         } else if (username.startsWith("P") ||username.startsWith("p")) {
             try{
@@ -109,12 +111,14 @@ public class UserController {
                     throw new ApiRequestException("This PLO is denied to login");
                 }
             }catch (Exception e){
-                response.setHeader("error", e.getMessage());
+                String cleanedErrorMessage = cleanString(e.getMessage());
+                response.setHeader("error", cleanedErrorMessage);
                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                 Map<String, String> error = new HashMap<>();
-                error.put("error_message", e.getMessage());
+                error.put("error_message", cleanedErrorMessage);
                 response.setContentType(MimeTypeUtils.APPLICATION_JSON_VALUE);
-                new ObjectMapper().writeValue(response.getOutputStream(), error);
+                ObjectMapper objectMapper = new ObjectMapper();
+                objectMapper.writeValue(response.getOutputStream(), error);
             }
         } else if (username.startsWith("a") || username.startsWith("A")) {
             try{
@@ -142,14 +146,20 @@ public class UserController {
                     throw new ApiRequestException("This admin is denied to login");
                 }
             }catch (Exception e){
-                response.setHeader("error", e.getMessage());
+                String cleanedErrorMessage = cleanString(e.getMessage());
+                response.setHeader("error", cleanedErrorMessage);
                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                 Map<String, String> error = new HashMap<>();
-                error.put("error_message", e.getMessage());
+                error.put("error_message", cleanedErrorMessage);
                 response.setContentType(MimeTypeUtils.APPLICATION_JSON_VALUE);
-                new ObjectMapper().writeValue(response.getOutputStream(), error);
+                ObjectMapper objectMapper = new ObjectMapper();
+                objectMapper.writeValue(response.getOutputStream(), error);
             }
         }
+    }
+    private String cleanString(String input) {
+        String cleaned = input.replaceAll("[\r\n]", "");
+        return cleaned;
     }
     @PostMapping("/regiterUser")
     public ResponseEntity<String> registerUser(RequestRegisterUser user){
@@ -201,30 +211,6 @@ public class UserController {
     public ResponseEntity<String> updateNewPassword(@RequestBody RequestChangePassword password){
         try{
             return ResponseEntity.ok(userService.updatePasswordUser(password));
-        }catch (Exception e){
-            throw e;
-        }
-    }
-    @GetMapping("/PLO/profile")
-    public ResponseEntity<ResponsePLOProfile> responsePLOProfile(){
-        try{
-            return ResponseEntity.ok(userService.getPLOProfileResponseByPLOID());
-        }catch (Exception e){
-            throw e;
-        }
-    }
-    @PutMapping("/PLO/profile/update")
-    public ResponseEntity<ResponsePLOProfile> updateProfilePLO(@RequestBody RequestPLOupdateProfile profile){
-        try{
-            return ResponseEntity.ok(userService.updatePLOprofile(profile));
-        }catch (Exception e){
-            throw e;
-        }
-    }
-    @PutMapping("/changePassword")
-    public ResponseEntity<List<String>> changePasswordUser(RequestChangePasswordUser password){
-        try{
-            return ResponseEntity.ok(userService.changePasswordUser(password));
         }catch (Exception e){
             throw e;
         }

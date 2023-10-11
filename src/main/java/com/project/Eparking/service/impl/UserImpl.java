@@ -295,7 +295,7 @@ public class UserImpl implements UserService, UserDetailsService {
             if(id.startsWith("cu") || id.startsWith("CU")){
                 boolean check = true;
                 Customer customer = userMapper.getCustomerByCustomerID(id);
-                if(!password.getCurrentPassword().equals(customer.getPassword())){
+                if(!passwordEncoder.matches(password.getCurrentPassword(),customer.getPassword())){
                     check = false;
                     response.add("The current password is wrong!");
                 } else if (!password.getNewPassword().equals(password.getReNewPassword())) {
@@ -311,10 +311,10 @@ public class UserImpl implements UserService, UserDetailsService {
             } else if (id.startsWith("pl") || id.startsWith("PL")) {
                 boolean check = true;
                 PLO plo = userMapper.getPLOByPLOID(id);
-                if(!password.getCurrentPassword().equals(plo.getPassword())){
+                if(!passwordEncoder.matches(password.getCurrentPassword(),plo.getPassword())){
                     check = false;
                     response.add("The current password is wrong!");
-                } else if (!password.getNewPassword().equals(password.getReNewPassword())) {
+                }if (!password.getNewPassword().equals(password.getReNewPassword())) {
                     check = false;
                     response.add("The new password is not match");
                 }
