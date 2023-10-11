@@ -69,10 +69,14 @@
     </select>
 
     <select id="showListVehicleInParking" resultType="com.project.Eparking.domain.response.ResponseShowVehicleInParking">
-        Select C.customerID, C.fullName, R.price, C.phoneNumber, licensePlate, R.startTime, R.endTime, RS.statusName, RM.methodName
-        FROM Customer C, Reservation R, LicensePlate L, ReservationStatus RS, ReservationMethod RM
-        WHERE R.customerID = C.customerID and R.customerID = L.customerID and R.methodID = RM.methodID and RS.statusID = R.statusID
-        and R.ploID = #{ploID} and R.statusID = #{statusID}
+        SELECT
+        R.customerID, R.price, R.startTime, R.endTime,
+        C.fullName, C.phoneNumber,
+        L.licensePlate
+        FROM Reservation R
+        JOIN Customer C ON R.customerID = C.customerID
+        JOIN LicensePlate L ON R.licensePlateID = L.licensePlateID
+        WHERE R.ploID = #{ploID} AND R.statusID = #{statusID}
     </select>
 
 

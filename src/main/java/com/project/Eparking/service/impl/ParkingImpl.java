@@ -89,9 +89,11 @@ public class ParkingImpl implements ParkingService {
     }
 
     @Override
-    public List<ResponseShowVehicleInParking> showListVehicleInParking(String ploID, int parkingStatusID) {
+    public List<ResponseShowVehicleInParking> showListVehicleInParking(int parkingStatusID) {
         try {
-            List<ResponseShowVehicleInParking> responseShowVehicleInParking = parkingMapper.showListVehicleInParking(ploID, parkingStatusID);
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String id = authentication.getName();
+            List<ResponseShowVehicleInParking> responseShowVehicleInParking = parkingMapper.showListVehicleInParking(id, parkingStatusID);
             return responseShowVehicleInParking;
         } catch (ApiRequestException e) {
             throw e;
