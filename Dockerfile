@@ -1,5 +1,4 @@
 FROM openjdk:17-jdk-alpine
-EXPOSE 8080
-ARG JAR_FILE=target/Eparking-0.0.1-SNAPSHOT.jar
-ADD ${JAR_FILE} app.jar
-ENTRYPOINT ["java","-jar","/app.jar"]
+COPY target/Eparking-0.0.1-SNAPSHOT.jar Eparking-0.0.1-SNAPSHOT.jar
+EXPOSE 8000
+CMD ["java", "-jar", "Eparking-0.0.1-SNAPSHOT.jar"]
