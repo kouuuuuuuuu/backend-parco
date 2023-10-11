@@ -4,6 +4,7 @@ import com.project.Eparking.domain.request.RequestImage;
 import com.project.Eparking.domain.request.RequestParking;
 import com.project.Eparking.domain.response.ParkingComing;
 import com.project.Eparking.domain.response.ResponseParkingStatus;
+import com.project.Eparking.domain.response.ResponseReservationDetail;
 import com.project.Eparking.domain.response.ResponseShowVehicleInParking;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -26,5 +27,6 @@ public interface ParkingMapper {
     List<ParkingComing> getListParkingOngoing();
 
     List<ResponseShowVehicleInParking> showListVehicleInParking(String ploID, int statusID);
+    ResponseReservationDetail getReservationDetailByReservationID(int ID);
 
 }

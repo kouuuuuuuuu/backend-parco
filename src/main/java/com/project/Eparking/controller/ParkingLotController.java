@@ -2,10 +2,7 @@ package com.project.Eparking.controller;
 
 import com.project.Eparking.domain.ParkingInformation;
 import com.project.Eparking.domain.request.RequestRegisterParking;
-import com.project.Eparking.domain.response.MessageResponse;
-import com.project.Eparking.domain.response.ResponseParkingStatus;
-import com.project.Eparking.domain.response.ResponseRegisterParking;
-import com.project.Eparking.domain.response.ResponseShowVehicleInParking;
+import com.project.Eparking.domain.response.*;
 import com.project.Eparking.exception.ApiRequestException;
 import com.project.Eparking.service.interf.ParkingService;
 import com.project.Eparking.service.interf.UserService;
@@ -71,6 +68,14 @@ public class ParkingLotController {
             List<ResponseShowVehicleInParking> responseShowVehicleInParking = parkingService.showListVehicleInParking(parkingStatusID);
             return ResponseEntity.ok(responseShowVehicleInParking);
         } catch (ApiRequestException e) {
+            throw e;
+        }
+    }
+    @GetMapping("/getReservationDetail")
+    public ResponseEntity<ResponseReservationDetail> getReservationDetail(@RequestParam int reservationID){
+        try{
+            return ResponseEntity.ok(parkingService.getReservationDetailByPLOID(reservationID));
+        }catch (ApiRequestException e){
             throw e;
         }
     }

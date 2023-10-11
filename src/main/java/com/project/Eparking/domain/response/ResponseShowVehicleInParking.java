@@ -10,7 +10,7 @@ import java.time.Instant;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ResponseShowVehicleInParking {
-
+    private String reservationID;
     private String customerID;
     private String fullName;
     private double price;

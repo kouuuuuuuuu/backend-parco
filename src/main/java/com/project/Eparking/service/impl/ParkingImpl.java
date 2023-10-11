@@ -112,6 +112,17 @@ public class ParkingImpl implements ParkingService {
             throw new ApiRequestException("Failed to get parking information" + e.getMessage());
         }
     }
+
+    @Override
+    public ResponseReservationDetail getReservationDetailByPLOID(int reservationID) {
+        try{
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String id = authentication.getName();
+            return parkingMapper.getReservationDetailByReservationID(reservationID);
+        }catch (Exception e){
+            throw new ApiRequestException("Failed to get parking information" + e.getMessage());
+        }
+    }
 }
 
 

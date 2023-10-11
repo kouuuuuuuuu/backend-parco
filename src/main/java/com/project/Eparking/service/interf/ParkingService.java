@@ -4,6 +4,7 @@ import com.project.Eparking.domain.ParkingInformation;
 import com.project.Eparking.domain.request.RequestRegisterParking;
 import com.project.Eparking.domain.response.ResponseParkingStatus;
 import com.project.Eparking.domain.response.ResponseRegisterParking;
+import com.project.Eparking.domain.response.ResponseReservationDetail;
 import com.project.Eparking.domain.response.ResponseShowVehicleInParking;
 import org.springframework.http.ResponseEntity;
 
@@ -19,5 +20,6 @@ public interface ParkingService {
 
     List<ResponseShowVehicleInParking> showListVehicleInParking(int parkingStatusID);
     ParkingInformation getParkingInformation();
+    ResponseReservationDetail getReservationDetailByPLOID(int reservationID);
 
 }
