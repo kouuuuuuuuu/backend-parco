@@ -8,4 +8,5 @@ import java.util.List;
 @Mapper
 public interface ImageMapper {
     List<Image> getImageListByPLOID(String ploID);
+    List<Image> getImageByPloId(String ploId);
 }

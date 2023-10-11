@@ -3,6 +3,7 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.project.Eparking.dao.RatingMapper">
+
     <resultMap id = "listRating" type = "com.project.Eparking.domain.Rating">
         <result property = "ratingID" column = "ratingID"/>
         <result property = "star" column = "star"/>
@@ -24,6 +25,26 @@
         feedbackDate
         FROM Rating
         WHERE ploID = #{ploID}
+    </select>
+
+
+    <select id="getWithPaginationByPloId" resultType="com.project.Eparking.domain.Rating">
+        SELECT
+            ratingID,
+            star,
+            content,
+            customerID,
+            ploID,
+            reservationID,
+            feedbackDate
+        FROM
+            rating
+        WHERE
+            ploID = #{ploId}
+        LIMIT
+            #{pageSize}
+        OFFSET
+            #{pageNum};
     </select>
 
 </mapper>

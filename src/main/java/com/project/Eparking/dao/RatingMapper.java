@@ -8,4 +8,5 @@ import java.util.List;
 @Mapper
 public interface RatingMapper {
     List<Rating> getRatingListByPLOID(String ploID);
+    List<Rating> getWithPaginationByPloId(int pageNum, int pageSize, String ploId);
 }
