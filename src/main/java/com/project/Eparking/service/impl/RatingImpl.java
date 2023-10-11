@@ -38,10 +38,6 @@ public class RatingImpl implements RatingService {
         int pageNumOffset = (pageNum -1) == 0 ? 0 : (pageNum-1) * pageSize;
         List<Rating> ratingList = ratingMapper.getWithPaginationByPloId(pageNumOffset,pageSize,ploId);
 
-        if (ratingList.isEmpty()){
-            throw new Exception("Not found rating of this parking lot owner");
-        }
-
         // 2. Mapping to dto
         List<RatingDTO> ratingDTOS = new ArrayList<>();
         for (Rating rating: ratingList){
