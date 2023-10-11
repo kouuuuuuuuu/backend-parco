@@ -13,6 +13,10 @@
         FROM
             reservationmethod;
     </select>
-
+    <update id="updateStatusReservation" parameterType="com.project.Eparking.domain.request.RequestUpdateStatusReservation">
+        UPDATE Reservation
+        SET statusID = #{statusID}
+        WHERE reservationID = #{reservation.reservationID};
+    </update>
 
 </mapper>
