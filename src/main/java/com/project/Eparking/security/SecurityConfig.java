@@ -40,14 +40,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/user/checkOTPcode",
                         "/user/updatePassword",
                         "/swagger-ui.html", "/webjars/**", "/v2/api-docs", "/swagger-resources/**").permitAll();
-
-        http.authorizeRequests().antMatchers(POST, "/user/getResponse").hasAnyAuthority("CUSTOMER");
+        http.authorizeRequests().antMatchers(GET, "/user/PLO/profile").hasAnyAuthority("PLO");
+        http.authorizeRequests().antMatchers(GET, "/PLO/profile/update").hasAnyAuthority("PLO");
+        http.authorizeRequests().antMatchers(GET, "/user/changePassword").hasAnyAuthority("PLO","CUSTOMER");
         http.authorizeRequests().antMatchers(POST, "/parking/registerParking").hasAnyAuthority("PLO");
         http.authorizeRequests().antMatchers(GET, "/parking/getParkingStatusID").hasAnyAuthority("PLO");
         http.authorizeRequests().antMatchers(PUT, "/parking/updateParkingStatusID/**").hasAnyAuthority("PLO", "ADMIN");
         http.authorizeRequests().antMatchers(GET, "/parking/showListVehicleInParking").hasAnyAuthority("PLO");
         http.authorizeRequests().antMatchers(GET, "/plo/getListPloByStatus").hasAnyAuthority("ADMIN");
         http.authorizeRequests().antMatchers(GET, "/plo/searchListPloByKeywords").hasAnyAuthority("ADMIN");
+        http.authorizeRequests().antMatchers(GET, "/parking/getParkingInformation").hasAnyAuthority("PLO");
+        http.authorizeRequests().antMatchers(GET, "/rating/getRatingList").hasAnyAuthority("PLO");
         http.authorizeRequests().anyRequest().authenticated();
         http.addFilter(customAuthenticationFilter);
         http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);

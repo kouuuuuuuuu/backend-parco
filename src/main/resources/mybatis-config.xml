@@ -17,6 +17,10 @@
 
         <mapper resource="mapper/ParkingLotOwnerMapper.xml"></mapper>
 
+        <mapper resource="mapper/ImageMapper.xml"></mapper>
+
+        <mapper resource="mapper/RatingMapper.xml"></mapper>
+
     </mappers>
 
 </configuration>

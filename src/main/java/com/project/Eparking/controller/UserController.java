@@ -4,14 +4,12 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.Eparking.dao.UserMapper;
-import com.project.Eparking.domain.Admin;
-import com.project.Eparking.domain.Customer;
-import com.project.Eparking.domain.LicensePlate;
-import com.project.Eparking.domain.PLO;
+import com.project.Eparking.domain.*;
 import com.project.Eparking.domain.request.*;
 import com.project.Eparking.domain.response.ResponseAdmin;
 import com.project.Eparking.domain.response.ResponseCustomer;
 import com.project.Eparking.domain.response.ResponsePLO;
+import com.project.Eparking.domain.response.ResponsePLOProfile;
 import com.project.Eparking.exception.ApiRequestException;
 import com.project.Eparking.service.interf.LicensePlateService;
 import com.project.Eparking.service.interf.UserService;
@@ -22,6 +20,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.util.MimeTypeUtils;
 import org.springframework.web.bind.annotation.*;
@@ -199,9 +198,33 @@ public class UserController {
         }
     }
     @PutMapping("/updatePassword")
-    private ResponseEntity<String> updateNewPassword(@RequestBody RequestChangePassword password){
+    public ResponseEntity<String> updateNewPassword(@RequestBody RequestChangePassword password){
         try{
             return ResponseEntity.ok(userService.updatePasswordUser(password));
+        }catch (Exception e){
+            throw e;
+        }
+    }
+    @GetMapping("/PLO/profile")
+    public ResponseEntity<ResponsePLOProfile> responsePLOProfile(){
+        try{
+            return ResponseEntity.ok(userService.getPLOProfileResponseByPLOID());
+        }catch (Exception e){
+            throw e;
+        }
+    }
+    @PutMapping("/PLO/profile/update")
+    public ResponseEntity<ResponsePLOProfile> updateProfilePLO(@RequestBody RequestPLOupdateProfile profile){
+        try{
+            return ResponseEntity.ok(userService.updatePLOprofile(profile));
+        }catch (Exception e){
+            throw e;
+        }
+    }
+    @PutMapping("/changePassword")
+    public ResponseEntity<List<String>> changePasswordUser(RequestChangePasswordUser password){
+        try{
+            return ResponseEntity.ok(userService.changePasswordUser(password));
         }catch (Exception e){
             throw e;
         }

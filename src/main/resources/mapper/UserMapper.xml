@@ -146,5 +146,31 @@
         SET password = #{password.password}
         WHERE customerID = #{ID}
     </update>
-
+    <select id="getPLOProfileResponseByPLOID" resultType="com.project.Eparking.domain.response.ResponsePLOProfile">
+        SELECT
+            ploID,
+            phoneNumber,
+            fullName,
+            email
+        FROM PLO
+        WHERE ploID = #{ploID}
+    </select>
+    <update id="updatePLOprofile" parameterType="com.project.Eparking.domain.response.ResponsePLOProfile">
+        UPDATE PLO
+        SET fullName = #{profile.fullName},
+            email = #{profile.email}
+        WHERE ploID = #{ID}
+    </update>
+    <select id="getParkingInformationByPLOID" resultType="com.project.Eparking.domain.ParkingInformation">
+        SELECT
+            ploID,
+            parkingName,
+            description,
+            address,
+            slot,
+            length,
+            width
+        FROM PLO
+        WHERE ploID = #{ploID}
+    </select>
 </mapper>

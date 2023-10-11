@@ -1,5 +1,6 @@
 package com.project.Eparking.service.interf;
 
+import com.project.Eparking.domain.ParkingInformation;
 import com.project.Eparking.domain.request.RequestRegisterParking;
 import com.project.Eparking.domain.response.ResponseParkingStatus;
 import com.project.Eparking.domain.response.ResponseRegisterParking;
@@ -17,5 +18,6 @@ public interface ParkingService {
     void updateParkingStatusID(String ploID, int parkingStatusID);
 
     List<ResponseShowVehicleInParking> showListVehicleInParking(String ploID, int parkingStatusID);
+    ParkingInformation getParkingInformation();
 
 }
