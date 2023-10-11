@@ -4,10 +4,12 @@ package com.project.Eparking.service.impl;
 import com.project.Eparking.dao.ImageMapper;
 import com.project.Eparking.dao.ParkingMapper;
 import com.project.Eparking.dao.UserMapper;
+import com.project.Eparking.domain.Image;
 import com.project.Eparking.domain.ParkingInformation;
 import com.project.Eparking.domain.request.RequestImage;
 import com.project.Eparking.domain.request.RequestParking;
 import com.project.Eparking.domain.request.RequestRegisterParking;
+import com.project.Eparking.domain.request.RequestUpdateProfilePLO;
 import com.project.Eparking.domain.response.*;
 import com.project.Eparking.exception.ApiRequestException;
 import com.project.Eparking.service.interf.ParkingService;
@@ -108,6 +110,27 @@ public class ParkingImpl implements ParkingService {
             return parkingInformation;
         }catch (Exception e){
             throw new ApiRequestException("Failed to get parking information" + e.getMessage());
+        }
+    }
+    @Transactional
+    @Override
+    public ParkingInformation updateParkingInformation(RequestUpdateProfilePLO plo) {
+        try{
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String id = authentication.getName();
+            parkingMapper.updateParkingProfile(plo,id);
+            if(!plo.getImage().isEmpty()){
+                imageMapper.deleteImageByPLOID(id);
+                List<Image> images = new ArrayList<>();
+                for (String image :
+                     plo.getImage()) {
+                    images.add(new Image(0,id,image));
+                }
+                imageMapper.batchInsertImages(images);
+            }
+            return getParkingInformation();
+        }catch (Exception e){
+            throw new ApiRequestException("Failed to update parking information" + e.getMessage());
         }
     }
 }

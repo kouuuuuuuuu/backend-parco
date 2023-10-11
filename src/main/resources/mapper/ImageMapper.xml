@@ -28,4 +28,16 @@
         WHERE
             ploId = #{ploId};
     </select>
+    <delete id="deleteImageByPLOID" parameterType="com.project.Eparking.domain.PLO">
+        DELETE FROM image
+        WHERE ploID = #{ploID};
+    </delete>
+
+    <insert id="batchInsertImages" parameterType="java.util.List">
+        INSERT INTO Image (ploID, imageLink)
+        VALUES
+        <foreach collection="list" item="image" separator=",">
+            (#{image.ploID}, #{image.imageLink})
+        </foreach>
+    </insert>
 </mapper>
