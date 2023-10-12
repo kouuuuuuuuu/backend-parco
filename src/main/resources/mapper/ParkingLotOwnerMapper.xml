@@ -38,11 +38,7 @@
         FROM
             plo
         WHERE
-            status = #{status}
-        LIMIT
-            #{pageSize}
-        OFFSET
-            #{pageNum};
+            ploID = #{ploId}
     </select>
 
     <select id="getAllPloWithPagination" resultType="com.project.Eparking.domain.PLO">
