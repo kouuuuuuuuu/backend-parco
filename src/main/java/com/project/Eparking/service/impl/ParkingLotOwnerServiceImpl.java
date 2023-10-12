@@ -1,18 +1,20 @@
 package com.project.Eparking.service.impl;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.Eparking.dao.*;
 import com.project.Eparking.domain.PLO;
 import com.project.Eparking.domain.dto.ListPloDTO;
 import com.project.Eparking.domain.Image;
-import com.project.Eparking.domain.PLO;
 import com.project.Eparking.domain.ParkingMethod;
 import com.project.Eparking.domain.ReservationMethod;
 import com.project.Eparking.domain.dto.ImageDTO;
+import com.project.Eparking.domain.dto.ListPloRegistrationDTO;
 import com.project.Eparking.domain.dto.ParkingLotOwnerDTO;
 import com.project.Eparking.service.interf.ParkingLotOwnerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -23,6 +25,7 @@ import java.util.Objects;
 public class ParkingLotOwnerServiceImpl implements ParkingLotOwnerService {
 
     private final ParkingLotOwnerMapper parkingLotOwnerMapper;
+
     private final ImageMapper imageMapper;
 
     private final ParkingMethodMapper parkingMethodMapper;
@@ -59,6 +62,26 @@ public class ParkingLotOwnerServiceImpl implements ParkingLotOwnerService {
             ploDto.setPhoneNumber(plo.getPhoneNumber());
             ploDto.setParkingName(plo.getParkingName());
             ploDto.setFullName(plo.getFullName());
+            parkingLotOwnerDTOList.add(ploDto);
+        }
+        return parkingLotOwnerDTOList;
+    }
+
+    @Override
+    public List<ListPloDTO> getListRegistrationByParkingStatus(int status, int pageNum, int pageSize) {
+        List<ListPloDTO> parkingLotOwnerDTOList = new ArrayList<>();
+        List<PLO> ploList;
+        int pageNumOffset = pageNum == 0 ? 0 : (pageNum -1) * pageSize;
+        // 1. Get list Registration by parking status from database
+        List<Integer> parkingStatus = List.of(status);
+
+        ploList = parkingLotOwnerMapper.getListPloByParkingStatusWithPagination(parkingStatus,pageNumOffset, pageSize);
+
+        // 2. Mapping data from entity to dto
+        for (PLO plo : ploList){
+            ListPloRegistrationDTO ploDto = new ListPloRegistrationDTO(plo.getPloID(), plo.getFullName(), plo.getPhoneNumber(),
+                    plo.getAddress(),plo.getParkingName());
+            ploDto.setRegisterContract(plo.getRegisterContract());
             parkingLotOwnerDTOList.add(ploDto);
         }
         return parkingLotOwnerDTOList;
@@ -152,7 +175,7 @@ public class ParkingLotOwnerServiceImpl implements ParkingLotOwnerService {
         parkingLotOwnerDTO.setOverNightFee(overnightMethod != null ? overnightMethod.getPrice() : 0);
         parkingLotOwnerDTO.setSlot(ploEntity.getSlot());
         parkingLotOwnerDTO.setLatitude(ploEntity.getLatitude() != null ? ploEntity.getLatitude() .toString() : "");
-        parkingLotOwnerDTO.setLongtitule(ploEntity.getLongtitude() != null ? ploEntity.getLongtitude().toString(): "");
+        parkingLotOwnerDTO.setLongtitude(ploEntity.getLongtitude() != null ? ploEntity.getLongtitude().toString(): "");
         parkingLotOwnerDTO.setLength(ploEntity.getLength() != null ? ploEntity.getLength() : 0);
         parkingLotOwnerDTO.setWidth(ploEntity.getWidth() != null ? ploEntity.getWidth() : 0);
         parkingLotOwnerDTO.setStar(ploEntity.getStar());

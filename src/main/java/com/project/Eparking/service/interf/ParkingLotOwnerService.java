@@ -12,4 +12,6 @@ public interface ParkingLotOwnerService {
     ParkingLotOwnerDTO getDetailPloById(String ploId) throws Exception;
 
     List<ListPloDTO> getPloByParkingStatus(int status, int pageNum, int pageSize);
+
+    List<ListPloDTO> getListRegistrationByParkingStatus(int status, int pageNum, int pageSize);
 }

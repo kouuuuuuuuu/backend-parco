@@ -11,4 +11,6 @@ public class Message {
     public static final String NOT_FOUND_PLO_BY_ID = "Not Found Parking Lot Owner By Id";
     public static final String NOT_FOUND_PLO_BY_KEY_WORD = "Not Found Parking Lot Owner By Key Word";
     public static final String NOT_FOUND_PLO_BY_STATUS = "Not Found Parking Lot Owner By Status";
+    public static final String NOT_FOUND_REGISTRATION_BY_PARKING_STATUS = "Not Found Parking Registration By Status";
+    public static final String GET_LIST_REGISTRATION_SUCCESS = "Get List Registration By Parking Status Success";
 }
