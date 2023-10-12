@@ -3,6 +3,7 @@ package com.project.Eparking.controller.admin;
 import com.project.Eparking.constant.Message;
 import com.project.Eparking.domain.dto.ListPloDTO;
 import com.project.Eparking.domain.dto.ParkingLotOwnerDTO;
+import com.project.Eparking.domain.dto.PloRegistrationDTO;
 import com.project.Eparking.domain.response.Response;
 import com.project.Eparking.service.interf.ParkingLotOwnerService;
 import lombok.RequiredArgsConstructor;
@@ -58,6 +59,19 @@ public class ParkingLotOwnerController {
                 return new Response(HttpStatus.NOT_FOUND.value(), Message.NOT_FOUND_PLO_BY_ID, null);
             }
             return new Response(HttpStatus.OK.value(), Message.GET_PLO_DETAIL_SUCCESS, detailPloDto);
+        }catch (Exception e){
+            return new Response(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage(), null);
+        }
+    }
+
+    @GetMapping("/getRegistrationDetail")
+    public Response getRegistrationDetail(@RequestParam("ploID") String polId){
+        try {
+            PloRegistrationDTO ploRegistrationDTO = parkingLotOwnerService.getPloRegistrationByPloId(polId);
+            if (Objects.isNull(ploRegistrationDTO)){
+                return new Response(HttpStatus.NOT_FOUND.value(), Message.NOT_FOUND_PLO_BY_ID, null);
+            }
+            return new Response(HttpStatus.OK.value(), Message.GET_REGISTRATION_PLO_SUCCESS, ploRegistrationDTO);
         }catch (Exception e){
             return new Response(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage(), null);
         }
