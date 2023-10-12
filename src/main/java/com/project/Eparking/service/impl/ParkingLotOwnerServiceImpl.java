@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -29,16 +30,25 @@ public class ParkingLotOwnerServiceImpl implements ParkingLotOwnerService {
     private final ReservationMethodMapper reservationMethodMapper;
 
     @Override
-    public List<ListPloDTO> getListPloByStatus(int status, int pageNum, int pageSize) {
+    public List<ListPloDTO> getPloByParkingStatus(int status, int pageNum, int pageSize) {
         List<ListPloDTO> parkingLotOwnerDTOList = new ArrayList<>();
         List<PLO> ploList;
         int pageNumOffset = pageNum == 0 ? 0 : (pageNum -1) * pageSize;
+        List<Integer> parkingStatus = null;
         //1. Get list PLO by status from database
         if (status == 0){
-            ploList = parkingLotOwnerMapper.getAllPloWithPagination(pageNumOffset, pageSize);
-        }else {
-            ploList = parkingLotOwnerMapper.getListPloByStatusWithPagination(status, pageNumOffset, pageSize);
+            parkingStatus = List.of(3,4,5,6);
         }
+
+        if (status == 1){
+            parkingStatus = List.of(3,4,5);
+        }
+
+        if (status == 2){
+            parkingStatus = List.of(6);
+        }
+
+        ploList = parkingLotOwnerMapper.getListPloByParkingStatusWithPagination(parkingStatus,pageNumOffset, pageSize);
 
 
         //2. Mapping data from entity to dto
@@ -83,6 +93,9 @@ public class ParkingLotOwnerServiceImpl implements ParkingLotOwnerService {
 
         //3. Get Plo by ploId;
         PLO ploEntity = parkingLotOwnerMapper.getPloById(ploId);
+        if (Objects.isNull(ploEntity)){
+            return null;
+        }
 
         //4. Get Fee by parking method
         List<ParkingMethod> parkingMethod = parkingMethodMapper.getParkingMethodById(ploId);
@@ -138,10 +151,10 @@ public class ParkingLotOwnerServiceImpl implements ParkingLotOwnerService {
         parkingLotOwnerDTO.setEveningFee(eveningMethod != null ? eveningMethod.getPrice() : 0);
         parkingLotOwnerDTO.setOverNightFee(overnightMethod != null ? overnightMethod.getPrice() : 0);
         parkingLotOwnerDTO.setSlot(ploEntity.getSlot());
-        parkingLotOwnerDTO.setLatitude(ploEntity.getLatitude().toString());
-        parkingLotOwnerDTO.setLongtitule(ploEntity.getLongtitude().toString());
-        parkingLotOwnerDTO.setLength(ploEntity.getLength());
-        parkingLotOwnerDTO.setWidth(ploEntity.getWidth());
+        parkingLotOwnerDTO.setLatitude(ploEntity.getLatitude() != null ? ploEntity.getLatitude() .toString() : "");
+        parkingLotOwnerDTO.setLongtitule(ploEntity.getLongtitude() != null ? ploEntity.getLongtitude().toString(): "");
+        parkingLotOwnerDTO.setLength(ploEntity.getLength() != null ? ploEntity.getLength() : 0);
+        parkingLotOwnerDTO.setWidth(ploEntity.getWidth() != null ? ploEntity.getWidth() : 0);
         parkingLotOwnerDTO.setStar(ploEntity.getStar());
         parkingLotOwnerDTO.setCurrentSlot(ploEntity.getCurrentSlot());
         return parkingLotOwnerDTO;

@@ -8,4 +8,7 @@ public class Message {
     //Rating
     public static final String GET_PAGINATION_RATING_BY_PLO_ID_SUCCESS = "Get Rating By Parking Lot Owner Success";
 
+    public static final String NOT_FOUND_PLO_BY_ID = "Not Found Parking Lot Owner By Id";
+    public static final String NOT_FOUND_PLO_BY_KEY_WORD = "Not Found Parking Lot Owner By Key Word";
+    public static final String NOT_FOUND_PLO_BY_STATUS = "Not Found Parking Lot Owner By Status";
 }

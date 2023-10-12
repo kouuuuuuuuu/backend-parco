@@ -7,12 +7,12 @@ import com.project.Eparking.domain.response.Response;
 import com.project.Eparking.service.interf.ParkingLotOwnerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import java.util.List;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.Objects;
+
+@CrossOrigin
 @RestController
 @RequestMapping("/plo")
 @RequiredArgsConstructor
@@ -20,12 +20,15 @@ public class ParkingLotOwnerController {
 
     private final ParkingLotOwnerService parkingLotOwnerService;
 
-    @GetMapping("/getListPloByStatus")
-    public Response getListParkingLotOwner(@RequestParam("status") int status,
+    @GetMapping("/getPloByParkingStatus")
+    public Response getPloByParkingStatus(@RequestParam("status") int status,
                                            @RequestParam(name = "pageNum", defaultValue = "1") int pageNum,
                                            @RequestParam(name = "pageSize", defaultValue = "5") int pageSize) {
         try {
-            List<ListPloDTO> listPlo = parkingLotOwnerService.getListPloByStatus(status, pageNum, pageSize);
+            List<ListPloDTO> listPlo = parkingLotOwnerService.getPloByParkingStatus(status, pageNum, pageSize);
+            if (listPlo.isEmpty()){
+                return new Response(HttpStatus.NOT_FOUND.value(), Message.NOT_FOUND_PLO_BY_STATUS, null);
+            }
             return new Response(HttpStatus.OK.value(), Message.GET_LIST_PLO_SUCCESS, listPlo);
         }catch (Exception e){
             return new Response(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage(), null);
@@ -38,6 +41,9 @@ public class ParkingLotOwnerController {
                                                      @RequestParam(name = "pageSize", defaultValue = "5") int pageSize) {
         try {
             List<ListPloDTO> listPloDTOS = parkingLotOwnerService.getListPloByKeywords(keyword, pageNum, pageSize);
+            if (listPloDTOS.isEmpty()){
+                return new Response(HttpStatus.NOT_FOUND.value(), Message.NOT_FOUND_PLO_BY_KEY_WORD, null);
+            }
             return new Response(HttpStatus.OK.value(), Message.GET_LIST_PLO_SUCCESS, listPloDTOS);
         } catch (Exception e) {
             return new Response(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage(), null);
@@ -48,6 +54,9 @@ public class ParkingLotOwnerController {
     public Response getDetailPloById(@RequestParam("ploID") String ploId){
         try {
             ParkingLotOwnerDTO detailPloDto = parkingLotOwnerService.getDetailPloById(ploId);
+            if (Objects.isNull(detailPloDto)){
+                return new Response(HttpStatus.NOT_FOUND.value(), Message.NOT_FOUND_PLO_BY_ID, null);
+            }
             return new Response(HttpStatus.OK.value(), Message.GET_PLO_DETAIL_SUCCESS, detailPloDto);
         }catch (Exception e){
             return new Response(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage(), null);

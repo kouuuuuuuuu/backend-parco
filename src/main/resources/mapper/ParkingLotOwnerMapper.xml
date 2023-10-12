@@ -5,7 +5,47 @@
 <mapper namespace="com.project.Eparking.dao.ParkingLotOwnerMapper">
 
 
-    <select id="getListPloByStatusWithPagination" resultType="com.project.Eparking.domain.PLO"></select>
+    <select id="getListPloByParkingStatusWithPagination" resultType="com.project.Eparking.domain.PLO">
+        SELECT
+            ploID,
+            balance,
+            phoneNumber,
+            fullName,
+            password,
+            email,
+            status,
+            identify,
+            parkingName,
+            description,
+            address,
+            latitude,
+            longtitude,
+            parkingStatusID,
+            slot,
+            currentSlot,
+            role,
+            length,
+            width,
+            waitingTime,
+            cancelBookingTime,
+            contractLink,
+            registerContract,
+            browseContract,
+            contractDuration,
+            star
+        FROM
+            plo
+        WHERE
+            parkingStatusID
+        IN
+        <foreach collection="parkingStatus" item="status" open="(" separator="," close=")">
+            #{status}
+        </foreach>
+        LIMIT
+            #{pageSize}
+        OFFSET
+            #{pageNum};
+    </select>
 
     <select id="getPloById" resultType="com.project.Eparking.domain.PLO">
         SELECT
@@ -38,43 +78,7 @@
         FROM
             plo
         WHERE
-            ploID = #{ploId}
-    </select>
-
-    <select id="getAllPloWithPagination" resultType="com.project.Eparking.domain.PLO">
-        SELECT
-            ploID,
-            balance,
-            phoneNumber,
-            fullName,
-            password,
-            email,
-            status,
-            identify,
-            parkingName,
-            description,
-            address,
-            latitude,
-            longtitude,
-            parkingStatusID,
-            slot,
-            currentSlot,
-            role,
-            length,
-            width,
-            waitingTime,
-            cancelBookingTime,
-            contractLink,
-            registerContract,
-            browseContract,
-            contractDuration,
-            star
-        FROM
-            plo
-        LIMIT
-            #{pageSize}
-        OFFSET
-            #{pageNum};;
+            ploID = #{ploId};
     </select>
 
     <select id="getListPloByKeywordsWithPagination" resultType="com.project.Eparking.domain.PLO">
@@ -115,10 +119,7 @@
         LIMIT
             #{pageSize}
         OFFSET
-            #{pageNum};;
-             plo
-        WHERE
-            ploID = #{ploId};
+            #{pageNum};
     </select>
 
 </mapper>

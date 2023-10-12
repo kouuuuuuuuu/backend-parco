@@ -8,9 +8,8 @@ import java.util.List;
 
 public interface ParkingLotOwnerService {
 
-    List<ListPloDTO> getListPloByStatus(int status, int pageNum, int pageSize);
-
     List<ListPloDTO> getListPloByKeywords(String keyword, int pageNum, int pageSize);
     ParkingLotOwnerDTO getDetailPloById(String ploId) throws Exception;
 
+    List<ListPloDTO> getPloByParkingStatus(int status, int pageNum, int pageSize);
 }
