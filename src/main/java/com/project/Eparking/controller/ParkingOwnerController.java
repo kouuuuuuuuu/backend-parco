@@ -2,10 +2,9 @@ package com.project.Eparking.controller;
 
 import com.project.Eparking.domain.ParkingInformation;
 import com.project.Eparking.domain.Rating;
-import com.project.Eparking.domain.request.RequestChangePasswordUser;
-import com.project.Eparking.domain.request.RequestPLOupdateProfile;
-import com.project.Eparking.domain.request.RequestUpdateProfilePLO;
+import com.project.Eparking.domain.request.*;
 import com.project.Eparking.domain.response.ResponsePLOProfile;
+import com.project.Eparking.exception.ApiRequestException;
 import com.project.Eparking.service.interf.ParkingService;
 import com.project.Eparking.service.interf.RatingService;
 import com.project.Eparking.service.interf.UserService;
@@ -69,6 +68,22 @@ public class ParkingOwnerController {
         try {
             return ResponseEntity.ok(parkingService.updateParkingInformation(plo));
         }catch (Exception e){
+            throw e;
+        }
+    }
+    @GetMapping("/checkPLOTransfer")
+    public ResponseEntity<String> checkPLOTransfer(@RequestParam RequestTransferParking phoneNumber){
+        try{
+            return ResponseEntity.ok(parkingService.checkPLOTransfer(phoneNumber));
+        }catch (ApiRequestException e){
+            throw e;
+        }
+    }
+    @PutMapping("/checkOTPcodeTransferParking")
+    public ResponseEntity<String> checkOTPcodeTransferParking(RequestCheckOTPTransferParking transferParking){
+        try{
+            return ResponseEntity.ok(parkingService.checkOTPcodeTransferParking(transferParking));
+        }catch (ApiRequestException e){
             throw e;
         }
     }

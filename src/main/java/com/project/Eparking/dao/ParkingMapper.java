@@ -1,12 +1,7 @@
 package com.project.Eparking.dao;
 
-import com.project.Eparking.domain.request.RequestImage;
-import com.project.Eparking.domain.request.RequestParking;
-import com.project.Eparking.domain.request.RequestUpdateProfilePLO;
-import com.project.Eparking.domain.response.ParkingComing;
-import com.project.Eparking.domain.response.ResponseParkingStatus;
-import com.project.Eparking.domain.response.ResponseReservationDetail;
-import com.project.Eparking.domain.response.ResponseShowVehicleInParking;
+import com.project.Eparking.domain.request.*;
+import com.project.Eparking.domain.response.*;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -32,6 +27,6 @@ public interface ParkingMapper {
     void updateParkingProfile(RequestUpdateProfilePLO plo,String ploID);
 
     ResponseReservationDetail getReservationDetailByReservationID(int ID);
-
+    void updateParkingOwner(ParamTransferParking transferParking);
 
 }
