@@ -114,25 +114,37 @@ public class ParkingImpl implements ParkingService {
             throw new ApiRequestException("Failed to get parking information" + e.getMessage());
         }
     }
+
     @Transactional
     @Override
     public ParkingInformation updateParkingInformation(RequestUpdateProfilePLO plo) {
-        try{
+        try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String id = authentication.getName();
-            parkingMapper.updateParkingProfile(plo,id);
-            if(!plo.getImage().isEmpty()){
+            parkingMapper.updateParkingProfile(plo, id);
+            if (!plo.getImage().isEmpty()) {
                 imageMapper.deleteImageByPLOID(id);
                 List<Image> images = new ArrayList<>();
                 for (String image :
-                     plo.getImage()) {
-                    images.add(new Image(0,id,image));
+                        plo.getImage()) {
+                    images.add(new Image(0, id, image));
                 }
                 imageMapper.batchInsertImages(images);
             }
             return getParkingInformation();
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new ApiRequestException("Failed to update parking information" + e.getMessage());
+        }
+    }
+
+    @Override
+    public ResponseReservationDetail getReservationDetailByPLOID(int reservationID) {
+        try{
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String id = authentication.getName();
+            return parkingMapper.getReservationDetailByReservationID(reservationID);
+        }catch (Exception e){
+            throw new ApiRequestException("Failed to get parking information" + e.getMessage());
         }
     }
 }

@@ -71,13 +71,14 @@
     <select id="showListVehicleInParking" resultType="com.project.Eparking.domain.response.ResponseShowVehicleInParking">
         SELECT
         R.customerID, R.price, R.startTime, R.endTime,
-        C.fullName, C.phoneNumber,
+        C.fullName, C.phoneNumber,R.reservationID,
         L.licensePlate
         FROM Reservation R
         JOIN Customer C ON R.customerID = C.customerID
         JOIN LicensePlate L ON R.licensePlateID = L.licensePlateID
         WHERE R.ploID = #{ploID} AND R.statusID = #{statusID}
     </select>
+
 
     <update id="updateParkingProfile" parameterType="com.project.Eparking.domain.request.RequestUpdateProfilePLO">
         UPDATE PLO
@@ -86,5 +87,24 @@
             description = #{plo.description}
         WHERE ploID = #{ploID}
     </update>
+
+    <select id="getReservationDetailByReservationID" resultType="com.project.Eparking.domain.response.ResponseReservationDetail">
+        SELECT
+        L.licensePlate,
+        R.price,
+        RM.methodName,
+        C.fullName,
+        RS.statusName,
+        R.startTime,
+        R.endTime,
+        R.checkIn,
+        R.checkOut
+        FROM Reservation R
+        JOIN LicensePlate L ON R.licensePlateID = L.licensePlateID
+        JOIN Customer C ON R.customerID = C.customerID
+        JOIN ReservationStatus RS ON R.statusID = RS.statusID
+        JOIN ReservationMethod RM ON R.methodID = RM.methodID
+        WHERE R.reservationID = #{ID};
+    </select>
 
 </mapper>

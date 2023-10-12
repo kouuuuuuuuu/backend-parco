@@ -5,6 +5,7 @@ import com.project.Eparking.domain.request.RequestRegisterParking;
 import com.project.Eparking.domain.request.RequestUpdateProfilePLO;
 import com.project.Eparking.domain.response.ResponseParkingStatus;
 import com.project.Eparking.domain.response.ResponseRegisterParking;
+import com.project.Eparking.domain.response.ResponseReservationDetail;
 import com.project.Eparking.domain.response.ResponseShowVehicleInParking;
 import org.springframework.http.ResponseEntity;
 
@@ -19,7 +20,12 @@ public interface ParkingService {
     void updateParkingStatusID(String ploID, int parkingStatusID);
 
     List<ResponseShowVehicleInParking> showListVehicleInParking(int parkingStatusID);
+
     ParkingInformation getParkingInformation();
+
     ParkingInformation updateParkingInformation(RequestUpdateProfilePLO plo);
+
+    ResponseReservationDetail getReservationDetailByPLOID(int reservationID);
+
 
 }
