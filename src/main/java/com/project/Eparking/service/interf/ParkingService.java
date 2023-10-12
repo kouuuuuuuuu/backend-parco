@@ -18,7 +18,7 @@ public interface ParkingService {
 
     void updateParkingStatusID(String ploID, int parkingStatusID);
 
-    List<ResponseShowVehicleInParking> showListVehicleInParking(String ploID, int parkingStatusID);
+    List<ResponseShowVehicleInParking> showListVehicleInParking(int parkingStatusID);
     ParkingInformation getParkingInformation();
     ParkingInformation updateParkingInformation(RequestUpdateProfilePLO plo);
 

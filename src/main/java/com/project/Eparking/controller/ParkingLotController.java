@@ -64,12 +64,11 @@ public class ParkingLotController {
 
     @GetMapping("/showListVehicleInParking")
     public ResponseEntity<List<ResponseShowVehicleInParking>> showListVehicleInParking(
-            @RequestParam String ploID,
             @RequestParam int parkingStatusID,
             HttpServletResponse response,
             HttpServletRequest request) {
         try {
-            List<ResponseShowVehicleInParking> responseShowVehicleInParking = parkingService.showListVehicleInParking(ploID, parkingStatusID);
+            List<ResponseShowVehicleInParking> responseShowVehicleInParking = parkingService.showListVehicleInParking(parkingStatusID);
             return ResponseEntity.ok(responseShowVehicleInParking);
         } catch (ApiRequestException e) {
             throw e;
