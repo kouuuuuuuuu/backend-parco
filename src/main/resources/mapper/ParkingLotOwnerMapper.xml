@@ -122,4 +122,9 @@
             #{pageNum};
     </select>
 
+    <update id="updateParkingStatusByPloId" parameterType="map">
+        UPDATE plo
+        SET parkingStatusID = #{parkingStatusID}
+        WHERE ploID = #{ploID}
+    </update>
 </mapper>

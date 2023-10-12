@@ -9,6 +9,7 @@ import com.project.Eparking.domain.ParkingMethod;
 import com.project.Eparking.domain.ReservationMethod;
 import com.project.Eparking.domain.dto.ImageDTO;
 import com.project.Eparking.domain.dto.ParkingLotOwnerDTO;
+import com.project.Eparking.domain.dto.UpdatePloStatusDTO;
 import com.project.Eparking.service.interf.ParkingLotOwnerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -62,6 +63,22 @@ public class ParkingLotOwnerServiceImpl implements ParkingLotOwnerService {
             parkingLotOwnerDTOList.add(ploDto);
         }
         return parkingLotOwnerDTOList;
+    }
+
+    @Override
+    public boolean updatePloStatusById(UpdatePloStatusDTO updatePloStatusDTO) {
+        //1. Check is parking lot owner is exist
+        boolean isSuccess = true;
+        PLO plo = parkingLotOwnerMapper.getPloById(updatePloStatusDTO.getPloId());
+        if (Objects.isNull(plo)){
+            isSuccess = false;
+        }
+
+        //2. Update parking status by plo id
+        plo.setParkingStatusID(updatePloStatusDTO.getNewStatus());
+        parkingLotOwnerMapper.updateParkingStatusByPloId(plo.getPloID(), plo.getParkingStatusID());
+
+        return isSuccess;
     }
 
     @Override

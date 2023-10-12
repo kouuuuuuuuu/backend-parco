@@ -3,6 +3,7 @@ package com.project.Eparking.controller.admin;
 import com.project.Eparking.constant.Message;
 import com.project.Eparking.domain.dto.ListPloDTO;
 import com.project.Eparking.domain.dto.ParkingLotOwnerDTO;
+import com.project.Eparking.domain.dto.UpdatePloStatusDTO;
 import com.project.Eparking.domain.response.Response;
 import com.project.Eparking.service.interf.ParkingLotOwnerService;
 import lombok.RequiredArgsConstructor;
@@ -58,6 +59,19 @@ public class ParkingLotOwnerController {
                 return new Response(HttpStatus.NOT_FOUND.value(), Message.NOT_FOUND_PLO_BY_ID, null);
             }
             return new Response(HttpStatus.OK.value(), Message.GET_PLO_DETAIL_SUCCESS, detailPloDto);
+        }catch (Exception e){
+            return new Response(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage(), null);
+        }
+    }
+
+    @PutMapping("/updatePloStatus")
+    public Response updatePloStatus(@RequestBody UpdatePloStatusDTO updatePloStatusDTO){
+        try {
+            boolean isUpdateSuccess = parkingLotOwnerService.updatePloStatusById(updatePloStatusDTO);
+            if(!isUpdateSuccess){
+                return  new Response(HttpStatus.NOT_FOUND.value(), Message.UPDATE_STATUS_PLO_BY_ID_FAIL, null);
+            }
+            return new Response(HttpStatus.OK.value(), Message.UPDATE_STATUS_PLO_BY_ID_SUCCESS, null);
         }catch (Exception e){
             return new Response(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage(), null);
         }
