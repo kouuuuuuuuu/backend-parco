@@ -2,6 +2,7 @@ package com.project.Eparking.dao;
 
 import com.project.Eparking.domain.request.RequestImage;
 import com.project.Eparking.domain.request.RequestParking;
+import com.project.Eparking.domain.request.RequestUpdateProfilePLO;
 import com.project.Eparking.domain.response.ParkingComing;
 import com.project.Eparking.domain.response.ResponseParkingStatus;
 import com.project.Eparking.domain.response.ResponseShowVehicleInParking;
@@ -26,5 +27,6 @@ public interface ParkingMapper {
     List<ParkingComing> getListParkingOngoing();
 
     List<ResponseShowVehicleInParking> showListVehicleInParking(String ploID, int statusID);
+    void updateParkingProfile(RequestUpdateProfilePLO plo,String ploID);
 
 }

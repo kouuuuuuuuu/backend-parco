@@ -4,6 +4,7 @@ import com.project.Eparking.domain.ParkingInformation;
 import com.project.Eparking.domain.Rating;
 import com.project.Eparking.domain.request.RequestChangePasswordUser;
 import com.project.Eparking.domain.request.RequestPLOupdateProfile;
+import com.project.Eparking.domain.request.RequestUpdateProfilePLO;
 import com.project.Eparking.domain.response.ResponsePLOProfile;
 import com.project.Eparking.service.interf.ParkingService;
 import com.project.Eparking.service.interf.RatingService;
@@ -47,7 +48,7 @@ public class ParkingOwnerController {
         }
     }
     @PutMapping("/changePassword")
-    public ResponseEntity<List<String>> changePasswordUser(RequestChangePasswordUser password){
+    public ResponseEntity<List<String>> changePasswordUser(@RequestBody RequestChangePasswordUser password){
         try{
             return ResponseEntity.ok(userService.changePasswordUser(password));
         }catch (Exception e){
@@ -59,6 +60,14 @@ public class ParkingOwnerController {
     public ResponseEntity<ParkingInformation> getParkingInformation(){
         try{
             return ResponseEntity.ok(parkingService.getParkingInformation());
+        }catch (Exception e){
+            throw e;
+        }
+    }
+    @PutMapping("/updateParkingInformation")
+    public ResponseEntity<ParkingInformation> updateParkingInformation(@RequestBody RequestUpdateProfilePLO plo){
+        try {
+            return ResponseEntity.ok(parkingService.updateParkingInformation(plo));
         }catch (Exception e){
             throw e;
         }

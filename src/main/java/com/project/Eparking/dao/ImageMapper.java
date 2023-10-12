@@ -9,4 +9,6 @@ import java.util.List;
 public interface ImageMapper {
     List<Image> getImageListByPLOID(String ploID);
     List<Image> getImageByPloId(String ploId);
+    void deleteImageByPLOID(String ploID);
+    void batchInsertImages(List<Image> image);
 }
