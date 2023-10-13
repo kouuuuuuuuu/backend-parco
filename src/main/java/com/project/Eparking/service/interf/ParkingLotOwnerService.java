@@ -11,8 +11,7 @@ public interface ParkingLotOwnerService {
 
     List<ListPloDTO> getListPloByKeywords(String keyword, int pageNum, int pageSize);
     ParkingLotOwnerDTO getDetailPloById(String ploId) throws Exception;
-
     List<ListPloDTO> getPloByParkingStatus(int status, int pageNum, int pageSize);
-
     PloRegistrationDTO getPloRegistrationByPloId(String ploId);
+    List<ListPloDTO> getListRegistrationByParkingStatus(int status, int pageNum, int pageSize);
 }

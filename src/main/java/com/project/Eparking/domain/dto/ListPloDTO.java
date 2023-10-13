@@ -1,5 +1,11 @@
 package com.project.Eparking.domain.dto;
+import lombok.Getter;
+import lombok.Setter;
 
+import java.sql.Timestamp;
+
+@Getter
+@Setter
 public class ListPloDTO{
 
     private String ploID;
@@ -8,43 +14,14 @@ public class ListPloDTO{
     private String address;
     private String parkingName;
 
-    public String getPloID() {
-        return ploID;
-    }
-
-    public void setPloID(String ploID) {
+    public ListPloDTO(String ploID, String fullName, String phoneNumber, String address, String parkingName) {
         this.ploID = ploID;
-    }
-
-    public String getFullName() {
-        return fullName;
-    }
-
-    public void setFullName(String fullName) {
         this.fullName = fullName;
-    }
-
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
         this.address = address;
-    }
-
-    public String getParkingName() {
-        return parkingName;
-    }
-
-    public void setParkingName(String parkingName) {
         this.parkingName = parkingName;
+    }
+
+    public ListPloDTO() {
     }
 }

@@ -65,13 +65,28 @@ public class ParkingLotOwnerController {
     }
 
     @GetMapping("/getRegistrationDetail")
-    public Response getRegistrationDetail(@RequestParam("ploID") String polId){
+    public Response getRegistrationDetail(@RequestParam("ploID") String polId) {
         try {
             PloRegistrationDTO ploRegistrationDTO = parkingLotOwnerService.getPloRegistrationByPloId(polId);
-            if (Objects.isNull(ploRegistrationDTO)){
+            if (Objects.isNull(ploRegistrationDTO)) {
                 return new Response(HttpStatus.NOT_FOUND.value(), Message.NOT_FOUND_PLO_BY_ID, null);
             }
             return new Response(HttpStatus.OK.value(), Message.GET_REGISTRATION_PLO_SUCCESS, ploRegistrationDTO);
+        } catch (Exception e) {
+            return new Response(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage(), null);
+        }
+    }
+
+    @GetMapping("/getRegistrationByParkingStatus")
+    public Response getListRegistrationByParkingStatus(@RequestParam("status")int status,
+                                                       @RequestParam(name = "pageNum", defaultValue = "1") int pageNum,
+                                                       @RequestParam(name = "pageSize", defaultValue = "5") int pageSize){
+        try {
+            List<ListPloDTO> listRegistration = parkingLotOwnerService.getListRegistrationByParkingStatus(status, pageNum, pageSize);
+            if (listRegistration.isEmpty()){
+                return new Response(HttpStatus.NOT_FOUND.value(), Message.NOT_FOUND_REGISTRATION_BY_PARKING_STATUS, null);
+            }
+            return new Response(HttpStatus.OK.value(), Message.GET_LIST_REGISTRATION_SUCCESS, listRegistration);
         }catch (Exception e){
             return new Response(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage(), null);
         }
