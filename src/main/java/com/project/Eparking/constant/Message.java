@@ -16,5 +16,7 @@ public class Message {
     public static final String LIST_CUSTOMER_EMPTY = "List Customer Is Empty";
     public static final String NOT_FOUND_REGISTRATION_BY_PARKING_STATUS = "Not Found Parking Registration By Status";
     public static final String GET_LIST_REGISTRATION_SUCCESS = "Get List Registration By Parking Status Success";
+    public static final String UPDATE_STATUS_PLO_BY_ID_FAIL = "Update Parking Lot Owner Status Failure";
+    public static final String UPDATE_STATUS_PLO_BY_ID_SUCCESS = "Update Parking Lot Owner Status Success";
 
 }

@@ -11,6 +11,7 @@ import com.project.Eparking.domain.dto.ImageDTO;
 import com.project.Eparking.domain.dto.ListPloRegistrationDTO;
 import com.project.Eparking.domain.dto.ParkingLotOwnerDTO;
 import com.project.Eparking.domain.dto.PloRegistrationDTO;
+import com.project.Eparking.domain.dto.UpdatePloStatusDTO;
 import com.project.Eparking.service.interf.ParkingLotOwnerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -123,20 +124,35 @@ public class ParkingLotOwnerServiceImpl implements ParkingLotOwnerService {
     public List<ListPloDTO> getListRegistrationByParkingStatus(int status, int pageNum, int pageSize) {
         List<ListPloDTO> parkingLotOwnerDTOList = new ArrayList<>();
         List<PLO> ploList;
-        int pageNumOffset = pageNum == 0 ? 0 : (pageNum -1) * pageSize;
+        int pageNumOffset = pageNum == 0 ? 0 : (pageNum - 1) * pageSize;
         // 1. Get list Registration by parking status from database
         List<Integer> parkingStatus = List.of(status);
 
-        ploList = parkingLotOwnerMapper.getListPloByParkingStatusWithPagination(parkingStatus,pageNumOffset, pageSize);
+        ploList = parkingLotOwnerMapper.getListPloByParkingStatusWithPagination(parkingStatus, pageNumOffset, pageSize);
 
         // 2. Mapping data from entity to dto
-        for (PLO plo : ploList){
+        for (PLO plo : ploList) {
             ListPloRegistrationDTO ploDto = new ListPloRegistrationDTO(plo.getPloID(), plo.getFullName(), plo.getPhoneNumber(),
-                    plo.getAddress(),plo.getParkingName());
+                    plo.getAddress(), plo.getParkingName());
             ploDto.setRegisterContract(plo.getRegisterContract());
             parkingLotOwnerDTOList.add(ploDto);
         }
         return parkingLotOwnerDTOList;
+    }
+
+    public boolean updatePloStatusById(UpdatePloStatusDTO updatePloStatusDTO) {
+        //1. Check is parking lot owner is exist
+        boolean isSuccess = true;
+        PLO plo = parkingLotOwnerMapper.getPloById(updatePloStatusDTO.getPloId());
+        if (Objects.isNull(plo)){
+            isSuccess = false;
+        }
+
+        //2. Update parking status by plo id
+        plo.setParkingStatusID(updatePloStatusDTO.getNewStatus());
+        parkingLotOwnerMapper.updateParkingStatusByPloId(plo.getPloID(), plo.getParkingStatusID());
+
+        return isSuccess;
     }
 
     @Override
