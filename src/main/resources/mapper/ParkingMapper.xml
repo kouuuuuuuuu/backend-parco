@@ -4,6 +4,14 @@
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.project.Eparking.dao.ParkingMapper">
 
+    <resultMap id = "listSetting" type = "com.project.Eparking.domain.response.ResponseParkingSetting">
+        <result property = "methodID" column = "methodID"/>
+        <result property = "methodName" column = "methodName"/>
+        <result property = "startTime" column = "startTime"/>
+        <result property = "endTime" column = "endTime"/>
+        <result property = "price" column = "price"/>
+    </resultMap>
+
     <update id="registerParking" parameterType="com.project.Eparking.domain.request.RequestParking">
         UPDATE PLO
         SET parkingName = #{parkingName},
@@ -107,4 +115,23 @@
         WHERE R.reservationID = #{ID};
     </select>
 
+    <select id="getParkingSettingByPLOID" resultMap="listSetting">
+        SELECT pm.methodID, rm.methodName, rm.startTime, rm.endTime, pm.price
+        FROM ParkingMethod pm
+        JOIN ReservationMethod rm ON pm.methodID = rm.methodID
+        WHERE pm.ploID = #{ploID}
+    </select>
+
+    <delete id="deleteParkingSetting" parameterType="com.project.Eparking.domain.PLO">
+        DELETE FROM ParkingMethod
+        WHERE ploID = #{ploID}
+    </delete>
+
+    <insert id="batchInsertSettingMethod" parameterType="java.util.List">
+        INSERT INTO ParkingMethod (ploID, methodID, price)
+        VALUES
+        <foreach collection="list" item="settings" separator=",">
+            (#{settings.ploID}, #{settings.methodID},#{settings.price})
+        </foreach>
+    </insert>
 </mapper>
