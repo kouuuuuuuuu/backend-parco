@@ -9,6 +9,7 @@ import com.project.Eparking.domain.ParkingMethod;
 import com.project.Eparking.domain.ReservationMethod;
 import com.project.Eparking.domain.dto.ImageDTO;
 import com.project.Eparking.domain.dto.ParkingLotOwnerDTO;
+import com.project.Eparking.domain.dto.PloRegistrationDTO;
 import com.project.Eparking.service.interf.ParkingLotOwnerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -62,6 +63,58 @@ public class ParkingLotOwnerServiceImpl implements ParkingLotOwnerService {
             parkingLotOwnerDTOList.add(ploDto);
         }
         return parkingLotOwnerDTOList;
+    }
+
+    @Override
+    public PloRegistrationDTO getPloRegistrationByPloId(String ploId) {
+        //1. Get Image by ploId
+        List<Image> images = imageMapper.getImageByPloId(ploId);
+
+        //2. Get Plo by ploId;
+        PLO ploEntity = parkingLotOwnerMapper.getPloById(ploId);
+        if (Objects.isNull(ploEntity)){
+            return null;
+        }
+
+        List<ImageDTO> imageDTOS = new ArrayList<>();
+        //3. Mapping to dto
+        if (!images.isEmpty()){
+            for (Image image : images){
+                ImageDTO imageDTO = new ImageDTO();
+                imageDTO.setImageID(image.getImageID());
+                imageDTO.setImageLink(image.getImageLink());
+                imageDTOS.add(imageDTO);
+            }
+        }
+
+        PloRegistrationDTO parkingLotOwnerDTO = new PloRegistrationDTO();
+        parkingLotOwnerDTO.setPloID(ploEntity.getPloID());
+        parkingLotOwnerDTO.setParkingName(ploEntity.getParkingName());
+        parkingLotOwnerDTO.setAddress(ploEntity.getAddress());
+        parkingLotOwnerDTO.setPhoneNumber(ploEntity.getPhoneNumber());
+        parkingLotOwnerDTO.setEmail(ploEntity.getEmail());
+        parkingLotOwnerDTO.setContractDuration(ploEntity.getContractDuration());
+        parkingLotOwnerDTO.setContractLink(ploEntity.getContractLink());
+        parkingLotOwnerDTO.setStatus(ploEntity.getStatus());
+        parkingLotOwnerDTO.setSlot(ploEntity.getSlot());
+        parkingLotOwnerDTO.setLatitude(ploEntity.getLatitude() != null ? ploEntity.getLatitude().toString() : "");
+        parkingLotOwnerDTO.setLongtitude(ploEntity.getLongtitude() != null ? ploEntity.getLongtitude().toString(): "");
+        parkingLotOwnerDTO.setLength(ploEntity.getLength() != null ? ploEntity.getLength() : 0);
+        parkingLotOwnerDTO.setWidth(ploEntity.getWidth() != null ? ploEntity.getWidth() : 0);
+        parkingLotOwnerDTO.setStar(ploEntity.getStar());
+        parkingLotOwnerDTO.setCurrentSlot(ploEntity.getCurrentSlot());
+        parkingLotOwnerDTO.setBalance(ploEntity.getBalance());
+        parkingLotOwnerDTO.setFullName(ploEntity.getFullName());
+        parkingLotOwnerDTO.setPassword(ploEntity.getPassword());
+        parkingLotOwnerDTO.setIdentify(ploEntity.getIdentify());
+        parkingLotOwnerDTO.setParkingStatusID(ploEntity.getParkingStatusID());
+        parkingLotOwnerDTO.setRole(ploEntity.getRole());
+        parkingLotOwnerDTO.setWaitingTime(ploEntity.getWaitingTime());
+        parkingLotOwnerDTO.setRegisterContract(ploEntity.getRegisterContract());
+        parkingLotOwnerDTO.setBrowseContract(ploEntity.getBrowseContract());
+        parkingLotOwnerDTO.setDescription(ploEntity.getDescription());
+        parkingLotOwnerDTO.setCancelBookingTime(ploEntity.getCancelBookingTime());
+        return parkingLotOwnerDTO;
     }
 
     @Override
