@@ -22,4 +22,23 @@
             customerID = #{customerID};
     </select>
 
+    <select id="getListCustomer" resultType="com.project.Eparking.domain.Customer">
+        SELECT
+            customerID,
+            wallet_balance,
+            identify,
+            role,
+            phoneNumber,
+            fullName,
+            password,
+            email,
+            registrationDate,
+            status
+        FROM
+            Customer
+        LIMIT
+            #{pageSize}
+        OFFSET
+            #{pageNum};
+    </select>
 </mapper>
