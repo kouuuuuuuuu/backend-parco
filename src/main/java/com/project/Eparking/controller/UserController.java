@@ -155,6 +155,15 @@ public class UserController {
                 ObjectMapper objectMapper = new ObjectMapper();
                 objectMapper.writeValue(response.getOutputStream(), error);
             }
+        }else {
+            // Invalid user ID prefix
+            response.setHeader("error", "Invalid user ID prefix");
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            Map<String, String> error = new HashMap<>();
+            error.put("error_message", "Invalid user ID prefix");
+            response.setContentType(MimeTypeUtils.APPLICATION_JSON_VALUE);
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.writeValue(response.getOutputStream(), error);
         }
     }
     private String cleanString(String input) {

@@ -110,7 +110,6 @@
     <update id="updateParkingOwner" parameterType="com.project.Eparking.domain.request.ParamTransferParking">
         UPDATE PLO
         SET
-            ploID = #{ploIDTransfer},
             phoneNumber = #{phoneNumberTransfer}
         WHERE ploID = #{ploID}
     </update>
