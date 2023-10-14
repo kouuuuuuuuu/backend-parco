@@ -19,12 +19,13 @@
         ratingID,
         star,
         content,
-        customerID,
+        Rating.customerID,
+        fullName,
         ploID,
         reservationID,
         feedbackDate
-        FROM Rating
-        WHERE ploID = #{ploID}
+        FROM Rating,Customer
+        WHERE ploID = #{ploID} AND Rating.customerID = Customer.customerID
     </select>
 
 

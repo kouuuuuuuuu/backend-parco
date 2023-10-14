@@ -1,18 +1,22 @@
 package com.project.Eparking.service.impl;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.Eparking.dao.*;
 import com.project.Eparking.domain.PLO;
 import com.project.Eparking.domain.dto.ListPloDTO;
 import com.project.Eparking.domain.Image;
-import com.project.Eparking.domain.PLO;
 import com.project.Eparking.domain.ParkingMethod;
 import com.project.Eparking.domain.ReservationMethod;
 import com.project.Eparking.domain.dto.ImageDTO;
+import com.project.Eparking.domain.dto.ListPloRegistrationDTO;
 import com.project.Eparking.domain.dto.ParkingLotOwnerDTO;
+import com.project.Eparking.domain.dto.PloRegistrationDTO;
+import com.project.Eparking.domain.dto.UpdatePloStatusDTO;
 import com.project.Eparking.service.interf.ParkingLotOwnerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -23,6 +27,7 @@ import java.util.Objects;
 public class ParkingLotOwnerServiceImpl implements ParkingLotOwnerService {
 
     private final ParkingLotOwnerMapper parkingLotOwnerMapper;
+
     private final ImageMapper imageMapper;
 
     private final ParkingMethodMapper parkingMethodMapper;
@@ -62,6 +67,92 @@ public class ParkingLotOwnerServiceImpl implements ParkingLotOwnerService {
             parkingLotOwnerDTOList.add(ploDto);
         }
         return parkingLotOwnerDTOList;
+    }
+
+    @Override
+    public PloRegistrationDTO getPloRegistrationByPloId(String ploId) {
+        //1. Get Image by ploId
+        List<Image> images = imageMapper.getImageByPloId(ploId);
+
+        //2. Get Plo by ploId;
+        PLO ploEntity = parkingLotOwnerMapper.getPloById(ploId);
+        if (Objects.isNull(ploEntity)) {
+            return null;
+        }
+
+        List<ImageDTO> imageDTOS = new ArrayList<>();
+        //3. Mapping to dto
+        if (!images.isEmpty()) {
+            for (Image image : images) {
+                ImageDTO imageDTO = new ImageDTO();
+                imageDTO.setImageID(image.getImageID());
+                imageDTO.setImageLink(image.getImageLink());
+                imageDTOS.add(imageDTO);
+            }
+        }
+
+        PloRegistrationDTO parkingLotOwnerDTO = new PloRegistrationDTO();
+        parkingLotOwnerDTO.setPloID(ploEntity.getPloID());
+        parkingLotOwnerDTO.setParkingName(ploEntity.getParkingName());
+        parkingLotOwnerDTO.setAddress(ploEntity.getAddress());
+        parkingLotOwnerDTO.setPhoneNumber(ploEntity.getPhoneNumber());
+        parkingLotOwnerDTO.setEmail(ploEntity.getEmail());
+        parkingLotOwnerDTO.setContractDuration(ploEntity.getContractDuration());
+        parkingLotOwnerDTO.setContractLink(ploEntity.getContractLink());
+        parkingLotOwnerDTO.setStatus(ploEntity.getStatus());
+        parkingLotOwnerDTO.setSlot(ploEntity.getSlot());
+        parkingLotOwnerDTO.setLatitude(ploEntity.getLatitude() != null ? ploEntity.getLatitude().toString() : "");
+        parkingLotOwnerDTO.setLongtitude(ploEntity.getLongtitude() != null ? ploEntity.getLongtitude().toString() : "");
+        parkingLotOwnerDTO.setLength(ploEntity.getLength() != null ? ploEntity.getLength() : 0);
+        parkingLotOwnerDTO.setWidth(ploEntity.getWidth() != null ? ploEntity.getWidth() : 0);
+        parkingLotOwnerDTO.setStar(ploEntity.getStar());
+        parkingLotOwnerDTO.setCurrentSlot(ploEntity.getCurrentSlot());
+        parkingLotOwnerDTO.setBalance(ploEntity.getBalance());
+        parkingLotOwnerDTO.setFullName(ploEntity.getFullName());
+        parkingLotOwnerDTO.setPassword(ploEntity.getPassword());
+        parkingLotOwnerDTO.setIdentify(ploEntity.getIdentify());
+        parkingLotOwnerDTO.setParkingStatusID(ploEntity.getParkingStatusID());
+        parkingLotOwnerDTO.setRole(ploEntity.getRole());
+        parkingLotOwnerDTO.setWaitingTime(ploEntity.getWaitingTime());
+        parkingLotOwnerDTO.setRegisterContract(ploEntity.getRegisterContract());
+        parkingLotOwnerDTO.setBrowseContract(ploEntity.getBrowseContract());
+        parkingLotOwnerDTO.setDescription(ploEntity.getDescription());
+        parkingLotOwnerDTO.setCancelBookingTime(ploEntity.getCancelBookingTime());
+        return parkingLotOwnerDTO;
+    }
+
+    public List<ListPloDTO> getListRegistrationByParkingStatus(int status, int pageNum, int pageSize) {
+        List<ListPloDTO> parkingLotOwnerDTOList = new ArrayList<>();
+        List<PLO> ploList;
+        int pageNumOffset = pageNum == 0 ? 0 : (pageNum - 1) * pageSize;
+        // 1. Get list Registration by parking status from database
+        List<Integer> parkingStatus = List.of(status);
+
+        ploList = parkingLotOwnerMapper.getListPloByParkingStatusWithPagination(parkingStatus, pageNumOffset, pageSize);
+
+        // 2. Mapping data from entity to dto
+        for (PLO plo : ploList) {
+            ListPloRegistrationDTO ploDto = new ListPloRegistrationDTO(plo.getPloID(), plo.getFullName(), plo.getPhoneNumber(),
+                    plo.getAddress(), plo.getParkingName());
+            ploDto.setRegisterContract(plo.getRegisterContract());
+            parkingLotOwnerDTOList.add(ploDto);
+        }
+        return parkingLotOwnerDTOList;
+    }
+
+    public boolean updatePloStatusById(UpdatePloStatusDTO updatePloStatusDTO) {
+        //1. Check is parking lot owner is exist
+        boolean isSuccess = true;
+        PLO plo = parkingLotOwnerMapper.getPloById(updatePloStatusDTO.getPloId());
+        if (Objects.isNull(plo)){
+            isSuccess = false;
+        }
+
+        //2. Update parking status by plo id
+        plo.setParkingStatusID(updatePloStatusDTO.getNewStatus());
+        parkingLotOwnerMapper.updateParkingStatusByPloId(plo.getPloID(), plo.getParkingStatusID());
+
+        return isSuccess;
     }
 
     @Override
@@ -152,7 +243,7 @@ public class ParkingLotOwnerServiceImpl implements ParkingLotOwnerService {
         parkingLotOwnerDTO.setOverNightFee(overnightMethod != null ? overnightMethod.getPrice() : 0);
         parkingLotOwnerDTO.setSlot(ploEntity.getSlot());
         parkingLotOwnerDTO.setLatitude(ploEntity.getLatitude() != null ? ploEntity.getLatitude() .toString() : "");
-        parkingLotOwnerDTO.setLongtitule(ploEntity.getLongtitude() != null ? ploEntity.getLongtitude().toString(): "");
+        parkingLotOwnerDTO.setLongtitude(ploEntity.getLongtitude() != null ? ploEntity.getLongtitude().toString(): "");
         parkingLotOwnerDTO.setLength(ploEntity.getLength() != null ? ploEntity.getLength() : 0);
         parkingLotOwnerDTO.setWidth(ploEntity.getWidth() != null ? ploEntity.getWidth() : 0);
         parkingLotOwnerDTO.setStar(ploEntity.getStar());

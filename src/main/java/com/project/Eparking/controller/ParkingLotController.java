@@ -1,6 +1,8 @@
 package com.project.Eparking.controller;
 
 import com.project.Eparking.domain.ParkingInformation;
+import com.project.Eparking.domain.ReservationMethod;
+import com.project.Eparking.domain.request.RequestParkingSetting;
 import com.project.Eparking.domain.request.RequestRegisterParking;
 import com.project.Eparking.domain.response.*;
 import com.project.Eparking.exception.ApiRequestException;
@@ -79,6 +81,7 @@ public class ParkingLotController {
             throw e;
         }
     }
+
     @GetMapping("/closeParkingStatus")
     public ResponseEntity<MessageResponse> closeParkignStatus(){
         try{
@@ -88,11 +91,41 @@ public class ParkingLotController {
             throw e;
         }
     }
+
+    @GetMapping("/getParkingSetting")
+    public ResponseEntity<ResponseParkingSettingWithID> getParkingSettingPLO(){
+        try{
+            return ResponseEntity.ok(parkingService.getParkingSettingByPLOID());
+        }catch (ApiRequestException e){
+            throw e;
+        }
+    }
+
     @GetMapping("/openParkingStatus")
     public ResponseEntity<MessageResponse> openParkignStatus(){
         try{
             parkingService.updateParkingStatusID(4);
             return ResponseEntity.ok(new MessageResponse("Update status successfully"));
+           }catch (ApiRequestException e){
+            throw e;
+        }
+    }
+
+    @PostMapping("/updateParkingSetting")
+    public ResponseEntity<String> updateParkingSetting(@RequestBody List<RequestParkingSetting> settings){
+        try{
+            parkingService.settingParking(settings);
+            return ResponseEntity.ok("Update setting successfully");
+        }catch (ApiRequestException e){
+            throw e;
+        }
+    }
+  
+    @GetMapping("/getAllReservationMethod")
+    public ResponseEntity<List<ReservationMethod>> getAllReservationMethod(){
+        try {
+            return ResponseEntity.ok(parkingService.getAllReservationMethod());
+
         }catch (ApiRequestException e){
             throw e;
         }

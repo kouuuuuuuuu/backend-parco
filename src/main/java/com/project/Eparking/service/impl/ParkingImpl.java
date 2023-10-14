@@ -3,9 +3,14 @@ package com.project.Eparking.service.impl;
 
 import com.project.Eparking.dao.ImageMapper;
 import com.project.Eparking.dao.ParkingMapper;
+import com.project.Eparking.dao.ReservationMethodMapper;
 import com.project.Eparking.dao.UserMapper;
 import com.project.Eparking.domain.Image;
 import com.project.Eparking.domain.ParkingInformation;
+
+
+import com.project.Eparking.domain.ReservationMethod;
+
 import com.project.Eparking.domain.request.*;
 import com.project.Eparking.domain.response.*;
 import com.project.Eparking.exception.ApiRequestException;
@@ -28,6 +33,7 @@ public class ParkingImpl implements ParkingService {
     private final UserMapper userMapper;
     private final ParkingMapper parkingMapper;
     private final ImageMapper imageMapper;
+    private final ReservationMethodMapper reservationMethodMapper;
 
     private final ESMService esmService;
 
@@ -151,6 +157,7 @@ public class ParkingImpl implements ParkingService {
     }
 
     @Override
+
     public String checkPLOTransfer(RequestTransferParking requestTransferParking) {
         String response = "";
             try{
@@ -184,6 +191,44 @@ public class ParkingImpl implements ParkingService {
             }
         }catch (Exception e){
             throw new ApiRequestException("Failed to check the OTP code" + e.getMessage());
+
+    public ResponseParkingSettingWithID getParkingSettingByPLOID() {
+        try{
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String id = authentication.getName();
+            List<ResponseParkingSetting> settings = parkingMapper.getParkingSettingByPLOID(id);
+            ResponseParkingSettingWithID parkingSettingWithID = new ResponseParkingSettingWithID(id,settings);
+            return parkingSettingWithID;
+        }catch (Exception e){
+            throw new ApiRequestException("Failed to get parking setting" + e.getMessage());
+        }
+    }
+    @Transactional
+    @Override
+    public void settingParking(List<RequestParkingSetting> settings) {
+        try{
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String id = authentication.getName();
+            List<RequestParkingSettingMapper> settingMappers = new ArrayList<>();
+            if(!settings.isEmpty()){
+                for (RequestParkingSetting setting:
+                        settings) {
+                    settingMappers.add(new RequestParkingSettingMapper(setting.getMethodID(),setting.getPrice(),id));
+                }
+                parkingMapper.deleteParkingSetting(id);
+                parkingMapper.batchInsertSettingMethod(settingMappers);
+            }
+        }catch (Exception e){
+            throw new ApiRequestException("Failed to update parking setting" + e.getMessage());
+        }
+    }
+
+    @Override
+    public List<ReservationMethod> getAllReservationMethod() {
+        try{
+            return reservationMethodMapper.getAllReservationMethod();
+        }catch (Exception e){
+            throw new ApiRequestException("Failed to get reservation method" + e.getMessage());
         }
     }
 }

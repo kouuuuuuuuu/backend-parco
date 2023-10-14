@@ -4,6 +4,14 @@
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.project.Eparking.dao.ParkingMapper">
 
+    <resultMap id = "listSetting" type = "com.project.Eparking.domain.response.ResponseParkingSetting">
+        <result property = "methodID" column = "methodID"/>
+        <result property = "methodName" column = "methodName"/>
+        <result property = "startTime" column = "startTime"/>
+        <result property = "endTime" column = "endTime"/>
+        <result property = "price" column = "price"/>
+    </resultMap>
+
     <update id="registerParking" parameterType="com.project.Eparking.domain.request.RequestParking">
         UPDATE PLO
         SET parkingName = #{parkingName},
@@ -72,11 +80,13 @@
         SELECT
         R.customerID, R.price, R.startTime, R.endTime,
         C.fullName, C.phoneNumber,R.reservationID,
-        L.licensePlate
+        L.licensePlate, RM.methodName,RS.statusName
         FROM Reservation R
         JOIN Customer C ON R.customerID = C.customerID
         JOIN LicensePlate L ON R.licensePlateID = L.licensePlateID
-        WHERE R.ploID = #{ploID} AND R.statusID = #{statusID}
+        JOIN ReservationMethod RM ON R.methodID = RM.methodID
+        JOIN ReservationStatus RS ON R.statusID = RS.statusID
+        WHERE R.ploID = "PL0934328813" AND R.statusID = 2
     </select>
 
 
@@ -107,6 +117,7 @@
         WHERE R.reservationID = #{ID};
     </select>
 
+
     <update id="updateParkingOwner" parameterType="com.project.Eparking.domain.request.ParamTransferParking">
         UPDATE PLO
         SET
@@ -115,4 +126,24 @@
     </update>
 
 
+
+    <select id="getParkingSettingByPLOID" resultMap="listSetting">
+        SELECT pm.methodID, rm.methodName, rm.startTime, rm.endTime, pm.price
+        FROM ParkingMethod pm
+        JOIN ReservationMethod rm ON pm.methodID = rm.methodID
+        WHERE pm.ploID = #{ploID}
+    </select>
+
+    <delete id="deleteParkingSetting" parameterType="com.project.Eparking.domain.PLO">
+        DELETE FROM ParkingMethod
+        WHERE ploID = #{ploID}
+    </delete>
+
+    <insert id="batchInsertSettingMethod" parameterType="java.util.List">
+        INSERT INTO ParkingMethod (ploID, methodID, price)
+        VALUES
+        <foreach collection="list" item="settings" separator=",">
+            (#{settings.ploID}, #{settings.methodID},#{settings.price})
+        </foreach>
+    </insert>
 </mapper>
