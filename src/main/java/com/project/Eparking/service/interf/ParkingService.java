@@ -19,7 +19,7 @@ public interface ParkingService {
 
     ResponseEntity<?> getParkingStatusOrList(String ploID);
 
-    void updateParkingStatusID(String ploID, int parkingStatusID);
+    void updateParkingStatusID(int parkingStatusID);
 
     List<ResponseShowVehicleInParking> showListVehicleInParking(int parkingStatusID);
 

@@ -82,9 +82,11 @@ public class ParkingImpl implements ParkingService {
 
     @Override
     @Transactional
-    public void updateParkingStatusID(String ploID, int parkingStatusID) {
+    public void updateParkingStatusID( int parkingStatusID) {
         try {
-            parkingMapper.updateParkingStatusID(ploID, parkingStatusID);
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String id = authentication.getName();
+            parkingMapper.updateParkingStatusID(id, parkingStatusID);
         } catch (Exception e) {
             throw new ApiRequestException("Failed to get parking status: " + e.getMessage());
         }

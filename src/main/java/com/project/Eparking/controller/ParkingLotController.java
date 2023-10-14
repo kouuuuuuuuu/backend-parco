@@ -52,7 +52,7 @@ public class ParkingLotController {
             HttpServletResponse response,
             HttpServletRequest request) {
         try {
-            parkingService.updateParkingStatusID(ploID, parkingStatusID);
+            parkingService.updateParkingStatusID(parkingStatusID);
             return ResponseEntity.ok(new MessageResponse("Update status successfully"));
         } catch (ApiRequestException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse("Register parking failure"));
@@ -75,6 +75,24 @@ public class ParkingLotController {
     public ResponseEntity<ResponseReservationDetail> getReservationDetail(@RequestParam int reservationID){
         try{
             return ResponseEntity.ok(parkingService.getReservationDetailByPLOID(reservationID));
+        }catch (ApiRequestException e){
+            throw e;
+        }
+    }
+    @GetMapping("/closeParkingStatus")
+    public ResponseEntity<MessageResponse> closeParkignStatus(){
+        try{
+            parkingService.updateParkingStatusID(5);
+            return ResponseEntity.ok(new MessageResponse("Update status successfully"));
+        }catch (ApiRequestException e){
+            throw e;
+        }
+    }
+    @GetMapping("/openParkingStatus")
+    public ResponseEntity<MessageResponse> openParkignStatus(){
+        try{
+            parkingService.updateParkingStatusID(4);
+            return ResponseEntity.ok(new MessageResponse("Update status successfully"));
         }catch (ApiRequestException e){
             throw e;
         }
