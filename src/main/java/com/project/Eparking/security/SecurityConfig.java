@@ -50,6 +50,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests().antMatchers(GET, "/parking/getReservationDetail").hasAnyAuthority("PLO");
         http.authorizeRequests().antMatchers(PUT, "/parking/updateParkingStatusID/**").hasAnyAuthority("PLO", "ADMIN");
         http.authorizeRequests().antMatchers(GET, "/parking/showListVehicleInParking").hasAnyAuthority("PLO");
+        http.authorizeRequests().antMatchers(GET, "/parking/closeParkingStatus").hasAnyAuthority("PLO");
+        http.authorizeRequests().antMatchers(GET, "/parking/openParkingStatus").hasAnyAuthority("PLO");
         http.authorizeRequests().antMatchers(GET, "/plo/getPloByParkingStatus").hasAnyAuthority("ADMIN");
         http.authorizeRequests().antMatchers(GET, "/plo/searchListPloByKeywords").hasAnyAuthority("ADMIN");
         http.authorizeRequests().antMatchers(GET, "/plo/getRegistrationDetail").hasAnyAuthority("ADMIN");
@@ -61,6 +63,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests().antMatchers(GET, "/PLO/getRatingList").hasAnyAuthority("PLO");
         http.authorizeRequests().antMatchers(GET, "/plo/getDetailPlo").hasAnyAuthority("ADMIN");
         http.authorizeRequests().antMatchers(GET, "/rating/getByPloId").hasAnyAuthority("ADMIN");
+        http.authorizeRequests().antMatchers(GET, "/PLO/checkPLOTransfer").hasAnyAuthority("PLO");
+        http.authorizeRequests().antMatchers(PUT, "/PLO/checkOTPcodeTransferParking").hasAnyAuthority("PLO");
         http.authorizeRequests().antMatchers(GET, "/customer/listCustomer").hasAnyAuthority("ADMIN");
         http.authorizeRequests().antMatchers(GET, "/plo/getRegistrationByParkingStatus").hasAnyAuthority("ADMIN");
         http.authorizeRequests().anyRequest().authenticated();

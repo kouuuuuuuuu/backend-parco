@@ -117,6 +117,16 @@
         WHERE R.reservationID = #{ID};
     </select>
 
+
+    <update id="updateParkingOwner" parameterType="com.project.Eparking.domain.request.ParamTransferParking">
+        UPDATE PLO
+        SET
+            phoneNumber = #{phoneNumberTransfer}
+        WHERE ploID = #{ploID}
+    </update>
+
+
+
     <select id="getParkingSettingByPLOID" resultMap="listSetting">
         SELECT pm.methodID, rm.methodName, rm.startTime, rm.endTime, pm.price
         FROM ParkingMethod pm

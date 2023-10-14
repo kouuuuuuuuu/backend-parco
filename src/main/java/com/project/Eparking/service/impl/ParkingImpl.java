@@ -7,10 +7,14 @@ import com.project.Eparking.dao.ReservationMethodMapper;
 import com.project.Eparking.dao.UserMapper;
 import com.project.Eparking.domain.Image;
 import com.project.Eparking.domain.ParkingInformation;
+
+
 import com.project.Eparking.domain.ReservationMethod;
+
 import com.project.Eparking.domain.request.*;
 import com.project.Eparking.domain.response.*;
 import com.project.Eparking.exception.ApiRequestException;
+import com.project.Eparking.service.interf.ESMService;
 import com.project.Eparking.service.interf.ParkingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +34,8 @@ public class ParkingImpl implements ParkingService {
     private final ParkingMapper parkingMapper;
     private final ImageMapper imageMapper;
     private final ReservationMethodMapper reservationMethodMapper;
+
+    private final ESMService esmService;
 
     @Override
     @Transactional
@@ -82,9 +88,11 @@ public class ParkingImpl implements ParkingService {
 
     @Override
     @Transactional
-    public void updateParkingStatusID(String ploID, int parkingStatusID) {
+    public void updateParkingStatusID( int parkingStatusID) {
         try {
-            parkingMapper.updateParkingStatusID(ploID, parkingStatusID);
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String id = authentication.getName();
+            parkingMapper.updateParkingStatusID(id, parkingStatusID);
         } catch (Exception e) {
             throw new ApiRequestException("Failed to get parking status: " + e.getMessage());
         }
@@ -149,6 +157,41 @@ public class ParkingImpl implements ParkingService {
     }
 
     @Override
+
+    public String checkPLOTransfer(RequestTransferParking requestTransferParking) {
+        String response = "";
+            try{
+                ResponsePLO existingPLO = userMapper.getPLOResponseByPhonenumber(requestTransferParking.getPhoneNumberTransfer());
+                if(existingPLO != null){
+                    return response = "The PLO is already exists";
+                }
+                ResponseSendOTP responseSendOTP = esmService.sendOTP(requestTransferParking.getPhoneNumberTransfer());
+                if(!responseSendOTP.getCodeResult().equals("100")){
+                    return response = "Can not send OTP to user";
+                }
+                response = "Send OTP successfully";
+            }catch (Exception e){
+                throw new ApiRequestException("Failed to send OTP to phoneNumber plo: " + e.getMessage());
+            }
+        return response;
+    }
+
+    @Override
+    public String checkOTPcodeTransferParking(RequestCheckOTPTransferParking transferParking) {
+        try{
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String id = authentication.getName();
+            ResponseCheckOTP responseCheckOTP = esmService.checkOTP(transferParking.getPhoneNumber(), transferParking.getOTPcode());
+            if (responseCheckOTP.getCodeResult().equalsIgnoreCase("100")) {
+                ParamTransferParking paramTransferParking = new ParamTransferParking(transferParking.getPhoneNumber(),id,"PL"+transferParking.getPhoneNumber());
+                parkingMapper.updateParkingOwner(paramTransferParking);
+                return "Successful owner conversion!";
+            } else {
+                return "OTP code is invalid";
+            }
+        }catch (Exception e){
+            throw new ApiRequestException("Failed to check the OTP code" + e.getMessage());
+
     public ResponseParkingSettingWithID getParkingSettingByPLOID() {
         try{
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

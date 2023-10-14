@@ -54,7 +54,7 @@ public class ParkingLotController {
             HttpServletResponse response,
             HttpServletRequest request) {
         try {
-            parkingService.updateParkingStatusID(ploID, parkingStatusID);
+            parkingService.updateParkingStatusID(parkingStatusID);
             return ResponseEntity.ok(new MessageResponse("Update status successfully"));
         } catch (ApiRequestException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse("Register parking failure"));
@@ -82,6 +82,16 @@ public class ParkingLotController {
         }
     }
 
+    @GetMapping("/closeParkingStatus")
+    public ResponseEntity<MessageResponse> closeParkignStatus(){
+        try{
+            parkingService.updateParkingStatusID(5);
+            return ResponseEntity.ok(new MessageResponse("Update status successfully"));
+        }catch (ApiRequestException e){
+            throw e;
+        }
+    }
+
     @GetMapping("/getParkingSetting")
     public ResponseEntity<ResponseParkingSettingWithID> getParkingSettingPLO(){
         try{
@@ -90,6 +100,17 @@ public class ParkingLotController {
             throw e;
         }
     }
+
+    @GetMapping("/openParkingStatus")
+    public ResponseEntity<MessageResponse> openParkignStatus(){
+        try{
+            parkingService.updateParkingStatusID(4);
+            return ResponseEntity.ok(new MessageResponse("Update status successfully"));
+           }catch (ApiRequestException e){
+            throw e;
+        }
+    }
+
     @PostMapping("/updateParkingSetting")
     public ResponseEntity<String> updateParkingSetting(@RequestBody List<RequestParkingSetting> settings){
         try{
@@ -99,10 +120,12 @@ public class ParkingLotController {
             throw e;
         }
     }
+  
     @GetMapping("/getAllReservationMethod")
     public ResponseEntity<List<ReservationMethod>> getAllReservationMethod(){
         try {
             return ResponseEntity.ok(parkingService.getAllReservationMethod());
+
         }catch (ApiRequestException e){
             throw e;
         }
