@@ -34,4 +34,5 @@ public interface ParkingMapper {
     List<ResponseParkingSetting> getParkingSettingByPLOID(String ploID);
     void deleteParkingSetting(String ploID);
     void batchInsertSettingMethod(List<RequestParkingSettingMapper> settings);
+    List<ResponseShowVehicleInParking> showListVehicleInParkingByParkingID(String ploID, int statusID);
 }

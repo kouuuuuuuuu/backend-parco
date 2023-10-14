@@ -62,12 +62,12 @@ public class ParkingLotController {
     }
 
     @GetMapping("/showListVehicleInParking")
-    public ResponseEntity<List<ResponseShowVehicleInParking>> showListVehicleInParking(
-            @RequestParam int parkingStatusID,
+    public ResponseEntity<List<ResponseShowVehicleInParking>> showListVehicleInParkingByStatusID(
+            @RequestParam int statusID,
             HttpServletResponse response,
             HttpServletRequest request) {
         try {
-            List<ResponseShowVehicleInParking> responseShowVehicleInParking = parkingService.showListVehicleInParking(parkingStatusID);
+            List<ResponseShowVehicleInParking> responseShowVehicleInParking = parkingService.showListVehicleInParking(statusID);
             return ResponseEntity.ok(responseShowVehicleInParking);
         } catch (ApiRequestException e) {
             throw e;
@@ -104,6 +104,18 @@ public class ParkingLotController {
         try {
             return ResponseEntity.ok(parkingService.getAllReservationMethod());
         }catch (ApiRequestException e){
+            throw e;
+        }
+    }
+    @GetMapping("/showListVehicleInParkingByParkingStatus")
+    public ResponseEntity<List<ResponseShowVehicleInParking>> showListVehicleInParkingByParkingStatus(
+            @RequestParam int parkingStatus,
+            HttpServletResponse response,
+            HttpServletRequest request) {
+        try {
+            List<ResponseShowVehicleInParking> responseShowVehicleInParking = parkingService.showListVehicleInParkingByParkingID(parkingStatus);
+            return ResponseEntity.ok(responseShowVehicleInParking);
+        } catch (ApiRequestException e) {
             throw e;
         }
     }

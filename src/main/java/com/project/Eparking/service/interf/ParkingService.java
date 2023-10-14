@@ -29,4 +29,5 @@ public interface ParkingService {
     ResponseParkingSettingWithID getParkingSettingByPLOID();
     void settingParking(List<RequestParkingSetting> settings);
     List<ReservationMethod> getAllReservationMethod();
+    List<ResponseShowVehicleInParking> showListVehicleInParkingByParkingID(int parkingStatusID);
 }

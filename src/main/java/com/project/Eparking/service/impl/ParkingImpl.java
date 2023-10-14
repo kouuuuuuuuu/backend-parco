@@ -91,11 +91,11 @@ public class ParkingImpl implements ParkingService {
     }
 
     @Override
-    public List<ResponseShowVehicleInParking> showListVehicleInParking(int parkingStatusID) {
+    public List<ResponseShowVehicleInParking> showListVehicleInParking(int statusID) {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String id = authentication.getName();
-            List<ResponseShowVehicleInParking> responseShowVehicleInParking = parkingMapper.showListVehicleInParking(id, parkingStatusID);
+            List<ResponseShowVehicleInParking> responseShowVehicleInParking = parkingMapper.showListVehicleInParking(id, statusID);
             return responseShowVehicleInParking;
         } catch (ApiRequestException e) {
             throw e;
@@ -186,6 +186,22 @@ public class ParkingImpl implements ParkingService {
             return reservationMethodMapper.getAllReservationMethod();
         }catch (Exception e){
             throw new ApiRequestException("Failed to get reservation method" + e.getMessage());
+        }
+    }
+    @Override
+    public List<ResponseShowVehicleInParking> showListVehicleInParkingByParkingID(int parkingStatusID) {
+        try {
+            if(parkingStatusID == 4) {
+                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+                String id = authentication.getName();
+                List<ResponseShowVehicleInParking> responseShowVehicleInParking = parkingMapper.showListVehicleInParking(id, 2);
+                return responseShowVehicleInParking;
+            }else {
+                List <ResponseShowVehicleInParking> responseShowVehicleInParking = null;
+                return responseShowVehicleInParking;
+            }
+        } catch (ApiRequestException e) {
+            throw e;
         }
     }
 }
