@@ -41,4 +41,11 @@
         OFFSET
             #{pageNum};
     </select>
+
+    <select id="countRecords" resultType="java.lang.Integer">
+        SELECT
+            COUNT(*)
+        FROM
+        Customer
+    </select>
 </mapper>

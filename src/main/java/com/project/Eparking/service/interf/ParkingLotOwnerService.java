@@ -4,6 +4,7 @@ import com.project.Eparking.domain.dto.ListPloDTO;
 import com.project.Eparking.domain.dto.ParkingLotOwnerDTO;
 import com.project.Eparking.domain.dto.PloRegistrationDTO;
 import com.project.Eparking.domain.dto.UpdatePloStatusDTO;
+import com.project.Eparking.domain.response.Page;
 
 import java.util.List;
 

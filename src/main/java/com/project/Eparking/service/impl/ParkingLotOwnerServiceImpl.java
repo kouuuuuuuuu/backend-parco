@@ -167,7 +167,7 @@ public class ParkingLotOwnerServiceImpl implements ParkingLotOwnerService {
     }
 
     @Override
-    public List<ListPloDTO> getListPloByKeywords(String keyword, int pageNum, int pageSize) {
+    public Page<ListPloDTO> getListPloByKeywords(String keyword, int status, int pageNum, int pageSize) {
 
         int pageNumOffset = pageNum == 0 ? 0 : (pageNum - 1) * pageSize;
         List<Integer> parkingStatus = null;

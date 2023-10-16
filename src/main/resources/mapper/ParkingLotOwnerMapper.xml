@@ -133,6 +133,7 @@
         SET parkingStatusID = #{parkingStatusID}
         WHERE ploID = #{ploID}
     </update>
+
     <select id="countRecords" resultType="java.lang.Integer">
         SELECT
             COUNT(*)
