@@ -189,9 +189,11 @@ public class ParkingImpl implements ParkingService {
             } else {
                 return "OTP code is invalid";
             }
-        }catch (Exception e){
+        }catch (Exception e) {
             throw new ApiRequestException("Failed to check the OTP code" + e.getMessage());
-
+        }
+    }
+    @Override
     public ResponseParkingSettingWithID getParkingSettingByPLOID() {
         try{
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

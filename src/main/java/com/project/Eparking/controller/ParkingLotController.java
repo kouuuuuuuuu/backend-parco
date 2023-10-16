@@ -82,7 +82,7 @@ public class ParkingLotController {
         }
     }
 
-    @GetMapping("/closeParkingStatus")
+    @PutMapping("/closeParkingStatus")
     public ResponseEntity<MessageResponse> closeParkignStatus(){
         try{
             parkingService.updateParkingStatusID(5);
@@ -101,7 +101,7 @@ public class ParkingLotController {
         }
     }
 
-    @GetMapping("/openParkingStatus")
+    @PutMapping("/openParkingStatus")
     public ResponseEntity<MessageResponse> openParkignStatus(){
         try{
             parkingService.updateParkingStatusID(4);
@@ -111,7 +111,7 @@ public class ParkingLotController {
         }
     }
 
-    @PostMapping("/updateParkingSetting")
+    @PutMapping("/updateParkingSetting")
     public ResponseEntity<String> updateParkingSetting(@RequestBody List<RequestParkingSetting> settings){
         try{
             parkingService.settingParking(settings);
