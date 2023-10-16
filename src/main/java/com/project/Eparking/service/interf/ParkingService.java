@@ -13,11 +13,13 @@ import com.project.Eparking.domain.request.RequestUpdateProfilePLO;
 import com.project.Eparking.domain.response.*;
 import org.springframework.http.ResponseEntity;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Map;
 
 public interface ParkingService {
 
-    void addParking(RequestRegisterParking registerParking);
+    Map<String, Object> addParking(RequestRegisterParking registerParking, HttpServletRequest req);
 
     ResponseEntity<?> getParkingStatusOrList(String ploID);
 

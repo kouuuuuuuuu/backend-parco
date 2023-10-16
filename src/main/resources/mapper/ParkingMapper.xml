@@ -20,7 +20,6 @@
         slot = #{slot},
         address = #{address},
         description = #{description},
-        imageLinkTransaction = #{imageLinkTransaction},
         parkingStatusID = #{parkingStatusID}
         WHERE ploID = #{ploID}
     </update>

@@ -18,7 +18,6 @@ public class RequestRegisterParking {
     private int slot;
     private String address;
     private String description;
-    private String imageLinkTransaction;
 
 
 }

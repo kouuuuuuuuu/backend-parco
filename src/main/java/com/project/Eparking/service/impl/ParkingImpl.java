@@ -9,6 +9,7 @@ import com.project.Eparking.domain.Image;
 import com.project.Eparking.domain.ParkingInformation;
 
 
+import com.project.Eparking.domain.Payment;
 import com.project.Eparking.domain.ReservationMethod;
 
 import com.project.Eparking.domain.request.*;
@@ -16,6 +17,7 @@ import com.project.Eparking.domain.response.*;
 import com.project.Eparking.exception.ApiRequestException;
 import com.project.Eparking.service.interf.ESMService;
 import com.project.Eparking.service.interf.ParkingService;
+import com.project.Eparking.service.interf.PaymentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -23,7 +25,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -36,10 +40,11 @@ public class ParkingImpl implements ParkingService {
     private final ReservationMethodMapper reservationMethodMapper;
 
     private final ESMService esmService;
+    private final PaymentService paymentService;
 
     @Override
     @Transactional
-    public void addParking(RequestRegisterParking registerParking) {
+    public Map<String, Object> addParking(RequestRegisterParking registerParking, HttpServletRequest req) {
         try {
             RequestParking requestParking = new RequestParking();
             requestParking.setPloID(registerParking.getPloID());
@@ -49,19 +54,28 @@ public class ParkingImpl implements ParkingService {
             requestParking.setSlot(registerParking.getSlot());
             requestParking.setAddress(registerParking.getAddress());
             requestParking.setDescription(registerParking.getDescription());
-            requestParking.setImageLinkTransaction(registerParking.getImageLinkTransaction());
             requestParking.setParkingStatusID(2);
             parkingMapper.registerParking(requestParking);
-
-            List<String> imageLinks = registerParking.getImages();
-            List<RequestImage> requestImages = new ArrayList<>();
-            for (String imageLink : imageLinks) {
-                RequestImage requestImage = new RequestImage();
-                requestImage.setPloID(registerParking.getPloID());
-                requestImage.setImageLink(imageLink);
-                requestImages.add(requestImage);
-                parkingMapper.addImage(requestImage);
+//            List<String> imageLinks = registerParking.getImages();
+//            List<RequestImage> requestImages = new ArrayList<>();
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String id = authentication.getName();
+            if (!registerParking.getImages().isEmpty()) {
+                imageMapper.deleteImageByPLOID(id);
+                List<Image> images = new ArrayList<>();
+                for (String image :
+                        registerParking.getImages()) {
+                    images.add(new Image(0, id, image));
+                }
+                imageMapper.batchInsertImages(images);
             }
+            Map<String, Object> responseAddParking = new HashMap<>();
+            Payment payment = new Payment();
+            payment.setAmountParam("350000");
+            ResponseEntity<?> paymentResponse = paymentService.createPayment(req,payment);
+            responseAddParking.put("Message","Register parking successfully");
+            responseAddParking.put("paymentResponse",paymentResponse);
+            return responseAddParking;
         } catch (Exception e) {
             throw new ApiRequestException("Failed to register parking: " + e.getMessage());
         }

@@ -39,6 +39,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/user/checkPhoneNumber",
                         "/user/checkOTPcode",
                         "/user/updatePassword",
+                        "/parking/getReturnPayment",
                         "/swagger-ui.html", "/webjars/**", "/v2/api-docs", "/swagger-resources/**").permitAll();
         http.authorizeRequests().antMatchers(GET, "/PLO/profile").hasAnyAuthority("PLO");
         http.authorizeRequests().antMatchers(GET, "/updateProfile").hasAnyAuthority("PLO");
