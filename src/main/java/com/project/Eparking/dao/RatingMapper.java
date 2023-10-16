@@ -9,4 +9,6 @@ import java.util.List;
 public interface RatingMapper {
     List<Rating> getRatingListByPLOID(String ploID);
     List<Rating> getWithPaginationByPloId(int pageNum, int pageSize, String ploId);
+
+    Integer countRecords(String ploId);
 }

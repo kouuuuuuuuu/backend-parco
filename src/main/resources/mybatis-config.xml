@@ -29,6 +29,8 @@
 
         <mapper resource="mapper/RatingMapper.xml"></mapper>
 
+        <mapper resource="mapper/ParkingStatusMapper.xml"></mapper>
+
     </mappers>
 
 </configuration>

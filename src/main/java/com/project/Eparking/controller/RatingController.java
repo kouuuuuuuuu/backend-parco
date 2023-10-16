@@ -3,6 +3,7 @@ package com.project.Eparking.controller;
 import com.project.Eparking.constant.Message;
 import com.project.Eparking.domain.Rating;
 import com.project.Eparking.domain.dto.RatingDTO;
+import com.project.Eparking.domain.response.Page;
 import com.project.Eparking.domain.response.Response;
 import com.project.Eparking.domain.response.ResponsePLOProfile;
 import com.project.Eparking.service.interf.RatingService;
@@ -24,7 +25,7 @@ public class RatingController {
                                      @RequestParam(name = "pageNum", defaultValue = "1") int pageNum,
                                      @RequestParam(name = "pageSize", defaultValue = "5") int pageSize){
         try {
-            List<RatingDTO> ratingDTOS = ratingService.getRatingWithPaginationByPloId(pageNum, pageSize, ploId);
+            Page<RatingDTO> ratingDTOS = ratingService.getRatingWithPaginationByPloId(pageNum, pageSize, ploId);
             return new Response(HttpStatus.OK.value(), Message.GET_PAGINATION_RATING_BY_PLO_ID_SUCCESS, ratingDTOS);
         }catch (Exception e){
             return new Response(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage(), null);

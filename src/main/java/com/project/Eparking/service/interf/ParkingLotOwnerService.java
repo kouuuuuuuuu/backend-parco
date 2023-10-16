@@ -9,10 +9,10 @@ import java.util.List;
 
 public interface ParkingLotOwnerService {
 
-    List<ListPloDTO> getListPloByKeywords(String keyword, int pageNum, int pageSize);
+    Page<ListPloDTO> getListPloByKeywords(String keyword, int parkingStatus, int pageNum, int pageSize);
     ParkingLotOwnerDTO getDetailPloById(String ploId) throws Exception;
-    List<ListPloDTO> getPloByParkingStatus(int status, int pageNum, int pageSize);
     PloRegistrationDTO getPloRegistrationByPloId(String ploId);
     List<ListPloDTO> getListRegistrationByParkingStatus(int status, int pageNum, int pageSize);
     boolean updatePloStatusById(UpdatePloStatusDTO updatePloStatusDTO);
+    Page<ListPloDTO> getPloByParkingStatus(int status, int pageNum, int pageSize);
 }
