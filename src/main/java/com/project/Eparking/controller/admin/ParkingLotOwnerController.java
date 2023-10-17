@@ -83,9 +83,10 @@ public class ParkingLotOwnerController {
     @GetMapping("/getRegistrationByParkingStatus")
     public Response getListRegistrationByParkingStatus(@RequestParam("status")int status,
                                                        @RequestParam(name = "pageNum", defaultValue = "1") int pageNum,
-                                                       @RequestParam(name = "pageSize", defaultValue = "5") int pageSize){
+                                                       @RequestParam(name = "pageSize", defaultValue = "5") int pageSize,
+                                                       @RequestParam(name = "keywords", defaultValue = "") String keywords){
         try {
-            Page<ListPloDTO> listRegistration = parkingLotOwnerService.getListRegistrationByParkingStatus(status, pageNum, pageSize);
+            Page<ListPloDTO> listRegistration = parkingLotOwnerService.getListRegistrationByParkingStatus(status, pageNum, pageSize, keywords);
             if (listRegistration.getContent().isEmpty()){
                 return new Response(HttpStatus.NOT_FOUND.value(), Message.NOT_FOUND_REGISTRATION_BY_PARKING_STATUS, null);
             }
@@ -107,4 +108,5 @@ public class ParkingLotOwnerController {
             return new Response(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage(), null);
         }
     }
+
 }

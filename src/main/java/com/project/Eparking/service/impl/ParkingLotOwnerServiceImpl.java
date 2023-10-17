@@ -1,6 +1,5 @@
 package com.project.Eparking.service.impl;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.Eparking.dao.*;
 import com.project.Eparking.domain.*;
 import com.project.Eparking.domain.dto.*;
@@ -54,7 +53,7 @@ public class ParkingLotOwnerServiceImpl implements ParkingLotOwnerService {
             parkingStatus = List.of(6);
         }
 
-        ploList = parkingLotOwnerMapper.getListPloByParkingStatusWithPagination(parkingStatus,pageNumOffset, pageSize);
+        ploList = parkingLotOwnerMapper.getListPloByParkingStatusWithPagination(parkingStatus,pageNumOffset, pageSize, "");
         if (ploList.isEmpty()){
             return new Page<ListPloDTO>(parkingLotOwnerDTOList, pageNum, pageSize, 0);
         }
@@ -130,14 +129,14 @@ public class ParkingLotOwnerServiceImpl implements ParkingLotOwnerService {
         return parkingLotOwnerDTO;
     }
 
-    public Page<ListPloDTO> getListRegistrationByParkingStatus(int status, int pageNum, int pageSize) {
+    public Page<ListPloDTO> getListRegistrationByParkingStatus(int status, int pageNum, int pageSize, String keywords) {
         List<ListPloDTO> parkingLotOwnerDTOList = new ArrayList<>();
         List<PLO> ploList;
         int pageNumOffset = pageNum == 0 ? 0 : (pageNum - 1) * pageSize;
         // 1. Get list Registration by parking status from database
         List<Integer> parkingStatus = List.of(status);
 
-        ploList = parkingLotOwnerMapper.getListPloByParkingStatusWithPagination(parkingStatus, pageNumOffset, pageSize);
+        ploList = parkingLotOwnerMapper.getListPloByParkingStatusWithPagination(parkingStatus, pageNumOffset, pageSize, "%" + keywords + "%");
         if (ploList.isEmpty()){
             return new Page<ListPloDTO>(parkingLotOwnerDTOList, pageNum, pageSize, 0);
         }
@@ -153,7 +152,7 @@ public class ParkingLotOwnerServiceImpl implements ParkingLotOwnerService {
                     dateFormat.format(plo.getContractDuration()) : "");
             parkingLotOwnerDTOList.add(ploDto);
         }
-        int countRecords = this.countRecords(parkingStatus, "");
+        int countRecords = this.countRecords(parkingStatus, keywords);
         return new Page<ListPloDTO>(parkingLotOwnerDTOList, pageNum, pageSize, countRecords);
     }
 
