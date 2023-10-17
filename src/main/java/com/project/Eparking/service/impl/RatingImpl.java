@@ -4,7 +4,9 @@ import com.project.Eparking.dao.CustomerMapper;
 import com.project.Eparking.dao.RatingMapper;
 import com.project.Eparking.domain.Customer;
 import com.project.Eparking.domain.Rating;
+import com.project.Eparking.domain.dto.ListPloDTO;
 import com.project.Eparking.domain.dto.RatingDTO;
+import com.project.Eparking.domain.response.Page;
 import com.project.Eparking.exception.ApiRequestException;
 import com.project.Eparking.service.interf.RatingService;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +35,7 @@ public class RatingImpl implements RatingService {
         }
     }
     @Override
-    public List<RatingDTO> getRatingWithPaginationByPloId(int pageNum, int pageSize, String ploId) throws Exception {
+    public Page<RatingDTO> getRatingWithPaginationByPloId(int pageNum, int pageSize, String ploId) throws Exception {
         // 1. Get list rating entity pagination
         int pageNumOffset = (pageNum -1) == 0 ? 0 : (pageNum-1) * pageSize;
         List<Rating> ratingList = ratingMapper.getWithPaginationByPloId(pageNumOffset,pageSize,ploId);
@@ -50,6 +52,11 @@ public class RatingImpl implements RatingService {
             ratingDTO.setFeedbackDate(rating.getFeedbackDate());
             ratingDTOS.add(ratingDTO);
         }
-        return ratingDTOS;
+        int totalRecords = this.countRecords(ploId);
+        return new Page<RatingDTO>(ratingDTOS, pageNum, pageSize, totalRecords);
+    }
+
+    private Integer countRecords(String ploId){
+        return ratingMapper.countRecords(ploId);
     }
 }

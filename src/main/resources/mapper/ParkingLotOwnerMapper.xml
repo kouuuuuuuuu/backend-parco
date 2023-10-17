@@ -112,10 +112,16 @@
         FROM
             plo
         WHERE
+            parkingStatusID
+        IN
+        <foreach collection="parkingStatus" item="status" open="(" separator="," close=")">
+            #{status}
+        </foreach>
+        AND (
             fullName like #{keyword} OR
             phoneNumber like #{keyword} OR
             parkingName like #{keyword} OR
-            address like #{keyword}
+            address like #{keyword} )
         LIMIT
             #{pageSize}
         OFFSET
@@ -127,4 +133,25 @@
         SET parkingStatusID = #{parkingStatusID}
         WHERE ploID = #{ploID}
     </update>
+
+    <select id="countRecords" resultType="java.lang.Integer">
+        SELECT
+            COUNT(*)
+        FROM
+            plo
+        WHERE
+            parkingStatusID
+        IN
+            <foreach collection="parkingStatus" item="status" open="(" separator="," close=")">
+                #{status}
+            </foreach>
+            <if test="keywords != null and keywords != ''">
+                AND (
+                fullName like #{keywords} OR
+                phoneNumber like #{keywords} OR
+                parkingName like #{keywords} OR
+                address like #{keywords} )
+            </if>
+    </select>
+
 </mapper>

@@ -5,6 +5,7 @@ import com.project.Eparking.domain.dto.ListPloDTO;
 import com.project.Eparking.domain.dto.ParkingLotOwnerDTO;
 import com.project.Eparking.domain.dto.PloRegistrationDTO;
 import com.project.Eparking.domain.dto.UpdatePloStatusDTO;
+import com.project.Eparking.domain.response.Page;
 import com.project.Eparking.domain.response.Response;
 import com.project.Eparking.service.interf.ParkingLotOwnerService;
 import lombok.RequiredArgsConstructor;
@@ -27,8 +28,8 @@ public class ParkingLotOwnerController {
                                            @RequestParam(name = "pageNum", defaultValue = "1") int pageNum,
                                            @RequestParam(name = "pageSize", defaultValue = "5") int pageSize) {
         try {
-            List<ListPloDTO> listPlo = parkingLotOwnerService.getPloByParkingStatus(status, pageNum, pageSize);
-            if (listPlo.isEmpty()){
+            Page<ListPloDTO> listPlo = parkingLotOwnerService.getPloByParkingStatus(status, pageNum, pageSize);
+            if (listPlo.getContent().isEmpty()){
                 return new Response(HttpStatus.NOT_FOUND.value(), Message.NOT_FOUND_PLO_BY_STATUS, null);
             }
             return new Response(HttpStatus.OK.value(), Message.GET_LIST_PLO_SUCCESS, listPlo);
@@ -40,13 +41,14 @@ public class ParkingLotOwnerController {
     @GetMapping("/searchListPloByKeywords")
     public Response getListParkingLotOwnerByKeywords(@RequestParam("keyword") String keyword,
                                                      @RequestParam(name = "pageNum", defaultValue = "1") int pageNum,
-                                                     @RequestParam(name = "pageSize", defaultValue = "5") int pageSize) {
+                                                     @RequestParam(name = "pageSize", defaultValue = "5") int pageSize,
+                                                     @RequestParam("parkingStatus") int parkingStatus) {
         try {
-            List<ListPloDTO> listPloDTOS = parkingLotOwnerService.getListPloByKeywords(keyword, pageNum, pageSize);
-            if (listPloDTOS.isEmpty()){
+            Page<ListPloDTO> ploDTOSpage = parkingLotOwnerService.getListPloByKeywords(keyword, parkingStatus, pageNum, pageSize);
+            if (Objects.isNull(ploDTOSpage) || ploDTOSpage.getContent().isEmpty()){
                 return new Response(HttpStatus.NOT_FOUND.value(), Message.NOT_FOUND_PLO_BY_KEY_WORD, null);
             }
-            return new Response(HttpStatus.OK.value(), Message.GET_LIST_PLO_SUCCESS, listPloDTOS);
+            return new Response(HttpStatus.OK.value(), Message.GET_LIST_PLO_SUCCESS, ploDTOSpage);
         } catch (Exception e) {
             return new Response(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage(), null);
         }

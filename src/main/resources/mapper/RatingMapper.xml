@@ -48,4 +48,15 @@
             #{pageNum};
     </select>
 
+    <select id="countRecords" resultType="java.lang.Integer">
+        SELECT
+            COUNT(*)
+        FROM
+            rating
+        WHERE
+            <if test="ploId != null and ploId != ''">
+                ploID = #{ploId}
+            </if>
+    </select>
+
 </mapper>

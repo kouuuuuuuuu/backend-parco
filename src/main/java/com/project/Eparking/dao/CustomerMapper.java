@@ -10,4 +10,6 @@ public interface CustomerMapper {
     Customer getCustomerById(String customerID);
 
     List<Customer> getListCustomer(int pageNum, int pageSize);
+
+    Integer countRecords();
 }

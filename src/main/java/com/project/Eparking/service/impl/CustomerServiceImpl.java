@@ -5,6 +5,8 @@ import com.project.Eparking.dao.LicensePlateMapper;
 import com.project.Eparking.domain.Customer;
 import com.project.Eparking.domain.LicensePlate;
 import com.project.Eparking.domain.dto.CustomerDTO;
+import com.project.Eparking.domain.dto.ListPloDTO;
+import com.project.Eparking.domain.response.Page;
 import com.project.Eparking.service.interf.CustomerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +28,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     private SimpleDateFormat dateFormat = new SimpleDateFormat("DD/MM/YYYY");
     @Override
-    public List<CustomerDTO> getListCustomer(int pageNum, int pageSize) {
+    public Page<CustomerDTO> getListCustomer(int pageNum, int pageSize) {
         List<CustomerDTO> customerDTOList = new ArrayList<>();
 
         int pageNumOffset = pageNum == 0 ? 0 : (pageNum - 1) * pageSize;
@@ -49,7 +51,13 @@ public class CustomerServiceImpl implements CustomerService {
             customerDTOList.add(customerDTO);
         }
 
-        return customerDTOList;
+        int totalRecords = this.countRecords();
+
+        return new Page<CustomerDTO>(customerDTOList, pageNum, pageSize, totalRecords);
+    }
+
+    private Integer countRecords(){
+        return customerMapper.countRecords();
     }
 
 }
