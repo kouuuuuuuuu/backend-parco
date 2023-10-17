@@ -230,4 +230,12 @@ public class UserController {
             throw e;
         }
     }
+    @GetMapping("/getNotifcations")
+    public ResponseEntity<List<Notifications>> getListNotification(){
+        try {
+            return ResponseEntity.ok(userService.getListNotificationByID());
+        }catch (ApiRequestException e){
+            throw e;
+        }
+    }
 }
