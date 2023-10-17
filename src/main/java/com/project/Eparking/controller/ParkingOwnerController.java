@@ -87,4 +87,12 @@ public class ParkingOwnerController {
             throw e;
         }
     }
+    @GetMapping("/getBalance")
+    public ResponseEntity<Double> getBalance(){
+        try {
+            return ResponseEntity.ok(userService.getBalancePlO());
+        }catch (ApiRequestException e){
+            throw e;
+        }
+    }
 }

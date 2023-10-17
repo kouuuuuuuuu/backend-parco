@@ -30,4 +30,5 @@ public interface UserMapper {
     ResponsePLOProfile getPLOProfileResponseByPLOID(String ploID);
     void updatePLOprofile(RequestPLOupdateProfile profile,String ID);
     ParkingInformation getParkingInformationByPLOID(String ploID);
+    double getBalancePlO(String ploID);
 }

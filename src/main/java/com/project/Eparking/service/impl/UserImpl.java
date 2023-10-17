@@ -331,4 +331,14 @@ public class UserImpl implements UserService, UserDetailsService {
         return response;
     }
 
+    @Override
+    public double getBalancePlO() {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String id = authentication.getName();
+            return userMapper.getBalancePlO(id);
+        }catch (Exception e){
+            throw new ApiRequestException("Failed to get plo balance by ID" + e.getMessage());
+        }
+    }
 }
