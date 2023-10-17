@@ -1,16 +1,9 @@
 package com.project.Eparking.service.impl;
 
 
-import com.project.Eparking.dao.ImageMapper;
-import com.project.Eparking.dao.ParkingMapper;
-import com.project.Eparking.dao.ReservationMethodMapper;
-import com.project.Eparking.dao.UserMapper;
-import com.project.Eparking.domain.Image;
-import com.project.Eparking.domain.ParkingInformation;
+import com.project.Eparking.dao.*;
+import com.project.Eparking.domain.*;
 
-
-import com.project.Eparking.domain.Payment;
-import com.project.Eparking.domain.ReservationMethod;
 
 import com.project.Eparking.domain.request.*;
 import com.project.Eparking.domain.response.*;
@@ -19,6 +12,7 @@ import com.project.Eparking.service.interf.ESMService;
 import com.project.Eparking.service.interf.ParkingService;
 import com.project.Eparking.service.interf.PaymentService;
 import lombok.RequiredArgsConstructor;
+import org.apache.ibatis.transaction.Transaction;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -41,6 +35,7 @@ public class ParkingImpl implements ParkingService {
 
     private final ESMService esmService;
     private final PaymentService paymentService;
+    private final TransactionMapper transactionMapper;
 
     @Override
     @Transactional
@@ -243,6 +238,18 @@ public class ParkingImpl implements ParkingService {
     public List<ReservationMethod> getAllReservationMethod() {
         try{
             return reservationMethodMapper.getAllReservationMethod();
+        }catch (Exception e){
+            throw new ApiRequestException("Failed to get reservation method" + e.getMessage());
+        }
+    }
+
+    @Override
+    public PLOTransaction checkPLOPayment() {
+        try{
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String id = authentication.getName();
+            RequestGetTransactionPLOByID transactionPLOByID = new RequestGetTransactionPLOByID(id,1);
+            return transactionMapper.getTransactionPLOByID(transactionPLOByID);
         }catch (Exception e){
             throw new ApiRequestException("Failed to get reservation method" + e.getMessage());
         }

@@ -1,15 +1,12 @@
 package com.project.Eparking.service.interf;
 
+import com.project.Eparking.domain.PLOTransaction;
 import com.project.Eparking.domain.ParkingInformation;
 
-import com.project.Eparking.domain.request.RequestCheckOTPTransferParking;
+import com.project.Eparking.domain.request.*;
 
 import com.project.Eparking.domain.ReservationMethod;
-import com.project.Eparking.domain.request.RequestParkingSetting;
 
-import com.project.Eparking.domain.request.RequestRegisterParking;
-import com.project.Eparking.domain.request.RequestTransferParking;
-import com.project.Eparking.domain.request.RequestUpdateProfilePLO;
 import com.project.Eparking.domain.response.*;
 import org.springframework.http.ResponseEntity;
 
@@ -40,5 +37,5 @@ public interface ParkingService {
     ResponseParkingSettingWithID getParkingSettingByPLOID();
     void settingParking(List<RequestParkingSetting> settings);
     List<ReservationMethod> getAllReservationMethod();
-
+    PLOTransaction checkPLOPayment();
 }

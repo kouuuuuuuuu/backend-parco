@@ -1,5 +1,6 @@
 package com.project.Eparking.controller;
 
+import com.project.Eparking.domain.PLOTransaction;
 import com.project.Eparking.domain.ParkingInformation;
 import com.project.Eparking.domain.Payment;
 import com.project.Eparking.domain.ReservationMethod;
@@ -146,6 +147,20 @@ public class ParkingLotController {
             throw e;
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
+        }
+    }
+    @GetMapping("/checkPaymentPLO")
+    public ResponseEntity<String> checkPaymentPLO(){
+        String response = null;
+        try{
+            PLOTransaction ploTransaction = parkingService.checkPLOPayment();
+            if(ploTransaction == null){
+                response = "PLO has not paid the yard registration fee!";
+            }
+            response = "PLO has paid the parking registration fee!";
+            return ResponseEntity.ok(response);
+        }catch (ApiRequestException e){
+            throw e;
         }
     }
 }
