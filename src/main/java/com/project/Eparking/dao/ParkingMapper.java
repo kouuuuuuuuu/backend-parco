@@ -43,4 +43,6 @@ public interface ParkingMapper {
   
     void batchInsertSettingMethod(List<RequestParkingSettingMapper> settings);
 
+    List<ResponseShowVehicleInParking> showListVehicleInParkingByParkingID(String ploID, int statusID);
+
 }

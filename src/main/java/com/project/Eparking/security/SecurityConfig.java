@@ -39,26 +39,31 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/user/checkPhoneNumber",
                         "/user/checkOTPcode",
                         "/user/updatePassword",
+                        "/parking/getReturnPayment",
                         "/swagger-ui.html", "/webjars/**", "/v2/api-docs", "/swagger-resources/**").permitAll();
         http.authorizeRequests().antMatchers(GET, "/PLO/profile").hasAnyAuthority("PLO");
-        http.authorizeRequests().antMatchers(GET, "/updateProfile").hasAnyAuthority("PLO");
+        http.authorizeRequests().antMatchers(PUT, "/PLO/updateProfile").hasAnyAuthority("PLO");
         http.authorizeRequests().antMatchers(GET, "/PLO/changePassword").hasAnyAuthority("PLO","CUSTOMER");
         http.authorizeRequests().antMatchers(PUT, "/reservation/checkoutReservation").hasAnyAuthority("PLO","CUSTOMER");
+        http.authorizeRequests().antMatchers(PUT, "/reservation/checkinReservation").hasAnyAuthority("PLO","CUSTOMER");
         http.authorizeRequests().antMatchers(POST, "/parking/registerParking").hasAnyAuthority("PLO");
         http.authorizeRequests().antMatchers(PUT, "/parking/updateParkingInformation").hasAnyAuthority("PLO");
         http.authorizeRequests().antMatchers(GET, "/parking/getParkingStatusID").hasAnyAuthority("PLO");
         http.authorizeRequests().antMatchers(GET, "/parking/getReservationDetail").hasAnyAuthority("PLO");
         http.authorizeRequests().antMatchers(PUT, "/parking/updateParkingStatusID/**").hasAnyAuthority("PLO", "ADMIN");
         http.authorizeRequests().antMatchers(GET, "/parking/showListVehicleInParking").hasAnyAuthority("PLO");
-        http.authorizeRequests().antMatchers(GET, "/parking/closeParkingStatus").hasAnyAuthority("PLO");
-        http.authorizeRequests().antMatchers(GET, "/parking/openParkingStatus").hasAnyAuthority("PLO");
+        http.authorizeRequests().antMatchers(GET, "/parking/checkPaymentPLO").hasAnyAuthority("PLO");
+        http.authorizeRequests().antMatchers(PUT, "/parking/closeParkingStatus").hasAnyAuthority("PLO");
+        http.authorizeRequests().antMatchers(PUT, "/parking/openParkingStatus").hasAnyAuthority("PLO");
         http.authorizeRequests().antMatchers(GET, "/plo/getPloByParkingStatus").hasAnyAuthority("ADMIN");
         http.authorizeRequests().antMatchers(GET, "/plo/searchListPloByKeywords").hasAnyAuthority("ADMIN");
         http.authorizeRequests().antMatchers(GET, "/plo/getRegistrationDetail").hasAnyAuthority("ADMIN");
         http.authorizeRequests().antMatchers(GET, "/plo/updatePloStatus").hasAnyAuthority("ADMIN");
         http.authorizeRequests().antMatchers(GET, "/PLO/getParkingInformation").hasAnyAuthority("PLO");
         http.authorizeRequests().antMatchers(GET, "/parking/getParkingSetting").hasAnyAuthority("PLO");
+        http.authorizeRequests().antMatchers(GET, "/parking//showListVehicleInParkingByParkingStatus").hasAnyAuthority("PLO");
         http.authorizeRequests().antMatchers(POST, "/parking/updateParkingSetting").hasAnyAuthority("PLO");
+        http.authorizeRequests().antMatchers(PUT, "/parking/updateParkingSetting").hasAnyAuthority("PLO");
         http.authorizeRequests().antMatchers(POST, "/parking/getAllReservationMethod").hasAnyAuthority("PLO","ADMIN");
         http.authorizeRequests().antMatchers(GET, "/PLO/getRatingList").hasAnyAuthority("PLO");
         http.authorizeRequests().antMatchers(GET, "/plo/getDetailPlo").hasAnyAuthority("ADMIN");

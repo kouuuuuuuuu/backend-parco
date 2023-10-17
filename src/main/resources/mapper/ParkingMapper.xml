@@ -20,7 +20,6 @@
         slot = #{slot},
         address = #{address},
         description = #{description},
-        imageLinkTransaction = #{imageLinkTransaction},
         parkingStatusID = #{parkingStatusID}
         WHERE ploID = #{ploID}
     </update>
@@ -86,7 +85,7 @@
         JOIN LicensePlate L ON R.licensePlateID = L.licensePlateID
         JOIN ReservationMethod RM ON R.methodID = RM.methodID
         JOIN ReservationStatus RS ON R.statusID = RS.statusID
-        WHERE R.ploID = "PL0934328813" AND R.statusID = 2
+        WHERE R.ploID = #{ploID} AND R.statusID = #{statusID}
     </select>
 
 
@@ -94,7 +93,10 @@
         UPDATE PLO
         SET
             parkingName = #{plo.parkingName},
-            description = #{plo.description}
+            description = #{plo.description},
+            slot = #{plo.slot},
+            waitingTime = #{plo.waitingTime},
+            cancelBookingTime = #{plo.cancelBookingTime}
         WHERE ploID = #{ploID}
     </update>
 

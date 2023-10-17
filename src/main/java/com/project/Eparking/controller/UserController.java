@@ -69,6 +69,8 @@ public class UserController {
                     Map<String, Object> tokens = new HashMap<>();
                     tokens.put("access_token", access_token);
                     tokens.put("Customer", responseCustomer);
+                    boolean isAdmin = false;
+                    tokens.put("isAdmin",isAdmin);
                     response.setContentType("application/json");
                     new ObjectMapper().writeValue(response.getOutputStream(), tokens);
                 }
@@ -104,6 +106,8 @@ public class UserController {
                     Map<String, Object> tokens = new HashMap<>();
                     tokens.put("access_token", access_token);
                     tokens.put("PLO", responsePLO);
+                    boolean isAdmin = false;
+                    tokens.put("isAdmin",isAdmin);
                     response.setContentType("application/json");
                     new ObjectMapper().writeValue(response.getOutputStream(), tokens);
                 }
@@ -139,6 +143,8 @@ public class UserController {
                     Map<String, Object> tokens = new HashMap<>();
                     tokens.put("access_token", access_token);
                     tokens.put("Admin", responseAdmin);
+                    boolean isAdmin = true;
+                    tokens.put("isAdmin",isAdmin);
                     response.setContentType("application/json");
                     new ObjectMapper().writeValue(response.getOutputStream(), tokens);
                 }
