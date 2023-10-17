@@ -45,7 +45,7 @@ public class ParkingLotOwnerController {
                                                      @RequestParam("parkingStatus") int parkingStatus) {
         try {
             Page<ListPloDTO> ploDTOSpage = parkingLotOwnerService.getListPloByKeywords(keyword, parkingStatus, pageNum, pageSize);
-            if (Objects.isNull(ploDTOSpage) || ploDTOSpage.getContent().isEmpty()){
+            if (ploDTOSpage.getContent().isEmpty()){
                 return new Response(HttpStatus.NOT_FOUND.value(), Message.NOT_FOUND_PLO_BY_KEY_WORD, null);
             }
             return new Response(HttpStatus.OK.value(), Message.GET_LIST_PLO_SUCCESS, ploDTOSpage);
@@ -85,8 +85,8 @@ public class ParkingLotOwnerController {
                                                        @RequestParam(name = "pageNum", defaultValue = "1") int pageNum,
                                                        @RequestParam(name = "pageSize", defaultValue = "5") int pageSize){
         try {
-            List<ListPloDTO> listRegistration = parkingLotOwnerService.getListRegistrationByParkingStatus(status, pageNum, pageSize);
-            if (listRegistration.isEmpty()){
+            Page<ListPloDTO> listRegistration = parkingLotOwnerService.getListRegistrationByParkingStatus(status, pageNum, pageSize);
+            if (listRegistration.getContent().isEmpty()){
                 return new Response(HttpStatus.NOT_FOUND.value(), Message.NOT_FOUND_REGISTRATION_BY_PARKING_STATUS, null);
             }
             return new Response(HttpStatus.OK.value(), Message.GET_LIST_REGISTRATION_SUCCESS, listRegistration);

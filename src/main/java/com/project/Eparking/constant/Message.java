@@ -19,4 +19,5 @@ public class Message {
     public static final String UPDATE_STATUS_PLO_BY_ID_FAIL = "Update Parking Lot Owner Status Failure";
     public static final String UPDATE_STATUS_PLO_BY_ID_SUCCESS = "Update Parking Lot Owner Status Success";
 
+    public static final String NOT_FOUND_CUSTOMER_BY_NAME = "Not Found Customer By Name";
 }

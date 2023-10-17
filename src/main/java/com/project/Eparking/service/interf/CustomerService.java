@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface CustomerService {
     Page<CustomerDTO> getListCustomer(int pageNum, int pageSize);
+
+    Page<CustomerDTO> getListCustomerByName(String name, int pageNum, int pageSize);
 }

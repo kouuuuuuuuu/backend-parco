@@ -34,4 +34,19 @@ public class CustomerController {
         }
     }
 
+    @GetMapping("/listCustomerByName")
+    public Response getListCustomerByName(@RequestParam("name") String name,
+                                          @RequestParam(name = "pageNum", defaultValue = "1") int pageNum,
+                                          @RequestParam(name = "pageSize", defaultValue = "5") int pageSize){
+        try {
+            Page<CustomerDTO> listCustomers = customerService.getListCustomerByName(name, pageNum, pageSize);
+            if (listCustomers.getContent().isEmpty()){
+                return new Response(HttpStatus.NOT_FOUND.value(), Message.NOT_FOUND_CUSTOMER_BY_NAME, null);
+            }
+            return new Response(HttpStatus.OK.value(), Message.GET_LIST_CUSTOMER_SUCCESS, listCustomers);
+        }catch (Exception e){
+          return new Response(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage(), null);
+        }
+    }
+
 }

@@ -12,4 +12,6 @@ public interface CustomerMapper {
     List<Customer> getListCustomer(int pageNum, int pageSize);
 
     Integer countRecords();
+
+    List<Customer> getListCustomerByName(String name, int pageNum, int pageSize);
 }
