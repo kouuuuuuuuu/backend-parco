@@ -1,23 +1,22 @@
 package com.project.Eparking.service.interf;
 
+import com.project.Eparking.domain.PLOTransaction;
 import com.project.Eparking.domain.ParkingInformation;
 
-import com.project.Eparking.domain.request.RequestCheckOTPTransferParking;
+import com.project.Eparking.domain.request.*;
 
 import com.project.Eparking.domain.ReservationMethod;
-import com.project.Eparking.domain.request.RequestParkingSetting;
 
-import com.project.Eparking.domain.request.RequestRegisterParking;
-import com.project.Eparking.domain.request.RequestTransferParking;
-import com.project.Eparking.domain.request.RequestUpdateProfilePLO;
 import com.project.Eparking.domain.response.*;
 import org.springframework.http.ResponseEntity;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Map;
 
 public interface ParkingService {
 
-    void addParking(RequestRegisterParking registerParking);
+    Map<String, Object> addParking(RequestRegisterParking registerParking, HttpServletRequest req);
 
     ResponseEntity<?> getParkingStatusOrList(String ploID);
 
@@ -27,7 +26,7 @@ public interface ParkingService {
 
     ParkingInformation getParkingInformation();
 
-    ParkingInformation updateParkingInformation(RequestUpdateProfilePLO plo);
+    ParkingInformation updateParkingInformation(RequestUpdateProfilePLOTime plo);
 
     ResponseReservationDetail getReservationDetailByPLOID(int reservationID);
     String checkPLOTransfer(RequestTransferParking requestTransferParking);
@@ -38,5 +37,5 @@ public interface ParkingService {
     ResponseParkingSettingWithID getParkingSettingByPLOID();
     void settingParking(List<RequestParkingSetting> settings);
     List<ReservationMethod> getAllReservationMethod();
-
+    PLOTransaction checkPLOPayment();
 }

@@ -1,12 +1,15 @@
 package com.project.Eparking.controller;
 
+import com.project.Eparking.domain.PLOTransaction;
 import com.project.Eparking.domain.ParkingInformation;
+import com.project.Eparking.domain.Payment;
 import com.project.Eparking.domain.ReservationMethod;
 import com.project.Eparking.domain.request.RequestParkingSetting;
 import com.project.Eparking.domain.request.RequestRegisterParking;
 import com.project.Eparking.domain.response.*;
 import com.project.Eparking.exception.ApiRequestException;
 import com.project.Eparking.service.interf.ParkingService;
+import com.project.Eparking.service.interf.PaymentService;
 import com.project.Eparking.service.interf.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,8 +19,11 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @CrossOrigin
 @RestController
@@ -27,14 +33,15 @@ public class ParkingLotController {
 
     private final ParkingService parkingService;
     private final UserService userService;
+    private final PaymentService paymentService;
 
     @PostMapping("/registerParking")
-    public ResponseEntity<MessageResponse> registerParking(@RequestBody RequestRegisterParking registerParking,
+    public ResponseEntity<?> registerParking(@RequestBody RequestRegisterParking registerParking,
                                                   HttpServletResponse response,
-                                                  HttpServletRequest request) {
+                                                  HttpServletRequest request, HttpServletRequest req) {
         try {
-            parkingService.addParking(registerParking);
-            return ResponseEntity.ok(new MessageResponse("Register parking successfully"));
+
+            return ResponseEntity.ok(parkingService.addParking(registerParking,req));
         } catch (ApiRequestException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse("Register parking failure"));
         }
@@ -82,7 +89,7 @@ public class ParkingLotController {
         }
     }
 
-    @GetMapping("/closeParkingStatus")
+    @PutMapping("/closeParkingStatus")
     public ResponseEntity<MessageResponse> closeParkignStatus(){
         try{
             parkingService.updateParkingStatusID(5);
@@ -101,7 +108,7 @@ public class ParkingLotController {
         }
     }
 
-    @GetMapping("/openParkingStatus")
+    @PutMapping("/openParkingStatus")
     public ResponseEntity<MessageResponse> openParkignStatus(){
         try{
             parkingService.updateParkingStatusID(4);
@@ -111,7 +118,7 @@ public class ParkingLotController {
         }
     }
 
-    @PostMapping("/updateParkingSetting")
+    @PutMapping("/updateParkingSetting")
     public ResponseEntity<String> updateParkingSetting(@RequestBody List<RequestParkingSetting> settings){
         try{
             parkingService.settingParking(settings);
@@ -126,6 +133,32 @@ public class ParkingLotController {
         try {
             return ResponseEntity.ok(parkingService.getAllReservationMethod());
 
+        }catch (ApiRequestException e){
+            throw e;
+        }
+    }
+    @GetMapping("/getReturnPayment")
+    public ResponseEntity<?> paymentReturn(
+            HttpServletRequest request
+    ){
+        try{
+            return paymentService.paymentReturn(request);
+        }catch (ApiRequestException e){
+            throw e;
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    @GetMapping("/checkPaymentPLO")
+    public ResponseEntity<String> checkPaymentPLO(){
+        String response = null;
+        try{
+            PLOTransaction ploTransaction = parkingService.checkPLOPayment();
+            if(ploTransaction == null){
+                response = "PLO has not paid the yard registration fee!";
+            }
+            response = "PLO has paid the parking registration fee!";
+            return ResponseEntity.ok(response);
         }catch (ApiRequestException e){
             throw e;
         }

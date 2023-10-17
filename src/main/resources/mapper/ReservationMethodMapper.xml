@@ -18,5 +18,15 @@
         SET statusID = #{statusID}
         WHERE reservationID = #{reservation.reservationID};
     </update>
+    <update id="updateCheckoutReservation" parameterType="com.project.Eparking.domain.request.RequestUpdateStatusReservation">
+        UPDATE Reservation
+        SET checkOut = #{checkOut}
+        WHERE reservationID = #{reservation.reservationID};
+    </update>
+    <update id="updateCheckinReservation" parameterType="com.project.Eparking.domain.request.RequestUpdateStatusReservation">
+        UPDATE Reservation
+        SET checkIn = #{checkIn}
+        WHERE reservationID = #{reservation.reservationID};
+    </update>
 
 </mapper>

@@ -15,9 +15,17 @@ import org.springframework.web.bind.annotation.*;
 public class ReservationController {
     private final ReservationService reservationService;
     @PutMapping("/checkoutReservation")
-    public ResponseEntity<String> checkouStatusReservation(@RequestBody RequestUpdateStatusReservation reservation){
+    public ResponseEntity<String> checkoutStatusReservation(@RequestBody RequestUpdateStatusReservation reservation){
         try{
             return ResponseEntity.ok(reservationService.checkOutStatusReservation(reservation));
+        }catch (ApiRequestException e){
+            throw e;
+        }
+    }
+    @PutMapping("/checkinReservation")
+    public ResponseEntity<String> checkinStatusReservation(@RequestBody RequestUpdateStatusReservation reservation){
+        try{
+            return ResponseEntity.ok(reservationService.checkInStatusReservation(reservation));
         }catch (ApiRequestException e){
             throw e;
         }
