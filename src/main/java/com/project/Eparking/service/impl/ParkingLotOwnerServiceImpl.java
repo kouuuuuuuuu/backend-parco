@@ -78,6 +78,38 @@ public class ParkingLotOwnerServiceImpl implements ParkingLotOwnerService {
     }
 
     @Override
+    public Page<RegistrationHistoryDTO> getListRegistrationHistory(int status, int pageNum, int pageSize, String keywords) {
+        List<RegistrationHistoryDTO> parkingLotOwnerDTOList = new ArrayList<>();
+        List<PLO> ploList;
+        int pageNumOffset = pageNum == 0 ? 0 : (pageNum - 1) * pageSize;
+        // 1. Get list Registration by parking status from database
+        List<Integer> parkingStatus = List.of(status);
+
+        ploList = parkingLotOwnerMapper.getListPloByParkingStatusWithPagination(parkingStatus, pageNumOffset, pageSize, "%" + keywords + "%");
+        if (ploList.isEmpty()){
+            return new Page<RegistrationHistoryDTO>(parkingLotOwnerDTOList, pageNum, pageSize, 0);
+        }
+
+        // 2. Mapping data from entity to dto
+        for (PLO plo : ploList) {
+            ParkingStatus parkingStatusEntity = parkingStatusMapper.getByParkingStatusId(plo.getParkingStatusID());
+            RegistrationHistoryDTO ploDto = new RegistrationHistoryDTO(plo.getPloID(), plo.getFullName(), plo.getPhoneNumber(),
+                    plo.getAddress(), plo.getParkingName());
+            ploDto.setRegisterContract(Objects.nonNull(plo.getRegisterContract()) ?
+                    dateFormat.format(plo.getRegisterContract()) : "");
+            ploDto.setStatusName(parkingStatusEntity.getStatusName());
+            ploDto.setContractDuration(Objects.nonNull(plo.getContractDuration()) ?
+                    dateFormat.format(plo.getContractDuration()) : "");
+            ploDto.setBrowseContract(Objects.nonNull(plo.getBrowseContract()) ?
+                    dateFormat.format(plo.getBrowseContract()) : "");
+            parkingLotOwnerDTOList.add(ploDto);
+        }
+        int countRecords = this.countRecords(parkingStatus, "%" + keywords + "%");
+        return new Page<RegistrationHistoryDTO>(parkingLotOwnerDTOList, pageNum, pageSize, countRecords);
+
+    }
+
+    @Override
     public PloRegistrationDTO getPloRegistrationByPloId(String ploId) {
         //1. Get Image by ploId
         List<Image> images = imageMapper.getImageByPloId(ploId);
@@ -105,7 +137,8 @@ public class ParkingLotOwnerServiceImpl implements ParkingLotOwnerService {
         parkingLotOwnerDTO.setAddress(ploEntity.getAddress());
         parkingLotOwnerDTO.setPhoneNumber(ploEntity.getPhoneNumber());
         parkingLotOwnerDTO.setEmail(ploEntity.getEmail());
-        parkingLotOwnerDTO.setContractDuration(ploEntity.getContractDuration());
+        parkingLotOwnerDTO.setContractDuration(Objects.nonNull(ploEntity.getContractDuration()) ?
+                dateFormat.format(ploEntity.getContractDuration()) : "");
         parkingLotOwnerDTO.setContractLink(ploEntity.getContractLink());
         parkingLotOwnerDTO.setStatus(ploEntity.getStatus());
         parkingLotOwnerDTO.setSlot(ploEntity.getSlot());
@@ -122,8 +155,10 @@ public class ParkingLotOwnerServiceImpl implements ParkingLotOwnerService {
         parkingLotOwnerDTO.setParkingStatusID(ploEntity.getParkingStatusID());
         parkingLotOwnerDTO.setRole(ploEntity.getRole());
         parkingLotOwnerDTO.setWaitingTime(ploEntity.getWaitingTime());
-        parkingLotOwnerDTO.setRegisterContract(ploEntity.getRegisterContract());
-        parkingLotOwnerDTO.setBrowseContract(ploEntity.getBrowseContract());
+        parkingLotOwnerDTO.setRegisterContract(Objects.nonNull(ploEntity.getRegisterContract()) ?
+                dateFormat.format(ploEntity.getRegisterContract()) : "");
+        parkingLotOwnerDTO.setBrowseContract(Objects.nonNull(ploEntity.getBrowseContract()) ?
+                dateFormat.format(ploEntity.getBrowseContract()) : "");
         parkingLotOwnerDTO.setDescription(ploEntity.getDescription());
         parkingLotOwnerDTO.setCancelBookingTime(ploEntity.getCancelBookingTime());
         return parkingLotOwnerDTO;
@@ -146,13 +181,14 @@ public class ParkingLotOwnerServiceImpl implements ParkingLotOwnerService {
             ParkingStatus parkingStatusEntity = parkingStatusMapper.getByParkingStatusId(plo.getParkingStatusID());
             ListPloRegistrationDTO ploDto = new ListPloRegistrationDTO(plo.getPloID(), plo.getFullName(), plo.getPhoneNumber(),
                     plo.getAddress(), plo.getParkingName());
-            ploDto.setRegisterContract(plo.getRegisterContract());
+            ploDto.setRegisterContract(Objects.nonNull(plo.getRegisterContract()) ?
+                    dateFormat.format(plo.getRegisterContract()) : "");
             ploDto.setStatusName(parkingStatusEntity.getStatusName());
             ploDto.setContractDuration(Objects.nonNull(plo.getContractDuration()) ?
                     dateFormat.format(plo.getContractDuration()) : "");
             parkingLotOwnerDTOList.add(ploDto);
         }
-        int countRecords = this.countRecords(parkingStatus, keywords);
+        int countRecords = this.countRecords(parkingStatus, "%" + keywords + "%");
         return new Page<ListPloDTO>(parkingLotOwnerDTOList, pageNum, pageSize, countRecords);
     }
 

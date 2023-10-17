@@ -20,4 +20,6 @@ public class Message {
     public static final String UPDATE_STATUS_PLO_BY_ID_SUCCESS = "Update Parking Lot Owner Status Success";
 
     public static final String NOT_FOUND_CUSTOMER_BY_NAME = "Not Found Customer By Name";
+    public static final String NOT_FOUND_REGISTRATION_HISTORY = "Not Found Registration History";
+    public static final String GET_LIST_REGISTRATION_HISTORY_SUCCESS = "Get List Registration History Success";
 }
