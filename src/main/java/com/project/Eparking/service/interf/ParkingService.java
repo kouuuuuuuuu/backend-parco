@@ -26,7 +26,7 @@ public interface ParkingService {
 
     ParkingInformation getParkingInformation();
 
-    ParkingInformation updateParkingInformation(RequestUpdateProfilePLO plo);
+    ParkingInformation updateParkingInformation(RequestUpdateProfilePLOTime plo);
 
     ResponseReservationDetail getReservationDetailByPLOID(int reservationID);
     String checkPLOTransfer(RequestTransferParking requestTransferParking);

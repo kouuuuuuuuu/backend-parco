@@ -169,7 +169,9 @@
             address,
             slot,
             length,
-            width
+            width,
+            waitingTime,
+            cancelBookingTime
         FROM PLO
         WHERE ploID = #{ploID}
     </select>

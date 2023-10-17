@@ -93,7 +93,10 @@
         UPDATE PLO
         SET
             parkingName = #{plo.parkingName},
-            description = #{plo.description}
+            description = #{plo.description},
+            slot = #{plo.slot},
+            waitingTime = #{plo.waitingTime},
+            cancelBookingTime = #{plo.cancelBookingTime}
         WHERE ploID = #{ploID}
     </update>
 

@@ -10,11 +10,11 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class RequestUpdateProfilePLO {
+public class RequestUpdateProfilePLOTime {
     private String parkingName;
     private String description;
     private int slot;
-    private Time waitingTime;
-    private Time cancelBookingTime;
+    private TimeFormat waitingTime;
+    private TimeFormat cancelBookingTime;
     private List<String> image;
 }

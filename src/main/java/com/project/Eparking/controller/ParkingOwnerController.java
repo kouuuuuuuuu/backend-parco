@@ -64,7 +64,7 @@ public class ParkingOwnerController {
         }
     }
     @PutMapping("/updateParkingInformation")
-    public ResponseEntity<ParkingInformation> updateParkingInformation(@RequestBody RequestUpdateProfilePLO plo){
+    public ResponseEntity<ParkingInformation> updateParkingInformation(@RequestBody RequestUpdateProfilePLOTime plo){
         try {
             return ResponseEntity.ok(parkingService.updateParkingInformation(plo));
         }catch (Exception e){

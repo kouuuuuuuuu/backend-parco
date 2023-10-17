@@ -20,10 +20,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.sql.Time;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -134,11 +132,32 @@ public class ParkingImpl implements ParkingService {
 
     @Transactional
     @Override
-    public ParkingInformation updateParkingInformation(RequestUpdateProfilePLO plo) {
+    public ParkingInformation updateParkingInformation(RequestUpdateProfilePLOTime plo) {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String id = authentication.getName();
-            parkingMapper.updateParkingProfile(plo, id);
+            RequestUpdateProfilePLO profilePLO = new RequestUpdateProfilePLO();
+            profilePLO.setParkingName(plo.getParkingName());
+            profilePLO.setDescription(plo.getDescription());
+            profilePLO.setSlot(plo.getSlot());
+
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(Calendar.HOUR_OF_DAY, plo.getWaitingTime().getHours());
+            calendar.set(Calendar.MINUTE, plo.getWaitingTime().getMinutes());
+            calendar.set(Calendar.SECOND, plo.getWaitingTime().getSeconds());
+            long timeInMillis = calendar.getTimeInMillis();
+            Time waitingTime = new Time(timeInMillis);
+            profilePLO.setWaitingTime(waitingTime);
+
+            Calendar calendarCancel = Calendar.getInstance();
+            calendarCancel.set(Calendar.HOUR_OF_DAY, plo.getCancelBookingTime().getHours());
+            calendarCancel.set(Calendar.MINUTE, plo.getCancelBookingTime().getMinutes());
+            calendarCancel.set(Calendar.SECOND, plo.getCancelBookingTime().getSeconds());
+            long timeInMillisCancel = calendarCancel.getTimeInMillis();
+            Time cancelTime = new Time(timeInMillisCancel);
+            profilePLO.setCancelBookingTime(cancelTime);
+
+            parkingMapper.updateParkingProfile(profilePLO, id);
             if (!plo.getImage().isEmpty()) {
                 imageMapper.deleteImageByPLOID(id);
                 List<Image> images = new ArrayList<>();

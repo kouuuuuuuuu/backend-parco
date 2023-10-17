@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.sql.Time;
 import java.util.List;
 @Data
 @AllArgsConstructor
@@ -17,5 +18,7 @@ public class ParkingInformation {
     private Double length;
     private Double width;
     private List<Image> image;
+    private Time waitingTime;
+    private Time cancelBookingTime;
 
 }
