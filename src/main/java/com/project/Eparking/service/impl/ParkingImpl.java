@@ -1,31 +1,27 @@
 package com.project.Eparking.service.impl;
 
 
-import com.project.Eparking.dao.ImageMapper;
-import com.project.Eparking.dao.ParkingMapper;
-import com.project.Eparking.dao.ReservationMethodMapper;
-import com.project.Eparking.dao.UserMapper;
-import com.project.Eparking.domain.Image;
-import com.project.Eparking.domain.ParkingInformation;
+import com.project.Eparking.dao.*;
+import com.project.Eparking.domain.*;
 
-
-import com.project.Eparking.domain.ReservationMethod;
 
 import com.project.Eparking.domain.request.*;
 import com.project.Eparking.domain.response.*;
 import com.project.Eparking.exception.ApiRequestException;
 import com.project.Eparking.service.interf.ESMService;
 import com.project.Eparking.service.interf.ParkingService;
+import com.project.Eparking.service.interf.PaymentService;
 import lombok.RequiredArgsConstructor;
+import org.apache.ibatis.transaction.Transaction;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
+import java.sql.Time;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -36,10 +32,12 @@ public class ParkingImpl implements ParkingService {
     private final ReservationMethodMapper reservationMethodMapper;
 
     private final ESMService esmService;
+    private final PaymentService paymentService;
+    private final TransactionMapper transactionMapper;
 
     @Override
     @Transactional
-    public void addParking(RequestRegisterParking registerParking) {
+    public Map<String, Object> addParking(RequestRegisterParking registerParking, HttpServletRequest req) {
         try {
             RequestParking requestParking = new RequestParking();
             requestParking.setPloID(registerParking.getPloID());
@@ -49,19 +47,28 @@ public class ParkingImpl implements ParkingService {
             requestParking.setSlot(registerParking.getSlot());
             requestParking.setAddress(registerParking.getAddress());
             requestParking.setDescription(registerParking.getDescription());
-            requestParking.setImageLinkTransaction(registerParking.getImageLinkTransaction());
             requestParking.setParkingStatusID(2);
             parkingMapper.registerParking(requestParking);
-
-            List<String> imageLinks = registerParking.getImages();
-            List<RequestImage> requestImages = new ArrayList<>();
-            for (String imageLink : imageLinks) {
-                RequestImage requestImage = new RequestImage();
-                requestImage.setPloID(registerParking.getPloID());
-                requestImage.setImageLink(imageLink);
-                requestImages.add(requestImage);
-                parkingMapper.addImage(requestImage);
+//            List<String> imageLinks = registerParking.getImages();
+//            List<RequestImage> requestImages = new ArrayList<>();
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String id = authentication.getName();
+            if (!registerParking.getImages().isEmpty()) {
+                imageMapper.deleteImageByPLOID(id);
+                List<Image> images = new ArrayList<>();
+                for (String image :
+                        registerParking.getImages()) {
+                    images.add(new Image(0, id, image));
+                }
+                imageMapper.batchInsertImages(images);
             }
+            Map<String, Object> responseAddParking = new HashMap<>();
+            Payment payment = new Payment();
+            payment.setAmountParam("350000");
+            ResponseEntity<?> paymentResponse = paymentService.createPayment(req,payment);
+            responseAddParking.put("Message","Register parking successfully");
+            responseAddParking.put("paymentResponse",paymentResponse);
+            return responseAddParking;
         } catch (Exception e) {
             throw new ApiRequestException("Failed to register parking: " + e.getMessage());
         }
@@ -125,11 +132,32 @@ public class ParkingImpl implements ParkingService {
 
     @Transactional
     @Override
-    public ParkingInformation updateParkingInformation(RequestUpdateProfilePLO plo) {
+    public ParkingInformation updateParkingInformation(RequestUpdateProfilePLOTime plo) {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String id = authentication.getName();
-            parkingMapper.updateParkingProfile(plo, id);
+            RequestUpdateProfilePLO profilePLO = new RequestUpdateProfilePLO();
+            profilePLO.setParkingName(plo.getParkingName());
+            profilePLO.setDescription(plo.getDescription());
+            profilePLO.setSlot(plo.getSlot());
+
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(Calendar.HOUR_OF_DAY, plo.getWaitingTime().getHours());
+            calendar.set(Calendar.MINUTE, plo.getWaitingTime().getMinutes());
+            calendar.set(Calendar.SECOND, plo.getWaitingTime().getSeconds());
+            long timeInMillis = calendar.getTimeInMillis();
+            Time waitingTime = new Time(timeInMillis);
+            profilePLO.setWaitingTime(waitingTime);
+
+            Calendar calendarCancel = Calendar.getInstance();
+            calendarCancel.set(Calendar.HOUR_OF_DAY, plo.getCancelBookingTime().getHours());
+            calendarCancel.set(Calendar.MINUTE, plo.getCancelBookingTime().getMinutes());
+            calendarCancel.set(Calendar.SECOND, plo.getCancelBookingTime().getSeconds());
+            long timeInMillisCancel = calendarCancel.getTimeInMillis();
+            Time cancelTime = new Time(timeInMillisCancel);
+            profilePLO.setCancelBookingTime(cancelTime);
+
+            parkingMapper.updateParkingProfile(profilePLO, id);
             if (!plo.getImage().isEmpty()) {
                 imageMapper.deleteImageByPLOID(id);
                 List<Image> images = new ArrayList<>();
@@ -189,9 +217,11 @@ public class ParkingImpl implements ParkingService {
             } else {
                 return "OTP code is invalid";
             }
-        }catch (Exception e){
+        }catch (Exception e) {
             throw new ApiRequestException("Failed to check the OTP code" + e.getMessage());
-
+        }
+    }
+    @Override
     public ResponseParkingSettingWithID getParkingSettingByPLOID() {
         try{
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -231,20 +261,33 @@ public class ParkingImpl implements ParkingService {
             throw new ApiRequestException("Failed to get reservation method" + e.getMessage());
         }
     }
+
     @Override
     public List<ResponseShowVehicleInParking> showListVehicleInParkingByParkingID(int parkingStatusID) {
         try {
-            if(parkingStatusID == 4) {
+            if (parkingStatusID == 4) {
                 Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
                 String id = authentication.getName();
                 List<ResponseShowVehicleInParking> responseShowVehicleInParking = parkingMapper.showListVehicleInParking(id, 2);
                 return responseShowVehicleInParking;
-            }else {
-                List <ResponseShowVehicleInParking> responseShowVehicleInParking = null;
+            } else {
+                List<ResponseShowVehicleInParking> responseShowVehicleInParking = null;
                 return responseShowVehicleInParking;
             }
         } catch (ApiRequestException e) {
             throw e;
+        }
+    }
+
+    @Override
+    public PLOTransaction checkPLOPayment() {
+        try{
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String id = authentication.getName();
+            RequestGetTransactionPLOByID transactionPLOByID = new RequestGetTransactionPLOByID(id,1);
+            return transactionMapper.getTransactionPLOByID(transactionPLOByID);
+        }catch (Exception e){
+            throw new ApiRequestException("Failed to get reservation method" + e.getMessage());
         }
     }
 }
