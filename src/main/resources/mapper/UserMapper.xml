@@ -4,6 +4,16 @@
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.project.Eparking.dao.UserMapper">
 
+    <resultMap id = "listNotifications" type = "com.project.Eparking.domain.Notifications">
+        <result property = "notiID" column = "notiID"/>
+        <result property = "recipient_type" column = "recipient_type"/>
+        <result property = "recipient_id" column = "recipient_id"/>
+        <result property = "sender_type" column = "sender_type"/>
+        <result property = "sender_id" column = "sender_id"/>
+        <result property = "content" column = "content"/>
+        <result property = "created_at" column = "created_at"/>
+    </resultMap>
+
     <select id="getAdminByAdminID" resultType="com.project.Eparking.domain.Admin">
         SELECT
             adminID,
@@ -180,4 +190,10 @@
         FROM PLO
         WHERE ploID = #{ploID}
     </select>
+    <select id="getListNotificationByID" resultMap="listNotifications">
+        SELECT notiID,recipient_type,recipient_id,sender_type,sender_id,content,created_at
+        FROM Notifications
+        WHERE recipient_id = #{recipientID}
+    </select>
+
 </mapper>
