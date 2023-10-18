@@ -19,7 +19,7 @@ public interface ParkingService {
 
     Map<String, Object> addParking(RequestRegisterParking registerParking, HttpServletRequest req);
 
-    ResponseEntity<?> getParkingStatusOrList(String ploID);
+    ResponseEntity<?> getParkingStatusOrList();
 
     void updateParkingStatusID(int parkingStatusID);
 
