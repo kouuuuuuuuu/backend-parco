@@ -8,22 +8,16 @@ import java.sql.Timestamp;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ResponseReservationDetail {
+public class ResponseReservation {
+    private int reservationID;
+    private String customerID;
+    private String ploID;
+    private int status;
     private String licensePlate;
-
-    private Double price;
-
-    private String methodName;
-
-    private String fullName;
-    private String phoneNumber;
-    private String statusName;
-
     private Timestamp startTime;
-
     private Timestamp endTime;
-
-    private Timestamp checkIn;
-
+    private double price;
     private Timestamp checkOut;
+    private Timestamp checkIn;
+    private String methodName;
 }

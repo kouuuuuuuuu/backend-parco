@@ -2,10 +2,7 @@ package com.project.Eparking.service.impl;
 
 import com.project.Eparking.dao.ImageMapper;
 import com.project.Eparking.dao.UserMapper;
-import com.project.Eparking.domain.Admin;
-import com.project.Eparking.domain.Customer;
-import com.project.Eparking.domain.PLO;
-import com.project.Eparking.domain.ParkingInformation;
+import com.project.Eparking.domain.*;
 import com.project.Eparking.domain.request.*;
 import com.project.Eparking.domain.response.*;
 import com.project.Eparking.exception.ApiRequestException;
@@ -331,4 +328,25 @@ public class UserImpl implements UserService, UserDetailsService {
         return response;
     }
 
+    @Override
+    public double getBalancePlO() {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String id = authentication.getName();
+            return userMapper.getBalancePlO(id);
+        }catch (Exception e){
+            throw new ApiRequestException("Failed to get plo balance by ID" + e.getMessage());
+        }
+    }
+
+    @Override
+    public List<Notifications> getListNotificationByID() {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String id = authentication.getName();
+            return userMapper.getListNotificationByID(id);
+        }catch (Exception e){
+            throw new ApiRequestException("Failed to get notifications by ID" + e.getMessage());
+        }
+    }
 }

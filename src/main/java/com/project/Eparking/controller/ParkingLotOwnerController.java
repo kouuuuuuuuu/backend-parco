@@ -1,10 +1,7 @@
 package com.project.Eparking.controller;
 
 import com.project.Eparking.constant.Message;
-import com.project.Eparking.domain.dto.ListPloDTO;
-import com.project.Eparking.domain.dto.ParkingLotOwnerDTO;
-import com.project.Eparking.domain.dto.PloRegistrationDTO;
-import com.project.Eparking.domain.dto.UpdatePloStatusDTO;
+import com.project.Eparking.domain.dto.*;
 import com.project.Eparking.domain.response.Page;
 import com.project.Eparking.domain.response.Response;
 import com.project.Eparking.service.interf.ParkingLotOwnerService;
@@ -48,7 +45,7 @@ public class ParkingLotOwnerController {
                                                      @RequestParam("parkingStatus") int parkingStatus) {
         try {
             Page<ListPloDTO> ploDTOSpage = parkingLotOwnerService.getListPloByKeywords(keyword, parkingStatus, pageNum, pageSize);
-            if (Objects.isNull(ploDTOSpage) || ploDTOSpage.getContent().isEmpty()){
+            if (ploDTOSpage.getContent().isEmpty()){
                 return new Response(HttpStatus.NOT_FOUND.value(), Message.NOT_FOUND_PLO_BY_KEY_WORD, null);
             }
             return new Response(HttpStatus.OK.value(), Message.GET_LIST_PLO_SUCCESS, ploDTOSpage);
@@ -86,10 +83,11 @@ public class ParkingLotOwnerController {
     @GetMapping("/getRegistrationByParkingStatus")
     public Response getListRegistrationByParkingStatus(@RequestParam("status")int status,
                                                        @RequestParam(name = "pageNum", defaultValue = "1") int pageNum,
-                                                       @RequestParam(name = "pageSize", defaultValue = "5") int pageSize){
+                                                       @RequestParam(name = "pageSize", defaultValue = "5") int pageSize,
+                                                       @RequestParam(name = "keywords", defaultValue = "") String keywords){
         try {
-            List<ListPloDTO> listRegistration = parkingLotOwnerService.getListRegistrationByParkingStatus(status, pageNum, pageSize);
-            if (listRegistration.isEmpty()){
+            Page<ListPloDTO> listRegistration = parkingLotOwnerService.getListRegistrationByParkingStatus(status, pageNum, pageSize, keywords);
+            if (listRegistration.getContent().isEmpty()){
                 return new Response(HttpStatus.NOT_FOUND.value(), Message.NOT_FOUND_REGISTRATION_BY_PARKING_STATUS, null);
             }
             return new Response(HttpStatus.OK.value(), Message.GET_LIST_REGISTRATION_SUCCESS, listRegistration);
@@ -106,6 +104,22 @@ public class ParkingLotOwnerController {
                 return  new Response(HttpStatus.NOT_FOUND.value(), Message.UPDATE_STATUS_PLO_BY_ID_FAIL, null);
             }
             return new Response(HttpStatus.OK.value(), Message.UPDATE_STATUS_PLO_BY_ID_SUCCESS, null);
+        }catch (Exception e){
+            return new Response(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage(), null);
+        }
+    }
+
+    @GetMapping("/getRegistrationHistory")
+    public Response getRegistrationHistory(@RequestParam(name = "keywords", defaultValue = "") String keywords,
+                                           @RequestParam(name = "pageNum", defaultValue = "1") int pageNum,
+                                           @RequestParam(name = "pageSize", defaultValue = "5") int pageSize){
+        int status = 3;
+        try {
+            Page<RegistrationHistoryDTO> listRegistration = parkingLotOwnerService.getListRegistrationHistory(status, pageNum, pageSize, keywords);
+            if (listRegistration.getContent().isEmpty()){
+                return new Response(HttpStatus.NOT_FOUND.value(), Message.NOT_FOUND_REGISTRATION_HISTORY, null);
+            }
+            return new Response(HttpStatus.OK.value(), Message.GET_LIST_REGISTRATION_HISTORY_SUCCESS, listRegistration);
         }catch (Exception e){
             return new Response(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage(), null);
         }

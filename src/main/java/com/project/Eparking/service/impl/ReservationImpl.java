@@ -1,14 +1,22 @@
 package com.project.Eparking.service.impl;
 
+import com.project.Eparking.dao.ParkingMapper;
+import com.project.Eparking.dao.ReservationMapper;
 import com.project.Eparking.dao.ReservationMethodMapper;
+import com.project.Eparking.dao.UserMapper;
+import com.project.Eparking.domain.PLO;
 import com.project.Eparking.domain.ReservationMethod;
 import com.project.Eparking.domain.request.RequestUpdateStatusReservation;
+import com.project.Eparking.domain.response.ResponseReservation;
 import com.project.Eparking.exception.ApiRequestException;
 import com.project.Eparking.service.interf.ParkingService;
 import com.project.Eparking.service.interf.ReservationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.time.Instant;
@@ -18,29 +26,51 @@ import java.time.Instant;
 @Slf4j
 public class ReservationImpl implements ReservationService {
     private final ReservationMethodMapper reservationMethodMapper;
+    private final ReservationMapper reservationMapper;
+    private final UserMapper userMapper;
+    private final ParkingMapper parkingMapper;
     @Override
+    @Transactional
     public String checkOutStatusReservation(RequestUpdateStatusReservation reservation) {
         String response = "";
         try{
-            reservationMethodMapper.updateStatusReservation(reservation,4);
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String id = authentication.getName();
+            ResponseReservation responseReservation = reservationMapper.findReservationByLicensePlate(id,2,reservation.getLicensePlate());
+            if(responseReservation == null){
+                return "Dont have any reservation with license plate";
+            }
+            reservationMethodMapper.updateStatusReservation(responseReservation.getReservationID(),4);
             long epochMilli = Instant.now().toEpochMilli();
             Timestamp timestamp = new Timestamp(epochMilli);
-            reservationMethodMapper.updateCheckoutReservation(reservation,timestamp);
+            reservationMethodMapper.updateCheckoutReservation(responseReservation.getReservationID(),timestamp);
+            PLO plo = userMapper.getPLOByPLOID(responseReservation.getPloID());
+            int currentSlot = plo.getCurrentSlot() - 1;
+            if(currentSlot < 0){
+                return "Something error with currentSlot plo";
+            }
+            parkingMapper.updateCurrentSlot(currentSlot,plo.getPloID());
             response = "Update successfully!";
         }catch (Exception e){
             throw new ApiRequestException("Failed to change password user" + e.getMessage());
         }
         return response;
     }
-
+    @Transactional
     @Override
     public String checkInStatusReservation(RequestUpdateStatusReservation reservation) {
         String response = "";
         try{
-            reservationMethodMapper.updateStatusReservation(reservation,2);
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String id = authentication.getName();
+            ResponseReservation responseReservation = reservationMapper.findReservationByLicensePlate(id,1,reservation.getLicensePlate());
+            if(responseReservation == null){
+                return "Dont have any reservation with license plate";
+            }
+            reservationMethodMapper.updateStatusReservation(responseReservation.getReservationID(), 2);
             long epochMilli = Instant.now().toEpochMilli();
             Timestamp timestamp = new Timestamp(epochMilli);
-            reservationMethodMapper.updateCheckinReservation(reservation,timestamp);;
+            reservationMethodMapper.updateCheckinReservation(responseReservation.getReservationID(),timestamp);;
             response = "Update successfully!";
         }catch (Exception e){
             throw new ApiRequestException("Failed to change password user" + e.getMessage());

@@ -1,9 +1,6 @@
 package com.project.Eparking.service.interf;
 
-import com.project.Eparking.domain.Admin;
-import com.project.Eparking.domain.Customer;
-import com.project.Eparking.domain.PLO;
-import com.project.Eparking.domain.ParkingInformation;
+import com.project.Eparking.domain.*;
 import com.project.Eparking.domain.request.*;
 import com.project.Eparking.domain.response.ResponseAdmin;
 import com.project.Eparking.domain.response.ResponseCustomer;
@@ -28,4 +25,6 @@ public interface UserService {
     ResponsePLOProfile getPLOProfileResponseByPLOID();
     ResponsePLOProfile updatePLOprofile(RequestPLOupdateProfile profile);
     List<String> changePasswordUser(RequestChangePasswordUser password);
+    double getBalancePlO();
+    List<Notifications> getListNotificationByID();
 }

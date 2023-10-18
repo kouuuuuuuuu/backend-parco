@@ -1,15 +1,14 @@
 package com.project.Eparking.dao;
 
-import com.project.Eparking.domain.Admin;
-import com.project.Eparking.domain.Customer;
-import com.project.Eparking.domain.PLO;
-import com.project.Eparking.domain.ParkingInformation;
+import com.project.Eparking.domain.*;
 import com.project.Eparking.domain.request.RequestChangePassword;
 import com.project.Eparking.domain.request.RequestConfirmOTP;
 import com.project.Eparking.domain.request.RequestPLOupdateProfile;
 import com.project.Eparking.domain.request.RequestRegisterUser;
 import com.project.Eparking.domain.response.*;
 import org.apache.ibatis.annotations.Mapper;
+
+import java.util.List;
 
 @Mapper
 public interface UserMapper {
@@ -30,4 +29,6 @@ public interface UserMapper {
     ResponsePLOProfile getPLOProfileResponseByPLOID(String ploID);
     void updatePLOprofile(RequestPLOupdateProfile profile,String ID);
     ParkingInformation getParkingInformationByPLOID(String ploID);
+    double getBalancePlO(String ploID);
+    List<Notifications> getListNotificationByID(String recipientID);
 }

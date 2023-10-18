@@ -3,6 +3,7 @@ package com.project.Eparking.service.interf;
 import com.project.Eparking.domain.PLOTransaction;
 import com.project.Eparking.domain.ParkingInformation;
 
+import com.project.Eparking.domain.Payment;
 import com.project.Eparking.domain.request.*;
 
 import com.project.Eparking.domain.ReservationMethod;
@@ -18,7 +19,7 @@ public interface ParkingService {
 
     Map<String, Object> addParking(RequestRegisterParking registerParking, HttpServletRequest req);
 
-    ResponseEntity<?> getParkingStatusOrList(String ploID);
+    ResponseEntity<?> getParkingStatusOrList();
 
     void updateParkingStatusID(int parkingStatusID);
 
@@ -41,4 +42,5 @@ public interface ParkingService {
     List<ResponseShowVehicleInParking> showListVehicleInParkingByParkingID(int parkingStatusID);
 
     PLOTransaction checkPLOPayment();
+    ResponseEntity<?> paymentParkingRegister(HttpServletRequest req);
 }

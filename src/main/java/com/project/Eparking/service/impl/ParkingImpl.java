@@ -73,10 +73,12 @@ public class ParkingImpl implements ParkingService {
             throw new ApiRequestException("Failed to register parking: " + e.getMessage());
         }
     }
-
-    public ResponseEntity<?> getParkingStatusOrList(String ploID) {
+    @Override
+    public ResponseEntity<?> getParkingStatusOrList() {
         try {
-            ResponseParkingStatus parkingStatus = parkingMapper.getParkingStatus(ploID);
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String id = authentication.getName();
+            ResponseParkingStatus parkingStatus = parkingMapper.getParkingStatus(id);
             if (parkingStatus.getParkingStatusID() == 4 || parkingStatus.getParkingStatusID() == 5) {
                 ResponseParkingList responseParkingList = new ResponseParkingList();
                 List<ParkingComing> listParkingOngoing = parkingMapper.getListParkingOngoing();
@@ -288,6 +290,17 @@ public class ParkingImpl implements ParkingService {
             return transactionMapper.getTransactionPLOByID(transactionPLOByID);
         }catch (Exception e){
             throw new ApiRequestException("Failed to get reservation method" + e.getMessage());
+        }
+    }
+
+    @Override
+    public ResponseEntity<?> paymentParkingRegister(HttpServletRequest req) {
+        try{
+            Payment payment = new Payment();
+            payment.setAmountParam("350000");
+            return paymentService.createPayment(req,payment);
+        }catch (Exception e){
+            throw new ApiRequestException("Failed to create parking register payment" + e.getMessage());
         }
     }
 }

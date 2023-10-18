@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.project.Eparking.dao.ReservationMapper">
+    <select id="findReservationByLicensePlate" resultType="com.project.Eparking.domain.response.ResponseReservation">
+        SELECT R.reservationID,R.customerID,R.ploID,R.statusID,LP.licensePlate,R.startTime,R.endTime,R.price,R.checkOut,RM.methodName,R.checkIn
+        FROM Reservation AS R
+        JOIN LicensePlate AS LP ON R.licensePlateID = LP.licensePlateID
+        JOIN ReservationMethod RM ON R.methodID = RM.methodID
+        WHERE R.ploID = #{ploID}
+        AND R.statusID = #{status}
+        AND LP.licensePlate = #{licensePlate};
+    </select>
+</mapper>

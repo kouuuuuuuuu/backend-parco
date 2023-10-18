@@ -11,7 +11,7 @@ public interface ParkingLotOwnerMapper {
 
     PLO getPloById(String ploId);
 
-    List<PLO> getListPloByParkingStatusWithPagination(List<Integer> parkingStatus, int pageNum, int pageSize);
+    List<PLO> getListPloByParkingStatusWithPagination(List<Integer> parkingStatus, int pageNum, int pageSize, String keywords);
 
     void updateParkingStatusByPloId(String ploID, int parkingStatusID);
 
