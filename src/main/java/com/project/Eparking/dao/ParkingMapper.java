@@ -45,4 +45,5 @@ public interface ParkingMapper {
 
     List<ResponseShowVehicleInParking> showListVehicleInParkingByParkingID(String ploID, int statusID);
 
+    void updateCurrentSlot(int currentSlot,String ploID);
 }

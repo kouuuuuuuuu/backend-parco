@@ -16,7 +16,7 @@ public class ResponseReservationDetail {
     private String methodName;
 
     private String fullName;
-
+    private String phoneNumber;
     private String statusName;
 
     private Timestamp startTime;

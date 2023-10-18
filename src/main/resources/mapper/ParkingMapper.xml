@@ -105,6 +105,7 @@
         L.licensePlate,
         R.price,
         RM.methodName,
+        C.phoneNumber,
         C.fullName,
         RS.statusName,
         R.startTime,
@@ -148,4 +149,10 @@
             (#{settings.ploID}, #{settings.methodID},#{settings.price})
         </foreach>
     </insert>
+
+    <update id="updateCurrentSlot" parameterType="com.project.Eparking.domain.PLO">
+        UPDATE PLO
+        SET currentSlot = #{currentSlot}
+        WHERE ploID = #{ploID}
+    </update>
 </mapper>

@@ -1,7 +1,10 @@
 package com.project.Eparking.service.impl;
 
+import com.project.Eparking.dao.ParkingMapper;
 import com.project.Eparking.dao.ReservationMapper;
 import com.project.Eparking.dao.ReservationMethodMapper;
+import com.project.Eparking.dao.UserMapper;
+import com.project.Eparking.domain.PLO;
 import com.project.Eparking.domain.ReservationMethod;
 import com.project.Eparking.domain.request.RequestUpdateStatusReservation;
 import com.project.Eparking.domain.response.ResponseReservation;
@@ -24,6 +27,8 @@ import java.time.Instant;
 public class ReservationImpl implements ReservationService {
     private final ReservationMethodMapper reservationMethodMapper;
     private final ReservationMapper reservationMapper;
+    private final UserMapper userMapper;
+    private final ParkingMapper parkingMapper;
     @Override
     @Transactional
     public String checkOutStatusReservation(RequestUpdateStatusReservation reservation) {
@@ -39,6 +44,12 @@ public class ReservationImpl implements ReservationService {
             long epochMilli = Instant.now().toEpochMilli();
             Timestamp timestamp = new Timestamp(epochMilli);
             reservationMethodMapper.updateCheckoutReservation(responseReservation.getReservationID(),timestamp);
+            PLO plo = userMapper.getPLOByPLOID(responseReservation.getPloID());
+            int currentSlot = plo.getCurrentSlot() - 1;
+            if(currentSlot < 0){
+                return "Something error with currentSlot plo";
+            }
+            parkingMapper.updateCurrentSlot(currentSlot,plo.getPloID());
             response = "Update successfully!";
         }catch (Exception e){
             throw new ApiRequestException("Failed to change password user" + e.getMessage());
