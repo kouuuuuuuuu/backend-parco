@@ -17,7 +17,7 @@ import java.util.Map;
 
 public interface ParkingService {
 
-    Map<String, Object> addParking(RequestRegisterParking registerParking, HttpServletRequest req);
+    String addParking(RequestRegisterParking registerParking);
 
     ResponseEntity<?> getParkingStatusOrList();
 
@@ -42,5 +42,5 @@ public interface ParkingService {
     List<ResponseShowVehicleInParking> showListVehicleInParkingByParkingID(int parkingStatusID);
 
     PLOTransaction checkPLOPayment();
-    ResponseEntity<?> paymentParkingRegister(HttpServletRequest req);
+    Map<String, Object> paymentParkingRegister(HttpServletRequest req);
 }

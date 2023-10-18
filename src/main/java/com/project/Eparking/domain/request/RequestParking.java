@@ -19,5 +19,6 @@ public class RequestParking {
     private String address;
     private String description;
     private int parkingStatusID;
+    private int currentSlot;
 
 }

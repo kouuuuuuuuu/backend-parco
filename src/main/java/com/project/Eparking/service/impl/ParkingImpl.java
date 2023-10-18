@@ -12,7 +12,6 @@ import com.project.Eparking.service.interf.ESMService;
 import com.project.Eparking.service.interf.ParkingService;
 import com.project.Eparking.service.interf.PaymentService;
 import lombok.RequiredArgsConstructor;
-import org.apache.ibatis.transaction.Transaction;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,6 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.servlet.http.HttpServletRequest;
 import java.sql.Time;
 import java.util.*;
+
+import static com.project.Eparking.config.UUIDgenerate.generateUUID;
 
 @Service
 @RequiredArgsConstructor
@@ -37,8 +38,12 @@ public class ParkingImpl implements ParkingService {
 
     @Override
     @Transactional
-    public Map<String, Object> addParking(RequestRegisterParking registerParking, HttpServletRequest req) {
+    public String addParking(RequestRegisterParking registerParking) {
         try {
+            PLOTransaction ploTransaction = transactionMapper.getTransactionByUUID(registerParking.getUUID());
+            if(ploTransaction == null){
+                return "The user has not paid the parking registration fee";
+            }
             RequestParking requestParking = new RequestParking();
             requestParking.setPloID(registerParking.getPloID());
             requestParking.setParkingName(registerParking.getParkingName());
@@ -48,11 +53,12 @@ public class ParkingImpl implements ParkingService {
             requestParking.setAddress(registerParking.getAddress());
             requestParking.setDescription(registerParking.getDescription());
             requestParking.setParkingStatusID(2);
+            requestParking.setCurrentSlot(0);
             parkingMapper.registerParking(requestParking);
-//            List<String> imageLinks = registerParking.getImages();
-//            List<RequestImage> requestImages = new ArrayList<>();
+
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String id = authentication.getName();
+
             if (!registerParking.getImages().isEmpty()) {
                 imageMapper.deleteImageByPLOID(id);
                 List<Image> images = new ArrayList<>();
@@ -62,13 +68,7 @@ public class ParkingImpl implements ParkingService {
                 }
                 imageMapper.batchInsertImages(images);
             }
-            Map<String, Object> responseAddParking = new HashMap<>();
-            Payment payment = new Payment();
-            payment.setAmountParam("350000");
-            ResponseEntity<?> paymentResponse = paymentService.createPayment(req,payment);
-            responseAddParking.put("Message","Register parking successfully");
-            responseAddParking.put("paymentResponse",paymentResponse);
-            return responseAddParking;
+            return "Register parking successfully";
         } catch (Exception e) {
             throw new ApiRequestException("Failed to register parking: " + e.getMessage());
         }
@@ -294,11 +294,16 @@ public class ParkingImpl implements ParkingService {
     }
 
     @Override
-    public ResponseEntity<?> paymentParkingRegister(HttpServletRequest req) {
+    public Map<String, Object> paymentParkingRegister(HttpServletRequest req) {
         try{
             Payment payment = new Payment();
             payment.setAmountParam("350000");
-            return paymentService.createPayment(req,payment);
+            Map<String, Object> map = new HashMap<>();
+            String UUID = generateUUID().toString();
+            map.put("Message","Create payment successfully");
+            map.put("UUID",UUID);
+            map.put("Payment",paymentService.createPayment(req,payment,UUID));
+            return map;
         }catch (Exception e){
             throw new ApiRequestException("Failed to create parking register payment" + e.getMessage());
         }
