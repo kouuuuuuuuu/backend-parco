@@ -290,6 +290,17 @@ public class ParkingImpl implements ParkingService {
             throw new ApiRequestException("Failed to get reservation method" + e.getMessage());
         }
     }
+
+    @Override
+    public ResponseEntity<?> paymentParkingRegister(HttpServletRequest req) {
+        try{
+            Payment payment = new Payment();
+            payment.setAmountParam("350000");
+            return paymentService.createPayment(req,payment);
+        }catch (Exception e){
+            throw new ApiRequestException("Failed to create parking register payment" + e.getMessage());
+        }
+    }
 }
 
 

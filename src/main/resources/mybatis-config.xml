@@ -33,6 +33,8 @@
 
         <mapper resource="mapper/PLOTransactionMapper.xml"></mapper>
 
+        <mapper resource="mapper/ReservationMapper.xml"></mapper>
+
     </mappers>
 
 </configuration>
