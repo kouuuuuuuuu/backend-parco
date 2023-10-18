@@ -55,18 +55,13 @@ public class ParkingLotController {
     }
 
     @GetMapping("/getParkingStatusID")
-    public ResponseEntity<?> getParkingStatusID(@RequestParam String ploID,
-                                                HttpServletResponse response,
-                                                HttpServletRequest request) {
-        return parkingService.getParkingStatusOrList(ploID);
+    public ResponseEntity<?> getParkingStatusID() {
+        return parkingService.getParkingStatusOrList();
     }
 
     @PutMapping("/updateParkingStatusID")
     public ResponseEntity<MessageResponse> updateParkingStatusID(
-            @RequestParam String ploID,
-            @RequestParam int parkingStatusID,
-            HttpServletResponse response,
-            HttpServletRequest request) {
+            @RequestParam int parkingStatusID) {
         try {
             parkingService.updateParkingStatusID(parkingStatusID);
             return ResponseEntity.ok(new MessageResponse("Update status successfully"));
