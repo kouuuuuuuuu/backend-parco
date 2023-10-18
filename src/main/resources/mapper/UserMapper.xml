@@ -175,4 +175,9 @@
         FROM PLO
         WHERE ploID = #{ploID}
     </select>
+    <select id="getBalancePlO" resultType="double">
+        SELECT balance
+        FROM PLO
+        WHERE ploID = #{ploID}
+    </select>
 </mapper>

@@ -28,4 +28,5 @@ public interface UserService {
     ResponsePLOProfile getPLOProfileResponseByPLOID();
     ResponsePLOProfile updatePLOprofile(RequestPLOupdateProfile profile);
     List<String> changePasswordUser(RequestChangePasswordUser password);
+    double getBalancePlO();
 }
