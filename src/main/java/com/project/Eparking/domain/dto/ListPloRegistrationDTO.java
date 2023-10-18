@@ -8,18 +8,18 @@ import java.sql.Timestamp;
 
 public class ListPloRegistrationDTO extends ListPloDTO{
 
-    private Timestamp registerContract;
+    private String registerContract;
 
     public ListPloRegistrationDTO(String ploID, String fullName, String phoneNumber, String address, String parkingName) {
         super(ploID, fullName, phoneNumber, address, parkingName);
     }
 
-    public void setRegisterContract(Timestamp registerContract) {
-        this.registerContract = registerContract;
+    public String getRegisterContract() {
+        return registerContract;
     }
 
-    public Timestamp getRegisterContract() {
-        return registerContract;
+    public void setRegisterContract(String registerContract) {
+        this.registerContract = registerContract;
     }
 
     @JsonIgnore

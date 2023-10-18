@@ -32,8 +32,8 @@ public class PloRegistrationDTO {
     private Time waitingTime;
     private Time cancelBookingTime;
     private String contractLink;
-    private Timestamp registerContract;
-    private Timestamp browseContract;
-    private Timestamp contractDuration;
+    private String registerContract;
+    private String browseContract;
+    private String contractDuration;
     private int star;
 }

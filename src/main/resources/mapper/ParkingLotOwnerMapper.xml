@@ -41,6 +41,11 @@
         <foreach collection="parkingStatus" item="status" open="(" separator="," close=")">
             #{status}
         </foreach>
+        <if test="keywords != null and keywords != ''">
+            AND (
+            fullName like #{keywords} OR
+            parkingName like #{keywords})
+        </if>
         LIMIT
             #{pageSize}
         OFFSET

@@ -48,4 +48,26 @@
         FROM
         Customer
     </select>
+
+    <select id="getListCustomerByName" resultType="com.project.Eparking.domain.Customer">
+        SELECT
+            customerID,
+            wallet_balance,
+            identify,
+            role,
+            phoneNumber,
+            fullName,
+            password,
+            email,
+            registrationDate,
+            status
+        FROM
+            Customer
+        WHERE
+            fullName like #{name}
+        LIMIT
+            #{pageSize}
+        OFFSET
+            #{pageNum};
+    </select>
 </mapper>
