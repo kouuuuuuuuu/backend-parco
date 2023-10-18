@@ -40,10 +40,17 @@ public class ParkingLotController {
                                                   HttpServletResponse response,
                                                   HttpServletRequest request, HttpServletRequest req) {
         try {
-
             return ResponseEntity.ok(parkingService.addParking(registerParking,req));
         } catch (ApiRequestException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse("Register parking failure"));
+        }
+    }
+    @PostMapping("/paymentRegisterParking")
+    public ResponseEntity<?> paymentRegisterParking(HttpServletRequest req){
+        try {
+            return ResponseEntity.ok(parkingService.paymentParkingRegister(req));
+        }catch (ApiRequestException e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse("Fail to create payment"));
         }
     }
 
