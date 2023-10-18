@@ -1,4 +1,4 @@
-package com.project.Eparking.controller.admin;
+package com.project.Eparking.controller;
 
 import com.project.Eparking.constant.Message;
 import com.project.Eparking.domain.dto.ListPloDTO;
@@ -15,7 +15,10 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Objects;
 
-@CrossOrigin
+@CrossOrigin(
+        origins = {"http://localhost:3000"},
+        allowCredentials = "true"
+)
 @RestController
 @RequestMapping("/plo")
 @RequiredArgsConstructor
