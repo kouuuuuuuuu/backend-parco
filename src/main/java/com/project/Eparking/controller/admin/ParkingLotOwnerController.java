@@ -1,4 +1,4 @@
-package com.project.Eparking.controller;
+package com.project.Eparking.controller.admin;
 
 import com.project.Eparking.constant.Message;
 import com.project.Eparking.domain.dto.*;
@@ -12,16 +12,14 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Objects;
 
-@CrossOrigin(
-        origins = {"http://localhost:3000"},
-        allowCredentials = "true"
-)
+@CrossOrigin
 @RestController
 @RequestMapping("/plo")
 @RequiredArgsConstructor
 public class ParkingLotOwnerController {
 
     private final ParkingLotOwnerService parkingLotOwnerService;
+
 
     @GetMapping("/getPloByParkingStatus")
     public Response getPloByParkingStatus(@RequestParam("status") int status,
