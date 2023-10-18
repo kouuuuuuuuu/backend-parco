@@ -161,6 +161,7 @@ public class ParkingLotOwnerServiceImpl implements ParkingLotOwnerService {
                 dateFormat.format(ploEntity.getBrowseContract()) : "");
         parkingLotOwnerDTO.setDescription(ploEntity.getDescription());
         parkingLotOwnerDTO.setCancelBookingTime(ploEntity.getCancelBookingTime());
+        parkingLotOwnerDTO.setImages(imageDTOS);
         return parkingLotOwnerDTO;
     }
 
@@ -305,6 +306,7 @@ public class ParkingLotOwnerServiceImpl implements ParkingLotOwnerService {
 
         ParkingLotOwnerDTO parkingLotOwnerDTO = new ParkingLotOwnerDTO();
         parkingLotOwnerDTO.setPloID(ploEntity.getPloID());
+        parkingLotOwnerDTO.setFullName(ploEntity.getFullName());
         parkingLotOwnerDTO.setParkingName(ploEntity.getParkingName());
         parkingLotOwnerDTO.setAddress(ploEntity.getAddress());
         parkingLotOwnerDTO.setPhoneNumber(ploEntity.getPhoneNumber());
@@ -322,6 +324,8 @@ public class ParkingLotOwnerServiceImpl implements ParkingLotOwnerService {
         parkingLotOwnerDTO.setWidth(ploEntity.getWidth() != null ? ploEntity.getWidth() : 0);
         parkingLotOwnerDTO.setStar(ploEntity.getStar());
         parkingLotOwnerDTO.setCurrentSlot(ploEntity.getCurrentSlot());
+        parkingLotOwnerDTO.setImages(imageDTOS);
+        parkingLotOwnerDTO.setParkingStatusID(ploEntity.getParkingStatusID());
         return parkingLotOwnerDTO;
     }
 
