@@ -7,4 +7,6 @@ public interface PloTransactionService {
     Page<PloWithdrawalDTO> getListWithdrawalByStatus(int status, int pageNum, int pageSize);
 
     boolean updateWithdrawalStatus(int transactionId, int status);
+
+    Page<PloWithdrawalDTO> searchWithdrawalByKeyword(int Status,String keywords, int pageNum, int pageSize);
 }

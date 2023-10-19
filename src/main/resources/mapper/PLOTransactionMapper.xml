@@ -60,21 +60,20 @@
         SELECT
             COUNT(*)
         FROM
-            PloTransaction
+            PloTransaction pts
+        JOIN
+            plo pl ON pts.ploID = pl.ploID
         WHERE
-            status
+            pts.status
         IN
-        <foreach collection="status" item="status" open="(" separator="," close=")">
-            #{status}
-        </foreach>
-        <if test="keywords != null and keywords != ''">
-            AND
-                ploID
-            IN
-            <foreach collection="ploIds" item="ploId" open="(" separator="," close=")">
-                #{ploId}
+            <foreach collection="status" item="status" open="(" separator="," close=")">
+                #{status}
             </foreach>
-        </if>
+            <if test="keywords != null and !keywords.isEmpty()">
+                AND (
+                pl.fullName like #{keywords} OR
+                pl.parkingName like #{keywords})
+            </if>
     </select>
 
     <select id="getPloTransactionByHistoryId" resultType="com.project.Eparking.domain.PLOTransaction">
@@ -101,4 +100,35 @@
         WHERE
             historyID = #{transactionId}
     </update>
+
+    <select id="searchPloTransactionByKeyword" resultType="com.project.Eparking.domain.PLOTransaction">
+        SELECT
+            pts.historyID,
+            pts.ploID,
+            pts.status,
+            pts.depositAmount,
+            pts.transactionDate,
+            pts.transactionResultDate,
+            pts.vnPay_ref,
+            pts.UUID
+        FROM
+            PloTransaction pts
+        JOIN
+            plo pl ON pts.ploID = pl.ploID
+        WHERE
+            pts.status
+        IN
+            <foreach collection="status" item="status" open="(" separator="," close=")">
+                #{status}
+            </foreach>
+            <if test="keyword != null and !keyword.isEmpty()">
+                AND (
+                pl.fullName like #{keyword} OR
+                pl.parkingName like #{keyword})
+            </if>
+        LIMIT
+            #{pageSize}
+        OFFSET
+            #{pageNum};
+    </select>
 </mapper>

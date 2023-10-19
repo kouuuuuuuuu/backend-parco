@@ -23,4 +23,6 @@ public interface TransactionMapper {
     PLOTransaction getPloTransactionByHistoryId(int transactionId);
 
     void updatePloTransactionStatusByHistoryId(int transactionId, int status);
+
+    List<PLOTransaction> searchPloTransactionByKeyword(List<Integer> status, String keyword, int pageNum, int pageSize);
 }
