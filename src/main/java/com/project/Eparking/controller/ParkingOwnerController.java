@@ -4,6 +4,7 @@ import com.project.Eparking.domain.ParkingInformation;
 import com.project.Eparking.domain.Rating;
 import com.project.Eparking.domain.request.*;
 import com.project.Eparking.domain.response.ResponsePLOProfile;
+import com.project.Eparking.domain.response.ResponseRevenuePLO;
 import com.project.Eparking.exception.ApiRequestException;
 import com.project.Eparking.service.interf.ParkingService;
 import com.project.Eparking.service.interf.RatingService;
@@ -91,6 +92,14 @@ public class ParkingOwnerController {
     public ResponseEntity<Double> getBalance(){
         try {
             return ResponseEntity.ok(userService.getBalancePlO());
+        }catch (ApiRequestException e){
+            throw e;
+        }
+    }
+    @GetMapping("/getRevenue")
+    public ResponseEntity<ResponseRevenuePLO> getRevenue(){
+        try {
+            return ResponseEntity.ok(parkingService.getRevenuePLO());
         }catch (ApiRequestException e){
             throw e;
         }

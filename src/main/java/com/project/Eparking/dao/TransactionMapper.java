@@ -4,7 +4,10 @@ import com.project.Eparking.domain.PLOTransaction;
 import com.project.Eparking.domain.TransactionMethod;
 import com.project.Eparking.domain.request.RequestGetTransactionPLOByID;
 import com.project.Eparking.domain.request.RequestPLOTransaction;
+import com.project.Eparking.domain.response.HistoryResponse;
 import org.apache.ibatis.annotations.Mapper;
+
+import java.util.List;
 
 @Mapper
 public interface TransactionMapper {
@@ -13,4 +16,5 @@ public interface TransactionMapper {
     TransactionMethod getTransactionMethodByHistoryID(String historyID);
     PLOTransaction getTransactionByUUID(String UUID);
     void insertTransactionMethod(TransactionMethod transactionMethod);
+    List<HistoryResponse> historyTransactionByPLOandStatus(String ploID, int status);
 }

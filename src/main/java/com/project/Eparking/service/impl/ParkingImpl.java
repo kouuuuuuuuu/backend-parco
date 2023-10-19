@@ -311,6 +311,20 @@ public class ParkingImpl implements ParkingService {
             throw new ApiRequestException("Failed to create parking register payment" + e.getMessage());
         }
     }
+
+    @Override
+    public ResponseRevenuePLO getRevenuePLO() {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String id = authentication.getName();
+            ResponseRevenuePLO plo = reservationMapper.getReservationMethodByMethodID(id);
+            plo.setBalance(userMapper.getBalancePlO(id));
+            plo.setHistory(transactionMapper.historyTransactionByPLOandStatus(id,3));
+            return plo;
+        }catch (Exception e){
+            throw new ApiRequestException("Failed to get Revenue PLO" + e.getMessage());
+        }
+    }
 }
 
 
