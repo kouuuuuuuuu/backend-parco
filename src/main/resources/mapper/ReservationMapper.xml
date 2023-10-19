@@ -27,4 +27,9 @@
         WHERE ploID = #{ploID}
     </select>
 
+    <select id="getSumByDateANDPLOID" resultType="Double">
+        SELECT SUM(price) AS totalPrice
+        FROM Reservation
+        WHERE startTime >= #{startTime} AND startTime <![CDATA[<= #{startTime2th} AND ploID = #{ploID}]]>
+    </select>
 </mapper>

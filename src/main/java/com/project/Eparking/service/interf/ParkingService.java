@@ -45,4 +45,5 @@ public interface ParkingService {
     Map<String, Object> paymentParkingRegister(HttpServletRequest req);
     ResponseRevenuePLO getRevenuePLO();
     String withdrawalRequest(RequestWithdrawal drawlRequest);
+    Double getSumReservation(RequestGetSumPLO requestGetSumPLO);
 }

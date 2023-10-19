@@ -373,6 +373,17 @@ public class ParkingImpl implements ParkingService {
             throw new ApiRequestException("Failed to get Revenue PLO" + e.getMessage());
         }
     }
+
+    @Override
+    public Double getSumReservation(RequestGetSumPLO requestGetSumPLO) {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String id = authentication.getName();
+            return reservationMapper.getSumByDateANDPLOID(requestGetSumPLO.getStartTime(),requestGetSumPLO.getStartTime2nd(),id);
+        }catch (Exception e){
+            throw new ApiRequestException("Failed to get Sum reservation" + e.getMessage());
+        }
+    }
 }
 
 
