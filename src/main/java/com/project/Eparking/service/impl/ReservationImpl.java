@@ -52,7 +52,7 @@ public class ReservationImpl implements ReservationService {
             parkingMapper.updateCurrentSlot(currentSlot,plo.getPloID());
             response = "Update successfully!";
         }catch (Exception e){
-            throw new ApiRequestException("Failed to change password user" + e.getMessage());
+            throw new ApiRequestException("Failed checkIn user" + e.getMessage());
         }
         return response;
     }
@@ -73,8 +73,40 @@ public class ReservationImpl implements ReservationService {
             reservationMethodMapper.updateCheckinReservation(responseReservation.getReservationID(),timestamp);;
             response = "Update successfully!";
         }catch (Exception e){
-            throw new ApiRequestException("Failed to change password user" + e.getMessage());
+            throw new ApiRequestException("Failed checkIn user" + e.getMessage());
         }
         return response;
+    }
+
+    @Override
+    public String checkInStatusReservationByReservationID(int reservationID) {
+        try{
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String id = authentication.getName();
+            reservationMethodMapper.updateStatusReservation(reservationID, 2);
+            long epochMilli = Instant.now().toEpochMilli();
+            Timestamp timestamp = new Timestamp(epochMilli);
+            reservationMethodMapper.updateCheckinReservation(reservationID,timestamp);
+            return "Update successfully!";
+        }catch (Exception e){
+            throw new ApiRequestException("Failed checkIn user" + e.getMessage());
+        }
+    }
+
+    @Override
+    public String checkOutStatusReservationByReservationID(int reservationID) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String id = authentication.getName();
+        reservationMethodMapper.updateStatusReservation(reservationID,4);
+        long epochMilli = Instant.now().toEpochMilli();
+        Timestamp timestamp = new Timestamp(epochMilli);
+        reservationMethodMapper.updateCheckoutReservation(reservationID,timestamp);
+        PLO plo = userMapper.getPLOByPLOID(id);
+        int currentSlot = plo.getCurrentSlot() - 1;
+        if(currentSlot < 0){
+            return "Something error with currentSlot plo";
+        }
+        parkingMapper.updateCurrentSlot(currentSlot,plo.getPloID());
+        return "Update successfully!";
     }
 }
