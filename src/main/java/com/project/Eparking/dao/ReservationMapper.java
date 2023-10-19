@@ -6,4 +6,5 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface ReservationMapper {
     ResponseReservation findReservationByLicensePlate(String ploID,int status,String licensePlate);
+    Double sumPriceReservationCurrentDateByPLO(String ploID);
 }

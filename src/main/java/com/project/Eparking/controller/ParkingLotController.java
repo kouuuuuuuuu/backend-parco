@@ -54,6 +54,7 @@ public class ParkingLotController {
 
     @GetMapping("/getParkingStatusID")
     public ResponseEntity<?> getParkingStatusID() {
+
         return parkingService.getParkingStatusOrList();
     }
 
