@@ -6,6 +6,7 @@ import lombok.Setter;
 import java.math.BigDecimal;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.util.List;
 
 @Getter
 @Setter
@@ -36,4 +37,5 @@ public class PloRegistrationDTO {
     private String browseContract;
     private String contractDuration;
     private int star;
+    private List<ImageDTO> images;
 }

@@ -29,4 +29,5 @@ public class ParkingLotOwnerDTO {
     private double morningFee;
     private double eveningFee;
     private double overNightFee;
+    private int parkingStatusID;
 }
