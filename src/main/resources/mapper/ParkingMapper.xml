@@ -20,6 +20,8 @@
         slot = #{slot},
         address = #{address},
         description = #{description},
+        parkingStatusID = #{parkingStatusID},
+        currentSlot = #{currentSlot},
         parkingStatusID = #{parkingStatusID}
         WHERE ploID = #{ploID}
     </update>

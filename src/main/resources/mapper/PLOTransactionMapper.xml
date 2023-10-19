@@ -3,13 +3,31 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.project.Eparking.dao.TransactionMapper">
+
     <insert id="insertTransactionPLO" parameterType="com.project.Eparking.domain.request.RequestPLOTransaction" >
-        INSERT INTO PloTransaction (method, ploID, status, depositAmount, transactionDate, transactionResultDate)
-        VALUES (#{method}, #{ploID}, #{status}, #{depositAmount}, #{transactionDate}, #{transactionResultDate});
+        INSERT INTO PloTransaction (ploID, status, depositAmount, transactionDate, transactionResultDate, vnPay_ref, UUID)
+        VALUES (#{ploID}, #{status}, #{depositAmount}, #{transactionDate}, #{transactionResultDate}, #{vnPay_ref}, #{UUID});
     </insert>
+
     <select id="getTransactionPLOByID" resultType="com.project.Eparking.domain.PLOTransaction">
-        SELECT historyID,method,ploID,status,depositAmount,transactionDate,transactionResultDate
+        SELECT historyID,ploID,status,depositAmount,transactionDate,transactionResultDate,vnPay_ref, UUID
         FROM PloTransaction
         WHERE ploID = #{ploID} AND status = #{status}
     </select>
+
+    <select id="getTransactionMethodByHistoryID" resultType="com.project.Eparking.domain.TransactionMethod">
+        SELECT transactionMethodID,historyID,bankCode,bankName,bankNumber
+        FROM TransactionMethod
+        WHERE historyID = #{historyID}
+    </select>
+
+    <select id="getTransactionByUUID" resultType="com.project.Eparking.domain.PLOTransaction">
+        SELECT historyID,ploID,status,depositAmount,transactionDate,transactionResultDate,vnPay_ref, UUID
+        FROM PloTransaction
+        WHERE UUID = #{UUID}
+    </select>
+    <insert id="insertTransactionMethod" parameterType="com.project.Eparking.domain.TransactionMethod">
+        INSERT INTO TransactionMethod (historyID, bankCode, bankName, bankNumber)
+        VALUES (#{historyID}, #{bankCode}, #{bankName}, #{bankNumber});
+    </insert>
 </mapper>

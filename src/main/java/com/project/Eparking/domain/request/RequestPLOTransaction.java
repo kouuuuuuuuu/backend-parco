@@ -9,10 +9,11 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RequestPLOTransaction {
-    private String method;
     private String ploID;
     private int status;
     private double depositAmount;
     private Timestamp transactionDate;
     private Timestamp transactionResultDate;
+    private String vnPay_ref;
+    private String UUID;
 }

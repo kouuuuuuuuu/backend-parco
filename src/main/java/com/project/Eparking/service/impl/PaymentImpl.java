@@ -2,7 +2,9 @@ package com.project.Eparking.service.impl;
 
 import com.project.Eparking.config.VNpayConfig;
 import com.project.Eparking.dao.TransactionMapper;
+import com.project.Eparking.domain.PLOTransaction;
 import com.project.Eparking.domain.Payment;
+import com.project.Eparking.domain.TransactionMethod;
 import com.project.Eparking.domain.request.RequestPLOTransaction;
 import com.project.Eparking.exception.ApiRequestException;
 import com.project.Eparking.service.interf.PaymentService;
@@ -13,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
@@ -29,7 +32,7 @@ import java.util.*;
 public class PaymentImpl implements PaymentService {
     private final UserService userService;
     private final TransactionMapper transactionMapper;
-    public ResponseEntity<?> createPayment(HttpServletRequest req, Payment payment) throws UnsupportedEncodingException {
+    public ResponseEntity<?> createPayment(HttpServletRequest req, Payment payment,String UUID) throws UnsupportedEncodingException {
         try {
             String vnp_Version = "2.1.0";
             String vnp_Command = "pay";
@@ -55,9 +58,10 @@ public class PaymentImpl implements PaymentService {
 
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String id = authentication.getName();
+            String orderInfor = UUID + "+" +id;
 
             vnp_Params.put("vnp_TxnRef", vnp_TxnRef);
-            vnp_Params.put("vnp_OrderInfo", String.valueOf(id));
+            vnp_Params.put("vnp_OrderInfo", orderInfor);
             vnp_Params.put("vnp_OrderType", "other");
 
             vnp_Params.put("vnp_Locale", "vn");
@@ -111,7 +115,7 @@ public class PaymentImpl implements PaymentService {
             throw new ApiRequestException("Fail to create payment action: " + e.getMessage());
         }
     }
-
+    @Transactional
     @Override
     public ResponseEntity<?> paymentReturn(HttpServletRequest request) throws UnsupportedEncodingException {
         Map fields = new HashMap();
@@ -139,16 +143,32 @@ public class PaymentImpl implements PaymentService {
                 try {
                     LocalDateTime paymentDateTime = LocalDateTime.parse(request.getParameter("vnp_PayDate"), formatter);
                     Timestamp timestamp = Timestamp.valueOf(paymentDateTime);
-                    transactionData.setPloID(request.getParameter("vnp_OrderInfo"));
-                    String method = request.getParameter("vnp_BankCode") + ", " + request.getParameter("vnp_TxnRef");
-                    transactionData.setMethod(method);
+                    String UUIDandID = request.getParameter("vnp_OrderInfo");
+
+                    String[] parts = UUIDandID.split("\\+");
+
+                    transactionData.setPloID(parts[1]);
+
+                    transactionData.setUUID(parts[0]);
+                    transactionData.setVnPay_ref(request.getParameter("vnp_TxnRef"));
+
                     transactionData.setDepositAmount(Double.parseDouble(request.getParameter("vnp_Amount")) / 100);
                     transactionData.setTransactionDate(timestamp);
+
                     long currentTimeMillis = System.currentTimeMillis();
                     Timestamp currentTimestamp = new Timestamp(currentTimeMillis);
+
                     transactionData.setTransactionResultDate(currentTimestamp);
                     transactionData.setStatus(1);
+
                     transactionMapper.insertTransactionPLO(transactionData);
+                    PLOTransaction ploTransaction = transactionMapper.getTransactionByUUID(parts[0]);
+                    TransactionMethod transactionMethod = new TransactionMethod();
+
+                    transactionMethod.setBankCode(request.getParameter("vnp_BankCode"));
+                    transactionMethod.setHistoryID(ploTransaction.getHistoryID());
+
+                    transactionMapper.insertTransactionMethod(transactionMethod);
                 }catch (ApiRequestException e){
                     return ResponseEntity.ok("Payment handled failed");
                 }

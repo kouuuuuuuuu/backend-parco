@@ -36,13 +36,11 @@ public class ParkingLotController {
     private final PaymentService paymentService;
 
     @PostMapping("/registerParking")
-    public ResponseEntity<?> registerParking(@RequestBody RequestRegisterParking registerParking,
-                                                  HttpServletResponse response,
-                                                  HttpServletRequest request, HttpServletRequest req) {
+    public ResponseEntity<String> registerParking(@RequestBody RequestRegisterParking registerParking) {
         try {
-            return ResponseEntity.ok(parkingService.addParking(registerParking,req));
+            return ResponseEntity.ok(parkingService.addParking(registerParking));
         } catch (ApiRequestException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse("Register parking failure"));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Register parking failure");
         }
     }
     @PostMapping("/paymentRegisterParking")
