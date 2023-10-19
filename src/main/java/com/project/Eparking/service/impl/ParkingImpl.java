@@ -35,6 +35,7 @@ public class ParkingImpl implements ParkingService {
     private final ESMService esmService;
     private final PaymentService paymentService;
     private final TransactionMapper transactionMapper;
+    private final ReservationMapper reservationMapper;
 
     @Override
     @Transactional
@@ -79,9 +80,11 @@ public class ParkingImpl implements ParkingService {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String id = authentication.getName();
             ResponseParkingStatus parkingStatus = parkingMapper.getParkingStatus(id);
+            parkingStatus.setTotalPriceToDay(reservationMapper.sumPriceReservationCurrentDateByPLO(id));
             if (parkingStatus.getParkingStatusID() == 4 || parkingStatus.getParkingStatusID() == 5) {
                 ResponseParkingList responseParkingList = new ResponseParkingList();
                 List<ParkingComing> listParkingOngoing = parkingMapper.getListParkingOngoing(id);
+                responseParkingList.setTotalPriceToDay(reservationMapper.sumPriceReservationCurrentDateByPLO(id));
                 responseParkingList.setTotalComing(listParkingOngoing);
                 responseParkingList.setTotalVehicle(listParkingOngoing.size());
                 responseParkingList.setParkingStatusID(parkingStatus.getParkingStatusID());

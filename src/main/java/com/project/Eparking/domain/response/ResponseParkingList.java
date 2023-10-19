@@ -14,6 +14,5 @@ public class ResponseParkingList {
     private String statusName;
     private int totalVehicle;
     private List<ParkingComing> totalComing;
-
-
+    private Double totalPriceToDay;
 }
