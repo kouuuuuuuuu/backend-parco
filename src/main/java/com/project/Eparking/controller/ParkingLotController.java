@@ -72,9 +72,7 @@ public class ParkingLotController {
 
     @GetMapping("/showListVehicleInParking")
     public ResponseEntity<List<ResponseShowVehicleInParking>> showListVehicleInParkingByStatusID(
-            @RequestParam int statusID,
-            HttpServletResponse response,
-            HttpServletRequest request) {
+            @RequestParam int statusID) {
         try {
             List<ResponseShowVehicleInParking> responseShowVehicleInParking = parkingService.showListVehicleInParking(statusID);
             return ResponseEntity.ok(responseShowVehicleInParking);
@@ -142,9 +140,7 @@ public class ParkingLotController {
 
     @GetMapping("/showListVehicleInParkingByParkingStatus")
     public ResponseEntity<List<ResponseShowVehicleInParking>> showListVehicleInParkingByParkingStatus(
-            @RequestParam int parkingStatus,
-            HttpServletResponse response,
-            HttpServletRequest request) {
+            @RequestParam int parkingStatus) {
         try {
             List<ResponseShowVehicleInParking> responseShowVehicleInParking = parkingService.showListVehicleInParkingByParkingID(parkingStatus);
             return ResponseEntity.ok(responseShowVehicleInParking);

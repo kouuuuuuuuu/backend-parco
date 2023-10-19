@@ -27,7 +27,7 @@ public interface ParkingMapper {
 
     void updateParkingStatusID(String ploID, int parkingStatusID);
 
-    List<ParkingComing> getListParkingOngoing();
+    List<ParkingComing> getListParkingOngoing(String ploID);
 
     List<ResponseShowVehicleInParking> showListVehicleInParking(String ploID, int statusID);
 

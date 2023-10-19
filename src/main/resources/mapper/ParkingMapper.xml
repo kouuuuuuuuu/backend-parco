@@ -71,8 +71,12 @@
     </update>
 
     <select id="getListParkingOngoing" resultType="com.project.Eparking.domain.response.ParkingComing">
-        Select reservationID, licensePlate, C.fullName, methodName from Reservation R, LicensePlate L, Customer C, ReservationMethod RM
-        WHERE R.customerID = C.customerID and R.customerID = L.customerID and R.methodID = RM.methodID and R.statusID = 1
+        Select R.reservationID, L.licensePlate, C.fullName, RM.methodName
+        FROM Reservation R
+        JOIN LicensePlate L ON R.licensePlateID = L.licensePlateID
+        JOIN Customer C ON R.customerID = C.customerID
+        JOIN ReservationMethod RM ON R.methodID = RM.methodID
+        WHERE R.statusID = 1 AND R.ploID = #{ploID}
     </select>
 
     <select id="showListVehicleInParking" resultType="com.project.Eparking.domain.response.ResponseShowVehicleInParking">

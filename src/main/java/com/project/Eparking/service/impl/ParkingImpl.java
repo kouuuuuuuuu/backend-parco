@@ -81,7 +81,7 @@ public class ParkingImpl implements ParkingService {
             ResponseParkingStatus parkingStatus = parkingMapper.getParkingStatus(id);
             if (parkingStatus.getParkingStatusID() == 4 || parkingStatus.getParkingStatusID() == 5) {
                 ResponseParkingList responseParkingList = new ResponseParkingList();
-                List<ParkingComing> listParkingOngoing = parkingMapper.getListParkingOngoing();
+                List<ParkingComing> listParkingOngoing = parkingMapper.getListParkingOngoing(id);
                 responseParkingList.setTotalComing(listParkingOngoing);
                 responseParkingList.setTotalVehicle(listParkingOngoing.size());
                 responseParkingList.setParkingStatusID(parkingStatus.getParkingStatusID());
