@@ -4,6 +4,7 @@
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.project.Eparking.dao.TransactionMapper">
 
+
     <resultMap id = "historyResponse" type = "com.project.Eparking.domain.response.HistoryResponse">
         <result property = "historyID" column = "historyID"/>
         <result property = "depositAmount" column = "depositAmount"/>
@@ -42,5 +43,16 @@
         FROM PloTransaction
         WHERE ploID = #{ploID} AND status = #{status}
     </select>
+    <insert id="insertTransactionPLOByPLOID" parameterType="com.project.Eparking.domain.request.RequestPLOTransactionWithdrawa" >
+        INSERT INTO PloTransaction (ploID, status, depositAmount, transactionDate)
+        VALUES (#{ploID}, #{status}, #{depositAmount}, #{transactionDate});
+    </insert>
 
+    <insert id="insertBatchTransactionMethod" parameterType="java.util.List">
+        INSERT INTO TransactionMethod (historyID, bankCode, bankName, bankNumber)
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (#{item.historyID}, #{item.bankCode}, #{item.bankName}, #{item.bankNumber})
+        </foreach>
+    </insert>
 </mapper>

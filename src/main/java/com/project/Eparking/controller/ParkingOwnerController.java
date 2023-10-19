@@ -104,4 +104,12 @@ public class ParkingOwnerController {
             throw e;
         }
     }
+    @PostMapping("/requestWithdrawal")
+    public ResponseEntity<String> requestWithdrawal(@RequestBody RequestWithdrawal requestWithdrawal){
+        try{
+            return ResponseEntity.ok(parkingService.withdrawalRequest(requestWithdrawal));
+        }catch (ApiRequestException e){
+            throw e;
+        }
+    }
 }
