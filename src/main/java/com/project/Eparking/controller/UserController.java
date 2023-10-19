@@ -6,10 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.Eparking.dao.UserMapper;
 import com.project.Eparking.domain.*;
 import com.project.Eparking.domain.request.*;
-import com.project.Eparking.domain.response.ResponseAdmin;
-import com.project.Eparking.domain.response.ResponseCustomer;
-import com.project.Eparking.domain.response.ResponsePLO;
-import com.project.Eparking.domain.response.ResponsePLOProfile;
+import com.project.Eparking.domain.response.*;
 import com.project.Eparking.exception.ApiRequestException;
 import com.project.Eparking.service.interf.LicensePlateService;
 import com.project.Eparking.service.interf.UserService;
@@ -231,7 +228,7 @@ public class UserController {
         }
     }
     @GetMapping("/getNotifcations")
-    public ResponseEntity<List<Notifications>> getListNotification(){
+    public ResponseEntity<List<ResponseNotifications>> getListNotification(){
         try {
             return ResponseEntity.ok(userService.getListNotificationByID());
         }catch (ApiRequestException e){

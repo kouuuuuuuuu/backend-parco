@@ -340,11 +340,26 @@ public class UserImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public List<Notifications> getListNotificationByID() {
+    public List<ResponseNotifications> getListNotificationByID() {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String id = authentication.getName();
-            return userMapper.getListNotificationByID(id);
+            List<Notifications> notifications = userMapper.getListNotificationByID(id);
+            List<ResponseNotifications> listNotiRes = new ArrayList<>();
+            for (Notifications notis:
+                 notifications) {
+                if(notis.getSender_type().equalsIgnoreCase("ADMIN")){
+                    listNotiRes.add(new ResponseNotifications(notis.getNotiID(), notis.getRecipient_type(),notis.getRecipient_id(),notis.getSender_type(),"ADMIN", notis.getContent(), notis.getCreated_at()));
+                }else if(notis.getSender_type().equalsIgnoreCase("CUSTOMER")){
+                    Customer customer = userMapper.getCustomerByCustomerID(notis.getSender_id());
+                    listNotiRes.add(new ResponseNotifications(notis.getNotiID(), notis.getRecipient_type(),notis.getRecipient_id(),notis.getSender_type(),customer.getFullName(), notis.getContent(), notis.getCreated_at()));
+                } else if (notis.getSender_type().equalsIgnoreCase("PLO")) {
+                    PLO plo = userMapper.getPLOByPLOID(notis.getSender_id());
+                    listNotiRes.add(new ResponseNotifications(notis.getNotiID(), notis.getRecipient_type(),notis.getRecipient_id(),notis.getSender_type(),plo.getFullName(), notis.getContent(), notis.getCreated_at()));
+                }
+
+            }
+            return listNotiRes;
         }catch (Exception e){
             throw new ApiRequestException("Failed to get notifications by ID" + e.getMessage());
         }
