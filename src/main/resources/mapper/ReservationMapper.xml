@@ -11,6 +11,13 @@
         <result property = "total" column = "total"/>
     </resultMap>
 
+    <resultMap id = "listResponseTop5ParkingRevenue" type = "com.project.Eparking.domain.response.ResponseTop5Revenue">
+        <result property = "ploID" column = "ploID"/>
+        <result property = "parkingName" column = "parkingName"/>
+        <result property = "fullName" column = "fullName"/>
+        <result property = "revenue" column = "revenue"/>
+    </resultMap>
+
     <select id="findReservationByLicensePlate" resultType="com.project.Eparking.domain.response.ResponseReservation">
         SELECT R.reservationID,R.customerID,R.ploID,R.statusID,LP.licensePlate,R.startTime,R.endTime,R.price,R.checkOut,RM.methodName,R.checkIn
         FROM Reservation AS R
@@ -38,7 +45,7 @@
     <select id="getSumByDateANDPLOID" resultType="Double">
         SELECT SUM(price) AS totalPrice
         FROM Reservation
-        WHERE startTime >= #{startTime} AND startTime <![CDATA[<= #{startTime2th} AND ploID = #{ploID}]]>
+        WHERE startTime >= #{startTime} AND startTime <![CDATA[<= CONCAT(#{startTime2th}, ' 23:59:59') AND ploID = #{ploID}]]>
     </select>
 
     <select id="getTop5ParkingHaveMostReservation" resultMap="listResponseTop5Parking">
@@ -58,6 +65,26 @@
             plo.ploID, plo.fullName, plo.parkingName
         ORDER BY
             total DESC
+        LIMIT 5;
+    </select>
+
+    <select id="getTop5ParkingHaveHighestRevenue" resultMap="listResponseTop5ParkingRevenue">
+        SELECT
+            plo.ploID as ploID,
+            plo.fullName as fullName,
+            plo.parkingName as parkingName,
+            SUM(reservation.price) AS revenue
+        FROM
+            reservation
+        LEFT JOIN
+            plo ON reservation.ploID = plo.ploID
+        WHERE
+            MONTH(reservation.startTime) = MONTH(#{inputDate})
+            AND YEAR(reservation.startTime) = YEAR(#{inputDate})
+        GROUP BY
+            plo.ploID, plo.fullName, plo.parkingName
+        ORDER BY
+            revenue DESC
         LIMIT 5;
     </select>
 

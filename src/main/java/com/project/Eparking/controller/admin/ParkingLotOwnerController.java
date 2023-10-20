@@ -6,6 +6,7 @@ import com.project.Eparking.domain.request.RequestMonthANDYear;
 import com.project.Eparking.domain.response.Page;
 import com.project.Eparking.domain.response.Response;
 import com.project.Eparking.domain.response.ResponseTop5Parking;
+import com.project.Eparking.domain.response.ResponseTop5Revenue;
 import com.project.Eparking.exception.ApiRequestException;
 import com.project.Eparking.service.interf.ParkingLotOwnerService;
 import com.project.Eparking.service.interf.ReservationService;
@@ -133,6 +134,15 @@ public class ParkingLotOwnerController {
         try {
             RequestMonthANDYear requestMonthANDYear = new RequestMonthANDYear(year + "-" + month);
             return ResponseEntity.ok(reservationService.getTop5Parking(requestMonthANDYear));
+        }catch (ApiRequestException e){
+            throw e;
+        }
+    }
+    @GetMapping("/getTop5ParkingRevenue")
+    public ResponseEntity<List<ResponseTop5Revenue>> getTop5ParkingMostRevenue(@RequestParam String month, @RequestParam String year){
+        try {
+            RequestMonthANDYear requestMonthANDYear = new RequestMonthANDYear(year + "-" + month);
+            return ResponseEntity.ok(reservationService.getTop5Revenue(requestMonthANDYear));
         }catch (ApiRequestException e){
             throw e;
         }
