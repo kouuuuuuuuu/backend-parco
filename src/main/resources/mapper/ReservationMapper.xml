@@ -3,6 +3,14 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.project.Eparking.dao.ReservationMapper">
+
+    <resultMap id = "listResponseTop5Parking" type = "com.project.Eparking.domain.response.ResponseTop5Parking">
+        <result property = "ploID" column = "ploID"/>
+        <result property = "parkingName" column = "parkingName"/>
+        <result property = "fullName" column = "fullName"/>
+        <result property = "total" column = "total"/>
+    </resultMap>
+
     <select id="findReservationByLicensePlate" resultType="com.project.Eparking.domain.response.ResponseReservation">
         SELECT R.reservationID,R.customerID,R.ploID,R.statusID,LP.licensePlate,R.startTime,R.endTime,R.price,R.checkOut,RM.methodName,R.checkIn
         FROM Reservation AS R
@@ -32,4 +40,25 @@
         FROM Reservation
         WHERE startTime >= #{startTime} AND startTime <![CDATA[<= #{startTime2th} AND ploID = #{ploID}]]>
     </select>
+
+    <select id="getTop5ParkingHaveMostReservation" resultMap="listResponseTop5Parking">
+        SELECT
+            plo.ploID as ploID,
+            plo.fullName as fullName,
+            plo.parkingName as parkingName,
+            COUNT(reservation.ploID) AS total
+        FROM
+            reservation
+        LEFT JOIN
+            plo ON reservation.ploID = plo.ploID
+        WHERE
+        MONTH(reservation.startTime) = MONTH(#{inputDate})
+        AND YEAR(reservation.startTime) = YEAR(#{inputDate})
+        GROUP BY
+            plo.ploID, plo.fullName, plo.parkingName
+        ORDER BY
+            total DESC
+        LIMIT 5;
+    </select>
+
 </mapper>

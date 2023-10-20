@@ -21,11 +21,11 @@ public class CustAndPloServiceImpl implements CustAndPloService {
 
     @Override
     public CustAndPloDTO getTotalCustAndPlo() {
-        long totalCustomerList = customerMapper.countRecords();
+//        long totalCustomerList = customerMapper.countRecords();
 
         long totalPloList = parkingLotOwnerMapper.countRecords(new ArrayList<>(), "");
-        CustAndPloDTO custAndPloDTO = new CustAndPloDTO(totalCustomerList, totalPloList);
+//        CustAndPloDTO custAndPloDTO = new CustAndPloDTO(totalCustomerList, totalPloList);
 
-        return custAndPloDTO;
+        return null;
     }
 }
