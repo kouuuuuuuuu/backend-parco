@@ -43,4 +43,5 @@ public interface ParkingService {
 
     PLOTransaction checkPLOPayment();
     Map<String, Object> paymentParkingRegister(HttpServletRequest req);
+    ResponseRevenuePLO getRevenuePLO();
 }
