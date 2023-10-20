@@ -1,6 +1,7 @@
 package com.project.Eparking.dao;
 
 import com.project.Eparking.domain.Customer;
+import com.project.Eparking.domain.request.RequestCustomerUpdateProfile;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -14,4 +15,5 @@ public interface CustomerMapper {
     Integer countRecords(String keywords);
 
     List<Customer> getListCustomerByName(String name, int pageNum, int pageSize);
+    void updateCustomerProfile(RequestCustomerUpdateProfile profile,String customerID);
 }
