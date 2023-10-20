@@ -10,7 +10,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RequestRegisterParking {
-    private String ploID;
     private String parkingName;
     private List<String> images;
     private double length;
