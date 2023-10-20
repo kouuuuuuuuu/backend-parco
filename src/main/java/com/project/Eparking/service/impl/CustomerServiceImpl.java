@@ -2,14 +2,19 @@ package com.project.Eparking.service.impl;
 
 import com.project.Eparking.dao.CustomerMapper;
 import com.project.Eparking.dao.LicensePlateMapper;
+import com.project.Eparking.dao.UserMapper;
 import com.project.Eparking.domain.Customer;
 import com.project.Eparking.domain.LicensePlate;
 import com.project.Eparking.domain.dto.CustomerDTO;
 import com.project.Eparking.domain.dto.ListPloDTO;
 import com.project.Eparking.domain.response.Page;
+import com.project.Eparking.domain.response.ResponseCustomer;
+import com.project.Eparking.exception.ApiRequestException;
 import com.project.Eparking.service.interf.CustomerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
@@ -24,6 +29,7 @@ public class CustomerServiceImpl implements CustomerService {
     private final CustomerMapper customerMapper;
 
     private final LicensePlateMapper licensePlateMapper;
+    private final UserMapper userMapper;
 
 
     private SimpleDateFormat dateFormat = new SimpleDateFormat("DD/MM/YYYY");
@@ -95,4 +101,14 @@ public class CustomerServiceImpl implements CustomerService {
         return customerMapper.countRecords(keyword);
     }
 
+    @Override
+    public ResponseCustomer getResponseCustomerByCustomerID() {
+        try{
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String id = authentication.getName();
+            return userMapper.getResponseCustomerByCustomerID(id);
+        }catch (Exception e){
+            throw new ApiRequestException("Failed to get customer profile" +e.getMessage());
+        }
+    }
 }
