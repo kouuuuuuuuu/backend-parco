@@ -311,7 +311,6 @@ public class ParkingLotOwnerServiceImpl implements ParkingLotOwnerService {
         parkingLotOwnerDTO.setAddress(ploEntity.getAddress());
         parkingLotOwnerDTO.setPhoneNumber(ploEntity.getPhoneNumber());
         parkingLotOwnerDTO.setEmail(ploEntity.getEmail());
-        parkingLotOwnerDTO.setContractDuration(ploEntity.getContractDuration());
         parkingLotOwnerDTO.setContractLink(ploEntity.getContractLink());
         parkingLotOwnerDTO.setStatus(ploEntity.getStatus());
         parkingLotOwnerDTO.setMorningFee(morningMethod != null ? morningMethod.getPrice() : 0);
@@ -326,6 +325,10 @@ public class ParkingLotOwnerServiceImpl implements ParkingLotOwnerService {
         parkingLotOwnerDTO.setCurrentSlot(ploEntity.getCurrentSlot());
         parkingLotOwnerDTO.setImages(imageDTOS);
         parkingLotOwnerDTO.setParkingStatusID(ploEntity.getParkingStatusID());
+        parkingLotOwnerDTO.setBrowseContract(Objects.nonNull(ploEntity.getBrowseContract())?
+                dateFormat.format(ploEntity.getBrowseContract()) : "");
+        parkingLotOwnerDTO.setContractDuration(Objects.nonNull(ploEntity.getContractDuration())?
+                dateFormat.format(ploEntity.getContractDuration()) : "");
         return parkingLotOwnerDTO;
     }
 
