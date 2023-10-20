@@ -25,4 +25,6 @@ public class Message {
     public static final String NOT_FOUND_PLO_WITHDRAWAL_BY_STATUS = "Not Found Parking Lot Owner Withdrawal By Status";
     public static final String GET_LIST_PLO_WITHDRAWAL_SUCCESS = "Get List Parking Lot Owner Withdrawal Sucess";
     public static final String UPDATE_WITHDRAWAL_STATUS_SUCCESS = "Update Withdrawal Status Success";
+    public static final String NOT_FOUND_PLO_TRANSACTION_BY_KEYWORD = "Not Found Withdrawal By Keyword";
+    public static final String SEARCH_PLO_TRANSACTION_BY_KEYWORD_SUCCESS = "Search Withdrawal By Keyword";
 }

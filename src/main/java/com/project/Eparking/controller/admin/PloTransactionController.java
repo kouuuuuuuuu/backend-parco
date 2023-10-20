@@ -45,4 +45,20 @@ public class PloTransactionController {
             return new Response(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage(), null);
         }
     }
+
+    @GetMapping("/searchWithdrawalByKeyword")
+    public Response searchWithdrawalByKeyword(@RequestParam("status") int status,
+                                              @RequestParam(name = "keyword", defaultValue = "") String keywords,
+                                              @RequestParam(name = "pageNum", defaultValue = "1") int pageNum,
+                                              @RequestParam(name = "pageSize", defaultValue = "5") int pageSize){
+        try {
+            Page<PloWithdrawalDTO> ploWithdrawalDTOPage = ploTransactionService.searchWithdrawalByKeyword(status, keywords, pageNum, pageSize);
+            if (ploWithdrawalDTOPage.getContent().isEmpty()){
+                return new Response(HttpStatus.NOT_FOUND.value(), Message.NOT_FOUND_PLO_TRANSACTION_BY_KEYWORD, null);
+            }
+            return new Response(HttpStatus.OK.value(), Message.SEARCH_PLO_TRANSACTION_BY_KEYWORD_SUCCESS, ploWithdrawalDTOPage);
+        }catch (Exception e){
+            return new Response(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage(), null);
+        }
+    }
 }

@@ -53,7 +53,7 @@ public class CustomerServiceImpl implements CustomerService {
             customerDTOList.add(customerDTO);
         }
 
-        int totalRecords = this.countRecords();
+        int totalRecords = this.countRecords("");
 
         return new Page<CustomerDTO>(customerDTOList, pageNum, pageSize, totalRecords);
     }
@@ -64,7 +64,8 @@ public class CustomerServiceImpl implements CustomerService {
 
         int pageNumOffset = pageNum == 0 ? 0 : (pageNum - 1) * pageSize;
         //1. Get list customer from database
-        List<Customer> listCustomers = customerMapper.getListCustomerByName("%" + name + "%", pageNumOffset, pageSize);
+        String searchKeyword = "%" + name.trim() + "%";
+        List<Customer> listCustomers = customerMapper.getListCustomerByName(searchKeyword, pageNumOffset, pageSize);
         if(listCustomers.isEmpty()){
             return new Page<CustomerDTO>(customerDTOList, pageNum, pageSize, 0);
         }
@@ -85,13 +86,13 @@ public class CustomerServiceImpl implements CustomerService {
             customerDTOList.add(customerDTO);
         }
 
-        int totalRecords = this.countRecords();
+        int totalRecords = this.countRecords(searchKeyword);
 
         return new Page<CustomerDTO>(customerDTOList, pageNum, pageSize, totalRecords);
     }
 
-    private Integer countRecords(){
-        return customerMapper.countRecords();
+    private Integer countRecords(String keyword){
+        return customerMapper.countRecords(keyword);
     }
 
 }
