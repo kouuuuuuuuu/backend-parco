@@ -35,6 +35,8 @@
 
         <mapper resource="mapper/ReservationMapper.xml"></mapper>
 
+        <mapper resource="mapper/TransactionMethodMapper.xml"></mapper>
+
     </mappers>
 
 </configuration>

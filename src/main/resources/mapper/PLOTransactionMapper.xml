@@ -38,6 +38,7 @@
         INSERT INTO TransactionMethod (historyID, bankCode, bankName, bankNumber)
         VALUES (#{historyID}, #{bankCode}, #{bankName}, #{bankNumber});
     </insert>
+  
     <select id="historyTransactionByPLOandStatus" resultMap="historyResponse">
         SELECT historyID,depositAmount,transactionDate,transactionResultDate
         FROM PloTransaction
@@ -55,4 +56,75 @@
             (#{item.historyID}, #{item.bankCode}, #{item.bankName}, #{item.bankNumber})
         </foreach>
     </insert>
+
+    <select id="getPagePloTransactionByStatus" resultType="com.project.Eparking.domain.PLOTransaction">
+        SELECT
+            historyID,
+            ploID,
+            status,
+            depositAmount,
+            transactionDate,
+            transactionResultDate,
+            vnPay_ref,
+            UUID
+        FROM
+            PloTransaction
+        WHERE
+            status
+        IN
+        <foreach collection="status" item="status" open="(" separator="," close=")">
+            #{status}
+        </foreach>
+        LIMIT
+            #{pageSize}
+        OFFSET
+            #{pageNum};
+
+    </select>
+
+    <select id="countRecords" resultType="java.lang.Integer">
+        SELECT
+            COUNT(*)
+        FROM
+            PloTransaction
+        WHERE
+            status
+        IN
+        <foreach collection="status" item="status" open="(" separator="," close=")">
+            #{status}
+        </foreach>
+        <if test="keywords != null and keywords != ''">
+            AND
+                ploID
+            IN
+            <foreach collection="ploIds" item="ploId" open="(" separator="," close=")">
+                #{ploId}
+            </foreach>
+        </if>
+    </select>
+
+    <select id="getPloTransactionByHistoryId" resultType="com.project.Eparking.domain.PLOTransaction">
+        SELECT
+            historyID,
+            ploID,
+            status,
+            depositAmount,
+            transactionDate,
+            transactionResultDate,
+            vnPay_ref,
+            UUID
+        FROM
+            PloTransaction
+        WHERE
+            historyID = #{transactionId}
+    </select>
+
+    <update id="updatePloTransactionStatusByHistoryId" parameterType="map">
+        UPDATE
+            PloTransaction
+        SET
+            status = #{status}
+        WHERE
+            historyID = #{transactionId}
+    </update>
 </mapper>

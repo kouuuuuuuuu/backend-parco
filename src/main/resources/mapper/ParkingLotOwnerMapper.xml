@@ -159,4 +159,12 @@
             </if>
     </select>
 
+    <update id="updatePloBalanceById" parameterType="map">
+        UPDATE
+            plo
+        SET
+            balance = #{balance}
+        WHERE
+            ploID = #{ploID}
+    </update>
 </mapper>

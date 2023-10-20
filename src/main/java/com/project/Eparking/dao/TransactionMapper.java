@@ -12,12 +12,28 @@ import java.util.List;
 
 @Mapper
 public interface TransactionMapper {
+  
     void insertTransactionPLO(RequestPLOTransaction ploTransaction);
+  
     PLOTransaction getTransactionPLOByID(RequestGetTransactionPLOByID transactionPLOByID);
+  
     TransactionMethod getTransactionMethodByHistoryID(String historyID);
+  
     PLOTransaction getTransactionByUUID(String UUID);
+  
     void insertTransactionMethod(TransactionMethod transactionMethod);
+  
     List<HistoryResponse> historyTransactionByPLOandStatus(String ploID, int status);
+
     void insertTransactionPLOByPLOID(RequestPLOTransactionWithdrawa requestPLOTransactionWithdrawa);
     void insertBatchTransactionMethod(List<TransactionMethod> item);
+  
+    List<PLOTransaction> getPagePloTransactionByStatus(List<Integer> status, int pageNum, int pageSize);
+
+    Integer countRecords(List<Integer> status, String keywords);
+
+    PLOTransaction getPloTransactionByHistoryId(int transactionId);
+
+    void updatePloTransactionStatusByHistoryId(int transactionId, int status);
+ 
 }
