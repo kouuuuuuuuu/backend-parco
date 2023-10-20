@@ -4,6 +4,14 @@
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.project.Eparking.dao.TransactionMapper">
 
+
+    <resultMap id = "historyResponse" type = "com.project.Eparking.domain.response.HistoryResponse">
+        <result property = "historyID" column = "historyID"/>
+        <result property = "depositAmount" column = "depositAmount"/>
+        <result property = "transactionDate" column = "transactionDate"/>
+        <result property = "transactionResultDate" column = "transactionResultDate"/>
+    </resultMap>
+
     <insert id="insertTransactionPLO" parameterType="com.project.Eparking.domain.request.RequestPLOTransaction" >
         INSERT INTO PloTransaction (ploID, status, depositAmount, transactionDate, transactionResultDate, vnPay_ref, UUID)
         VALUES (#{ploID}, #{status}, #{depositAmount}, #{transactionDate}, #{transactionResultDate}, #{vnPay_ref}, #{UUID});
@@ -29,6 +37,24 @@
     <insert id="insertTransactionMethod" parameterType="com.project.Eparking.domain.TransactionMethod">
         INSERT INTO TransactionMethod (historyID, bankCode, bankName, bankNumber)
         VALUES (#{historyID}, #{bankCode}, #{bankName}, #{bankNumber});
+    </insert>
+  
+    <select id="historyTransactionByPLOandStatus" resultMap="historyResponse">
+        SELECT historyID,depositAmount,transactionDate,transactionResultDate
+        FROM PloTransaction
+        WHERE ploID = #{ploID} AND status = #{status}
+    </select>
+    <insert id="insertTransactionPLOByPLOID" parameterType="com.project.Eparking.domain.request.RequestPLOTransactionWithdrawa" >
+        INSERT INTO PloTransaction (ploID, status, depositAmount, transactionDate)
+        VALUES (#{ploID}, #{status}, #{depositAmount}, #{transactionDate});
+    </insert>
+
+    <insert id="insertBatchTransactionMethod" parameterType="java.util.List">
+        INSERT INTO TransactionMethod (historyID, bankCode, bankName, bankNumber)
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (#{item.historyID}, #{item.bankCode}, #{item.bankName}, #{item.bankNumber})
+        </foreach>
     </insert>
 
     <select id="getPagePloTransactionByStatus" resultType="com.project.Eparking.domain.PLOTransaction">
@@ -60,21 +86,20 @@
         SELECT
             COUNT(*)
         FROM
-            PloTransaction
+            PloTransaction pts
+        JOIN
+            plo pl ON pts.ploID = pl.ploID
         WHERE
-            status
+            pts.status
         IN
-        <foreach collection="status" item="status" open="(" separator="," close=")">
-            #{status}
-        </foreach>
-        <if test="keywords != null and keywords != ''">
-            AND
-                ploID
-            IN
-            <foreach collection="ploIds" item="ploId" open="(" separator="," close=")">
-                #{ploId}
+            <foreach collection="status" item="status" open="(" separator="," close=")">
+                #{status}
             </foreach>
-        </if>
+            <if test="keywords != null and !keywords.isEmpty()">
+                AND (
+                pl.fullName like #{keywords} OR
+                pl.parkingName like #{keywords})
+            </if>
     </select>
 
     <select id="getPloTransactionByHistoryId" resultType="com.project.Eparking.domain.PLOTransaction">
@@ -101,4 +126,35 @@
         WHERE
             historyID = #{transactionId}
     </update>
+
+    <select id="searchPloTransactionByKeyword" resultType="com.project.Eparking.domain.PLOTransaction">
+        SELECT
+            pts.historyID,
+            pts.ploID,
+            pts.status,
+            pts.depositAmount,
+            pts.transactionDate,
+            pts.transactionResultDate,
+            pts.vnPay_ref,
+            pts.UUID
+        FROM
+            PloTransaction pts
+        JOIN
+            plo pl ON pts.ploID = pl.ploID
+        WHERE
+            pts.status
+        IN
+            <foreach collection="status" item="status" open="(" separator="," close=")">
+                #{status}
+            </foreach>
+            <if test="keyword != null and !keyword.isEmpty()">
+                AND (
+                pl.fullName like #{keyword} OR
+                pl.parkingName like #{keyword})
+            </if>
+        LIMIT
+            #{pageSize}
+        OFFSET
+            #{pageNum};
+    </select>
 </mapper>

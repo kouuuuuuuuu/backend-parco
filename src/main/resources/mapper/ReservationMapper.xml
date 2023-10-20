@@ -17,4 +17,19 @@
         FROM Reservation
         WHERE DATE(startTime) = CURDATE() AND ploID = #{ploID};
     </select>
+    <select id="getReservationMethodByMethodID" resultType="com.project.Eparking.domain.response.ResponseRevenuePLO">
+        SELECT ploID,
+        SUM(CASE WHEN methodID = 1 THEN 1 ELSE 0 END) AS TotalVehicleMethodDay,
+        SUM(CASE WHEN methodID = 2 THEN 1 ELSE 0 END) AS TotalVehicleMethodNight,
+        SUM(CASE WHEN methodID = 3 THEN 1 ELSE 0 END) AS TotalVehicleMethodOvernight,
+        COUNT(*) AS TotalVehicle
+        FROM Reservation
+        WHERE ploID = #{ploID}
+    </select>
+
+    <select id="getSumByDateANDPLOID" resultType="Double">
+        SELECT SUM(price) AS totalPrice
+        FROM Reservation
+        WHERE startTime >= #{startTime} AND startTime <![CDATA[<= #{startTime2th} AND ploID = #{ploID}]]>
+    </select>
 </mapper>

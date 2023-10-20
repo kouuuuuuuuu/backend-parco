@@ -1,6 +1,7 @@
 package com.project.Eparking.controller;
 
 import com.project.Eparking.domain.ParkingInformation;
+import com.project.Eparking.domain.request.RequestUpdateReservation;
 import com.project.Eparking.domain.request.RequestUpdateStatusReservation;
 import com.project.Eparking.exception.ApiRequestException;
 import com.project.Eparking.service.interf.ReservationService;
@@ -15,15 +16,32 @@ import org.springframework.web.bind.annotation.*;
 public class ReservationController {
     private final ReservationService reservationService;
     @PutMapping("/checkoutReservation")
-    public ResponseEntity<String> checkoutStatusReservation(@RequestBody RequestUpdateStatusReservation reservation){
+    public ResponseEntity<String> checkoutStatusReservation(@RequestBody RequestUpdateReservation reservation){
+        try{
+            return ResponseEntity.ok(reservationService.checkOutStatusReservationByReservationID(reservation.getReservationID()));
+        }catch (ApiRequestException e){
+            throw e;
+        }
+    }
+    @PutMapping("/checkinReservation")
+    public ResponseEntity<String> checkinStatusReservation(@RequestBody RequestUpdateReservation reservation){
+        try{
+            return ResponseEntity.ok(reservationService.checkInStatusReservationByReservationID(reservation.getReservationID()));
+        }catch (ApiRequestException e){
+            throw e;
+        }
+    }
+
+    @PutMapping("/checkoutReservationWithLicensePlate")
+    public ResponseEntity<String> checkoutStatusReservationWithLicensePlate(@RequestBody RequestUpdateStatusReservation reservation){
         try{
             return ResponseEntity.ok(reservationService.checkOutStatusReservation(reservation));
         }catch (ApiRequestException e){
             throw e;
         }
     }
-    @PutMapping("/checkinReservation")
-    public ResponseEntity<String> checkinStatusReservation(@RequestBody RequestUpdateStatusReservation reservation){
+    @PutMapping("/checkinReservationWithLicensePlate")
+    public ResponseEntity<String> checkinStatusReservationWithLicensePlate(@RequestBody RequestUpdateStatusReservation reservation){
         try{
             return ResponseEntity.ok(reservationService.checkInStatusReservation(reservation));
         }catch (ApiRequestException e){

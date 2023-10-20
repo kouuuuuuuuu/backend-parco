@@ -4,6 +4,7 @@ import com.project.Eparking.domain.ParkingInformation;
 import com.project.Eparking.domain.Rating;
 import com.project.Eparking.domain.request.*;
 import com.project.Eparking.domain.response.ResponsePLOProfile;
+import com.project.Eparking.domain.response.ResponseRevenuePLO;
 import com.project.Eparking.exception.ApiRequestException;
 import com.project.Eparking.service.interf.ParkingService;
 import com.project.Eparking.service.interf.RatingService;
@@ -12,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Date;
 import java.util.List;
 
 @CrossOrigin
@@ -91,6 +93,31 @@ public class ParkingOwnerController {
     public ResponseEntity<Double> getBalance(){
         try {
             return ResponseEntity.ok(userService.getBalancePlO());
+        }catch (ApiRequestException e){
+            throw e;
+        }
+    }
+    @GetMapping("/getRevenue")
+    public ResponseEntity<ResponseRevenuePLO> getRevenue(){
+        try {
+            return ResponseEntity.ok(parkingService.getRevenuePLO());
+        }catch (ApiRequestException e){
+            throw e;
+        }
+    }
+    @PostMapping("/requestWithdrawal")
+    public ResponseEntity<String> requestWithdrawal(@RequestBody RequestWithdrawal requestWithdrawal){
+        try{
+            return ResponseEntity.ok(parkingService.withdrawalRequest(requestWithdrawal));
+        }catch (ApiRequestException e){
+            throw e;
+        }
+    }
+    @GetMapping("/getSumByDate")
+    public ResponseEntity<Double> getSumByDate(@RequestParam Date startTime,@RequestParam Date startTime2nd){
+        try {
+            RequestGetSumPLO plo = new RequestGetSumPLO(startTime,startTime2nd);
+            return ResponseEntity.ok(parkingService.getSumReservation(plo));
         }catch (ApiRequestException e){
             throw e;
         }

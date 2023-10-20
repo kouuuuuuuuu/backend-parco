@@ -46,7 +46,11 @@
         SELECT
             COUNT(*)
         FROM
-        Customer
+            Customer
+        <if test="keywords != null and !keywords.isEmpty()">
+        WHERE
+            fullName like #{keywords}
+        </if>
     </select>
 
     <select id="getListCustomerByName" resultType="com.project.Eparking.domain.Customer">

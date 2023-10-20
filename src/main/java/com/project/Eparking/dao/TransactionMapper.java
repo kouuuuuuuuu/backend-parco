@@ -4,18 +4,30 @@ import com.project.Eparking.domain.PLOTransaction;
 import com.project.Eparking.domain.TransactionMethod;
 import com.project.Eparking.domain.request.RequestGetTransactionPLOByID;
 import com.project.Eparking.domain.request.RequestPLOTransaction;
+import com.project.Eparking.domain.request.RequestPLOTransactionWithdrawa;
+import com.project.Eparking.domain.response.HistoryResponse;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
 
 @Mapper
 public interface TransactionMapper {
+  
     void insertTransactionPLO(RequestPLOTransaction ploTransaction);
+  
     PLOTransaction getTransactionPLOByID(RequestGetTransactionPLOByID transactionPLOByID);
+  
     TransactionMethod getTransactionMethodByHistoryID(String historyID);
+  
     PLOTransaction getTransactionByUUID(String UUID);
+  
     void insertTransactionMethod(TransactionMethod transactionMethod);
+  
+    List<HistoryResponse> historyTransactionByPLOandStatus(String ploID, int status);
 
+    void insertTransactionPLOByPLOID(RequestPLOTransactionWithdrawa requestPLOTransactionWithdrawa);
+    void insertBatchTransactionMethod(List<TransactionMethod> item);
+  
     List<PLOTransaction> getPagePloTransactionByStatus(List<Integer> status, int pageNum, int pageSize);
 
     Integer countRecords(List<Integer> status, String keywords);
@@ -23,4 +35,7 @@ public interface TransactionMapper {
     PLOTransaction getPloTransactionByHistoryId(int transactionId);
 
     void updatePloTransactionStatusByHistoryId(int transactionId, int status);
+
+    List<PLOTransaction> searchPloTransactionByKeyword(List<Integer> status, String keyword, int pageNum, int pageSize);
+
 }

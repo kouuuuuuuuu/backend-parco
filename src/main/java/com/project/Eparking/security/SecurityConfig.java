@@ -45,9 +45,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests().antMatchers(GET, "/PLO/profile").hasAnyAuthority("PLO");
         http.authorizeRequests().antMatchers(PUT, "/PLO/updateProfile").hasAnyAuthority("PLO");
         http.authorizeRequests().antMatchers(PUT, "/PLO/getBalance").hasAnyAuthority("PLO");
+        http.authorizeRequests().antMatchers(GET, "/PLO/getRevenue").hasAnyAuthority("PLO");
+        http.authorizeRequests().antMatchers(GET, "/PLO/requestWithdrawal").hasAnyAuthority("PLO");
+        http.authorizeRequests().antMatchers(GET, "/PLO/getSumByDate").hasAnyAuthority("PLO");
         http.authorizeRequests().antMatchers(GET, "/PLO/changePassword").hasAnyAuthority("PLO","CUSTOMER");
         http.authorizeRequests().antMatchers(PUT, "/reservation/checkoutReservation").hasAnyAuthority("PLO","CUSTOMER");
         http.authorizeRequests().antMatchers(PUT, "/reservation/checkinReservation").hasAnyAuthority("PLO","CUSTOMER");
+        http.authorizeRequests().antMatchers(PUT, "/reservation/checkoutReservationWithLicensePlate").hasAnyAuthority("PLO");
+        http.authorizeRequests().antMatchers(PUT, "/reservation/checkinReservationWithLicensePlate").hasAnyAuthority("PLO");
         http.authorizeRequests().antMatchers(POST, "/parking/registerParking").hasAnyAuthority("PLO");
         http.authorizeRequests().antMatchers(PUT, "/parking/updateParkingInformation").hasAnyAuthority("PLO");
         http.authorizeRequests().antMatchers(GET, "/parking/getParkingStatusID").hasAnyAuthority("PLO");
@@ -80,6 +85,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests().antMatchers(GET, "/ploTransaction/getListWithdrawalByStatus").hasAnyAuthority("ADMIN");
         http.authorizeRequests().antMatchers(GET, "/ploTransaction/updateWithdrawalStatus").hasAnyAuthority("ADMIN");
         http.authorizeRequests().antMatchers(GET, "/custAndPlo/getTotalCustAndPlo").hasAnyAuthority("ADMIN");
+        http.authorizeRequests().antMatchers(GET, "/ploTransaction/searchWithdrawalByKeyword").hasAnyAuthority("ADMIN");
         http.authorizeRequests().antMatchers(GET, "/user/getNotifcations").hasAnyAuthority("ADMIN","PLO","CUSTOMER");
         http.authorizeRequests().anyRequest().authenticated();
         http.addFilter(customAuthenticationFilter);

@@ -111,6 +111,66 @@ public class PloTransactionServiceImpl implements PloTransactionService {
         return isSuccess;
     }
 
+    @Override
+    public Page<PloWithdrawalDTO> searchWithdrawalByKeyword(int status,String keywords, int pageNum, int pageSize) {
+        List<PloWithdrawalDTO> ploWithdrawalDTOS = new ArrayList<>();
+
+        //1. Search withdrawal by keyword
+        List<Integer> withdrawalStatus = null;
+        if (status == 1 ){
+            withdrawalStatus = List.of(2);
+        }
+
+        if (status == 2){
+            withdrawalStatus = List.of(3,4);
+        }
+
+        int pageNumOffset = pageNum == 0 ? 0 : (pageNum - 1) * pageSize;
+        String searchKeyword = "%" + keywords.trim() + "%";
+        List<PLOTransaction> ploTransactions = transactionMapper.searchPloTransactionByKeyword(withdrawalStatus, searchKeyword, pageNumOffset, pageSize);
+        if (ploTransactions.isEmpty()){
+            return new Page<PloWithdrawalDTO>(ploWithdrawalDTOS, pageNum, pageSize, 0);
+        }
+
+        //2. Mapping data to DTO
+        for (PLOTransaction ploTransaction : ploTransactions) {
+            List<WithdrawalTransactionMethodDTO> transactionMethodDTOS = new ArrayList<>();
+            //2.1 Get plo by ploId
+            PLO plo = parkingLotOwnerMapper.getPloById(ploTransaction.getPloID());
+
+            //2.2 Get transaction method by history id
+            List<TransactionMethod> transactionMethods = transactionMethodMapper.getListTransactionMethodByHistoryId(ploTransaction.getHistoryID());
+
+            PloWithdrawalDTO ploWithdrawalDTO = new PloWithdrawalDTO();
+            ploWithdrawalDTO.setTransactionID(ploTransaction.getHistoryID());
+            ploWithdrawalDTO.setPloID(plo.getPloID());
+            ploWithdrawalDTO.setStatusName((ploTransaction.getStatus() == 2) ?
+                    "Chờ phê duyệt" : (ploTransaction.getStatus() == 3) ? "Chấp nhận" : "Từ chối");
+            ploWithdrawalDTO.setAddress(plo.getAddress());
+            ploWithdrawalDTO.setParkingName(plo.getParkingName());
+            ploWithdrawalDTO.setFullName(plo.getFullName());
+            ploWithdrawalDTO.setDepositAmount(ploTransaction.getDepositAmount());
+            ploWithdrawalDTO.setBalance(plo.getBalance());
+            ploWithdrawalDTO.setTransactionDate(Objects.nonNull(ploTransaction.getTransactionDate()) ?
+                    dateFormat.format(ploTransaction.getTransactionDate()) : "");
+            ploWithdrawalDTO.setTransactionResultDate(Objects.nonNull(ploTransaction.getTransactionResultDate()) ?
+                    dateFormat.format(ploTransaction.getTransactionResultDate()) : "");
+            ploWithdrawalDTO.setPhoneNumber(plo.getPhoneNumber());
+
+            for (TransactionMethod transactionMethod : transactionMethods) {
+                WithdrawalTransactionMethodDTO transactionMethodDTO = new WithdrawalTransactionMethodDTO();
+                transactionMethodDTO.setBankName(transactionMethod.getBankName());
+                transactionMethodDTO.setBankNumber(transactionMethod.getBankNumber());
+                transactionMethodDTOS.add(transactionMethodDTO);
+            }
+            ploWithdrawalDTO.setTransactionMethod(transactionMethodDTOS);
+            ploWithdrawalDTOS.add(ploWithdrawalDTO);
+        }
+
+        int totalRecords = this.countRecords(withdrawalStatus, searchKeyword);
+        return new Page<PloWithdrawalDTO>(ploWithdrawalDTOS, pageNum, pageSize, totalRecords);
+    }
+
     private Integer countRecords(List<Integer> parkingStatus, String keywords){
         return transactionMapper.countRecords(parkingStatus, keywords);
     }

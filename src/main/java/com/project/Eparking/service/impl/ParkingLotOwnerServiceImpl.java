@@ -84,8 +84,8 @@ public class ParkingLotOwnerServiceImpl implements ParkingLotOwnerService {
         int pageNumOffset = pageNum == 0 ? 0 : (pageNum - 1) * pageSize;
         // 1. Get list Registration by parking status from database
         List<Integer> parkingStatus = List.of(status);
-
-        ploList = parkingLotOwnerMapper.getListPloByParkingStatusWithPagination(parkingStatus, pageNumOffset, pageSize, "%" + keywords + "%");
+        String searchKeyword = "%" + keywords.trim() + "%";
+        ploList = parkingLotOwnerMapper.getListPloByParkingStatusWithPagination(parkingStatus, pageNumOffset, pageSize, searchKeyword);
         if (ploList.isEmpty()){
             return new Page<RegistrationHistoryDTO>(parkingLotOwnerDTOList, pageNum, pageSize, 0);
         }
@@ -104,7 +104,7 @@ public class ParkingLotOwnerServiceImpl implements ParkingLotOwnerService {
                     dateFormat.format(plo.getBrowseContract()) : "");
             parkingLotOwnerDTOList.add(ploDto);
         }
-        int countRecords = this.countRecords(parkingStatus, "%" + keywords + "%");
+        int countRecords = this.countRecords(parkingStatus, searchKeyword);
         return new Page<RegistrationHistoryDTO>(parkingLotOwnerDTOList, pageNum, pageSize, countRecords);
 
     }
@@ -170,9 +170,9 @@ public class ParkingLotOwnerServiceImpl implements ParkingLotOwnerService {
         List<PLO> ploList;
         int pageNumOffset = pageNum == 0 ? 0 : (pageNum - 1) * pageSize;
         // 1. Get list Registration by parking status from database
-        List<Integer> parkingStatus = List.of(status);
-
-        ploList = parkingLotOwnerMapper.getListPloByParkingStatusWithPagination(parkingStatus, pageNumOffset, pageSize, "%" + keywords + "%");
+        List<Integer> parkingStatus = List.of(status );
+        String searchKeyword = "%" + keywords.trim() + "%";
+        ploList = parkingLotOwnerMapper.getListPloByParkingStatusWithPagination(parkingStatus, pageNumOffset, pageSize, searchKeyword);
         if (ploList.isEmpty()){
             return new Page<ListPloDTO>(parkingLotOwnerDTOList, pageNum, pageSize, 0);
         }
@@ -189,7 +189,7 @@ public class ParkingLotOwnerServiceImpl implements ParkingLotOwnerService {
                     dateFormat.format(plo.getContractDuration()) : "");
             parkingLotOwnerDTOList.add(ploDto);
         }
-        int countRecords = this.countRecords(parkingStatus, "%" + keywords + "%");
+        int countRecords = this.countRecords(parkingStatus, searchKeyword);
         return new Page<ListPloDTO>(parkingLotOwnerDTOList, pageNum, pageSize, countRecords);
     }
 
@@ -225,7 +225,8 @@ public class ParkingLotOwnerServiceImpl implements ParkingLotOwnerService {
         if (status == 2){
             parkingStatus = List.of(6);
         }
-        List<PLO> ploList = parkingLotOwnerMapper.getListPloByKeywordsWithPagination("%" + keyword + "%",
+        String searchKeyword = "%" + keyword.trim() + "%";
+        List<PLO> ploList = parkingLotOwnerMapper.getListPloByKeywordsWithPagination(searchKeyword,
                 parkingStatus, pageNumOffset, pageSize);
 
         if (ploList.isEmpty()){
@@ -248,7 +249,7 @@ public class ParkingLotOwnerServiceImpl implements ParkingLotOwnerService {
         }
 
         //3. get total page
-        int totalRecords = this.countRecords(parkingStatus, "%" + keyword + "%");
+        int totalRecords = this.countRecords(parkingStatus, searchKeyword);
         return new Page<ListPloDTO>(listPloDTOS, pageNum, pageSize, totalRecords);
     }
 
@@ -311,7 +312,6 @@ public class ParkingLotOwnerServiceImpl implements ParkingLotOwnerService {
         parkingLotOwnerDTO.setAddress(ploEntity.getAddress());
         parkingLotOwnerDTO.setPhoneNumber(ploEntity.getPhoneNumber());
         parkingLotOwnerDTO.setEmail(ploEntity.getEmail());
-        parkingLotOwnerDTO.setContractDuration(ploEntity.getContractDuration());
         parkingLotOwnerDTO.setContractLink(ploEntity.getContractLink());
         parkingLotOwnerDTO.setStatus(ploEntity.getStatus());
         parkingLotOwnerDTO.setMorningFee(morningMethod != null ? morningMethod.getPrice() : 0);
@@ -326,6 +326,10 @@ public class ParkingLotOwnerServiceImpl implements ParkingLotOwnerService {
         parkingLotOwnerDTO.setCurrentSlot(ploEntity.getCurrentSlot());
         parkingLotOwnerDTO.setImages(imageDTOS);
         parkingLotOwnerDTO.setParkingStatusID(ploEntity.getParkingStatusID());
+        parkingLotOwnerDTO.setBrowseContract(Objects.nonNull(ploEntity.getBrowseContract())?
+                dateFormat.format(ploEntity.getBrowseContract()) : "");
+        parkingLotOwnerDTO.setContractDuration(Objects.nonNull(ploEntity.getContractDuration())?
+                dateFormat.format(ploEntity.getContractDuration()) : "");
         return parkingLotOwnerDTO;
     }
 
