@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Date;
 import java.util.List;
 
 @CrossOrigin
@@ -108,6 +109,15 @@ public class ParkingOwnerController {
     public ResponseEntity<String> requestWithdrawal(@RequestBody RequestWithdrawal requestWithdrawal){
         try{
             return ResponseEntity.ok(parkingService.withdrawalRequest(requestWithdrawal));
+        }catch (ApiRequestException e){
+            throw e;
+        }
+    }
+    @GetMapping("/getSumByDate")
+    public ResponseEntity<Double> getSumByDate(@RequestParam Date startTime,@RequestParam Date startTime2nd){
+        try {
+            RequestGetSumPLO plo = new RequestGetSumPLO(startTime,startTime2nd);
+            return ResponseEntity.ok(parkingService.getSumReservation(plo));
         }catch (ApiRequestException e){
             throw e;
         }
