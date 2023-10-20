@@ -144,19 +144,21 @@
             COUNT(*)
         FROM
             plo
-        WHERE
-            parkingStatusID
-        IN
-            <foreach collection="parkingStatus" item="status" open="(" separator="," close=")">
-                #{status}
-            </foreach>
-            <if test="keywords != null and keywords != ''">
-                AND (
-                fullName like #{keywords} OR
-                phoneNumber like #{keywords} OR
-                parkingName like #{keywords} OR
-                address like #{keywords} )
-            </if>
+        <if test="parkingStatus != null and parkingStatus != ''">
+            WHERE
+                parkingStatusID
+            IN
+                <foreach collection="parkingStatus" item="status" open="(" separator="," close=")">
+                    #{status}
+                </foreach>
+        </if>
+        <if test="keywords != null and keywords != ''">
+            AND (
+            fullName like #{keywords} OR
+            phoneNumber like #{keywords} OR
+            parkingName like #{keywords} OR
+            address like #{keywords} )
+        </if>
     </select>
 
     <update id="updatePloBalanceById" parameterType="map">
