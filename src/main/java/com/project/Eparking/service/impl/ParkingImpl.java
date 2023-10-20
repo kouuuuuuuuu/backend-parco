@@ -20,7 +20,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import java.sql.Time;
+import java.sql.Timestamp;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.project.Eparking.config.UUIDgenerate.generateUUID;
 
@@ -41,12 +44,14 @@ public class ParkingImpl implements ParkingService {
     @Transactional
     public String addParking(RequestRegisterParking registerParking) {
         try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String id = authentication.getName();
             PLOTransaction ploTransaction = transactionMapper.getTransactionByUUID(registerParking.getUUID());
             if(ploTransaction == null){
                 return "The user has not paid the parking registration fee";
             }
             RequestParking requestParking = new RequestParking();
-            requestParking.setPloID(registerParking.getPloID());
+            requestParking.setPloID(id);
             requestParking.setParkingName(registerParking.getParkingName());
             requestParking.setLength(registerParking.getLength());
             requestParking.setWidth(registerParking.getWidth());
@@ -56,10 +61,6 @@ public class ParkingImpl implements ParkingService {
             requestParking.setParkingStatusID(2);
             requestParking.setCurrentSlot(0);
             parkingMapper.registerParking(requestParking);
-
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String id = authentication.getName();
-
             if (!registerParking.getImages().isEmpty()) {
                 imageMapper.deleteImageByPLOID(id);
                 List<Image> images = new ArrayList<>();
@@ -309,6 +310,78 @@ public class ParkingImpl implements ParkingService {
             return map;
         }catch (Exception e){
             throw new ApiRequestException("Failed to create parking register payment" + e.getMessage());
+        }
+    }
+
+    @Override
+    public ResponseRevenuePLO getRevenuePLO() {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String id = authentication.getName();
+            ResponseRevenuePLO plo = reservationMapper.getReservationMethodByMethodID(id);
+            plo.setBalance(userMapper.getBalancePlO(id));
+            plo.setHistory(transactionMapper.historyTransactionByPLOandStatus(id,3));
+            return plo;
+        }catch (Exception e){
+            throw new ApiRequestException("Failed to get Revenue PLO" + e.getMessage());
+        }
+    }
+    @Transactional
+    @Override
+    public String withdrawalRequest(RequestWithdrawal drawlRequest) {
+        try{
+            if(drawlRequest.getAmount() == 0 || drawlRequest.getAmount() <0){
+                return "Invalid withdrawal amount";
+            }
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String id = authentication.getName();
+            PLO plo = userMapper.getPLOByPLOID(id);
+            if(plo.getBalance() - drawlRequest.getAmount() <0){
+                return "The balance is not enough to withdraw";
+            }
+            List<HistoryResponse> historyResponses = transactionMapper.historyTransactionByPLOandStatus(id,2);
+            if( historyResponses.size()!=0){
+                return "This PLO currently has unapproved withdrawal request";
+            }
+            RequestPLOTransactionWithdrawa withdrawa = new RequestPLOTransactionWithdrawa();
+            withdrawa.setPloID(id);
+            withdrawa.setStatus(2);
+            withdrawa.setDepositAmount(drawlRequest.getAmount());
+            Date now = new Date();
+            Timestamp timestamp = new Timestamp(now.getTime());
+            withdrawa.setTransactionDate(timestamp);
+            transactionMapper.insertTransactionPLOByPLOID(withdrawa);
+            String pattern = "^[^-]+-[^-]+-[^-]+$";
+            Pattern regex = Pattern.compile(pattern);
+            Matcher matcher1 = regex.matcher(drawlRequest.getMethod1());
+            Matcher matcher2 = regex.matcher(drawlRequest.getMethod1());
+            if(!matcher1.matches()){
+                return "Method 1 is not correct format";
+            }
+            if(!matcher2.matches()){
+                return "Method 2 is not correct format";
+            }
+            PLOTransaction ploTransaction = transactionMapper.getTransactionPLOByID(new RequestGetTransactionPLOByID(id,2));
+            List<TransactionMethod> list = new ArrayList<>();
+            String[] partsMethod1 = drawlRequest.getMethod1().split("-");
+            String[] partsMethod2 = drawlRequest.getMethod2().split("-");
+            list.add(new TransactionMethod(null,ploTransaction.getHistoryID(),partsMethod1[0].trim(),partsMethod1[1].trim(),partsMethod1[2].trim()));
+            list.add(new TransactionMethod(null,ploTransaction.getHistoryID(),partsMethod2[0].trim(),partsMethod2[1].trim(),partsMethod2[2].trim()));
+            transactionMapper.insertBatchTransactionMethod(list);
+            return "Withdrawal application has been successfully submitted";
+        }catch (Exception e){
+            throw new ApiRequestException("Failed to get Revenue PLO" + e.getMessage());
+        }
+    }
+
+    @Override
+    public Double getSumReservation(RequestGetSumPLO requestGetSumPLO) {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String id = authentication.getName();
+            return reservationMapper.getSumByDateANDPLOID(requestGetSumPLO.getStartTime(),requestGetSumPLO.getStartTime2nd(),id);
+        }catch (Exception e){
+            throw new ApiRequestException("Failed to get Sum reservation" + e.getMessage());
         }
     }
 }

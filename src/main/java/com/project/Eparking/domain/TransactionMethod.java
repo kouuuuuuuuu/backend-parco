@@ -11,6 +11,6 @@ public class TransactionMethod {
     private String transactionMethodID;
     private int historyID;
     private String bankCode;
-    private String bankName;
     private String bankNumber;
+    private String bankName;
 }

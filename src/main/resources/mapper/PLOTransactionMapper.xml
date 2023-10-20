@@ -4,6 +4,14 @@
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.project.Eparking.dao.TransactionMapper">
 
+
+    <resultMap id = "historyResponse" type = "com.project.Eparking.domain.response.HistoryResponse">
+        <result property = "historyID" column = "historyID"/>
+        <result property = "depositAmount" column = "depositAmount"/>
+        <result property = "transactionDate" column = "transactionDate"/>
+        <result property = "transactionResultDate" column = "transactionResultDate"/>
+    </resultMap>
+
     <insert id="insertTransactionPLO" parameterType="com.project.Eparking.domain.request.RequestPLOTransaction" >
         INSERT INTO PloTransaction (ploID, status, depositAmount, transactionDate, transactionResultDate, vnPay_ref, UUID)
         VALUES (#{ploID}, #{status}, #{depositAmount}, #{transactionDate}, #{transactionResultDate}, #{vnPay_ref}, #{UUID});
@@ -29,6 +37,24 @@
     <insert id="insertTransactionMethod" parameterType="com.project.Eparking.domain.TransactionMethod">
         INSERT INTO TransactionMethod (historyID, bankCode, bankName, bankNumber)
         VALUES (#{historyID}, #{bankCode}, #{bankName}, #{bankNumber});
+    </insert>
+  
+    <select id="historyTransactionByPLOandStatus" resultMap="historyResponse">
+        SELECT historyID,depositAmount,transactionDate,transactionResultDate
+        FROM PloTransaction
+        WHERE ploID = #{ploID} AND status = #{status}
+    </select>
+    <insert id="insertTransactionPLOByPLOID" parameterType="com.project.Eparking.domain.request.RequestPLOTransactionWithdrawa" >
+        INSERT INTO PloTransaction (ploID, status, depositAmount, transactionDate)
+        VALUES (#{ploID}, #{status}, #{depositAmount}, #{transactionDate});
+    </insert>
+
+    <insert id="insertBatchTransactionMethod" parameterType="java.util.List">
+        INSERT INTO TransactionMethod (historyID, bankCode, bankName, bankNumber)
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (#{item.historyID}, #{item.bankCode}, #{item.bankName}, #{item.bankNumber})
+        </foreach>
     </insert>
 
     <select id="getPagePloTransactionByStatus" resultType="com.project.Eparking.domain.PLOTransaction">

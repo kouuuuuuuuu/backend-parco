@@ -15,7 +15,7 @@ public class ParkingLotOwnerDTO {
     private String address;
     private String parkingName;
     private String email;
-    private Timestamp contractDuration;
+    private String contractDuration;
     private String contractLink;
     private double length;
     private double width;
@@ -30,4 +30,5 @@ public class ParkingLotOwnerDTO {
     private double eveningFee;
     private double overNightFee;
     private int parkingStatusID;
+    private String browseContract;
 }
