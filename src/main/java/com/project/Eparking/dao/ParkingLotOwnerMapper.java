@@ -16,4 +16,6 @@ public interface ParkingLotOwnerMapper {
     void updateParkingStatusByPloId(String ploID, int parkingStatusID);
 
     Integer countRecords(List<Integer> parkingStatus, String keywords);
+
+    void updatePloBalanceById(String ploID, double balance);
 }

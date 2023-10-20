@@ -22,4 +22,7 @@ public class Message {
     public static final String NOT_FOUND_CUSTOMER_BY_NAME = "Not Found Customer By Name";
     public static final String NOT_FOUND_REGISTRATION_HISTORY = "Not Found Registration History";
     public static final String GET_LIST_REGISTRATION_HISTORY_SUCCESS = "Get List Registration History Success";
+    public static final String NOT_FOUND_PLO_WITHDRAWAL_BY_STATUS = "Not Found Parking Lot Owner Withdrawal By Status";
+    public static final String GET_LIST_PLO_WITHDRAWAL_SUCCESS = "Get List Parking Lot Owner Withdrawal Sucess";
+    public static final String UPDATE_WITHDRAWAL_STATUS_SUCCESS = "Update Withdrawal Status Success";
 }
