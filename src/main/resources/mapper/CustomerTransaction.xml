@@ -4,8 +4,22 @@
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.project.Eparking.dao.CustomerTransactionMapper">
 
+    <resultMap id = "listTransactionCustomer" type = "com.project.Eparking.domain.response.ResponseHistoryBalanceCustomer">
+        <result property = "transactionID" column = "transactionID"/>
+        <result property = "depositAmount" column = "depositAmount"/>
+        <result property = "rechargeTime" column = "rechargeTime"/>
+        <result property = "bankCode" column = "bankCode"/>
+    </resultMap>
+
     <insert id="insertCustomerTransaction" parameterType="com.project.Eparking.domain.request.RequestCustomerTransactionMapper" >
         INSERT INTO CustomerTransaction (depositAmount, rechargeTime, customerID, bankCode, vnPay_ref)
         VALUES (#{depositAmount}, #{rechargeTime}, #{customerID}, #{bankCode}, #{vnPay_ref});
     </insert>
+
+    <select id="getListTransactionCustomer" resultMap="listTransactionCustomer">
+        SELECT transactionID, depositAmount, rechargeTime, bankCode
+        FROM CustomerTransaction
+        WHERE customerID = #{customerID}
+        ORDER BY rechargeTime DESC;
+    </select>
 </mapper>

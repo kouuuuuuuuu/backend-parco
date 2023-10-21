@@ -5,6 +5,7 @@ import com.project.Eparking.domain.request.RequestChangePasswordUser;
 import com.project.Eparking.domain.request.RequestCustomerTransaction;
 import com.project.Eparking.domain.request.RequestCustomerUpdateProfile;
 import com.project.Eparking.domain.response.ResponseCustomer;
+import com.project.Eparking.domain.response.ResponseWalletScreen;
 import com.project.Eparking.exception.ApiRequestException;
 import com.project.Eparking.service.interf.CustomerService;
 import com.project.Eparking.service.interf.PaymentService;
@@ -61,6 +62,14 @@ public class CustomerControllerRole {
     public ResponseEntity<?> createPaymentCustomer(HttpServletRequest request, @RequestBody RequestCustomerTransaction transaction){
         try {
             return customerService.createPaymentCustomer(request,transaction);
+        }catch (ApiRequestException e){
+            throw e;
+        }
+    }
+    @GetMapping("/walletScreen")
+    public ResponseEntity<ResponseWalletScreen> responseWalletScreen(){
+        try {
+            return ResponseEntity.ok(customerService.responseWalletScreen());
         }catch (ApiRequestException e){
             throw e;
         }

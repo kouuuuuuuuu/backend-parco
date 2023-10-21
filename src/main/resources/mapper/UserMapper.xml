@@ -31,7 +31,7 @@
     <select id="getCustomerByCustomerID" resultType="com.project.Eparking.domain.Customer">
         SELECT
             customerID,
-            wallet_balance,
+            wallet_balance AS walletBalance,
             identify,
             role,
             phoneNumber,

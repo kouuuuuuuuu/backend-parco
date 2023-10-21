@@ -7,6 +7,7 @@ import com.project.Eparking.domain.request.RequestCustomerTransaction;
 import com.project.Eparking.domain.request.RequestCustomerUpdateProfile;
 import com.project.Eparking.domain.response.Page;
 import com.project.Eparking.domain.response.ResponseCustomer;
+import com.project.Eparking.domain.response.ResponseWalletScreen;
 import org.springframework.http.ResponseEntity;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,4 +21,5 @@ public interface CustomerService {
     String updateCustomerProfile(RequestCustomerUpdateProfile profile);
     List<String> updatePassswordCustomer(RequestChangePasswordUser customer);
     ResponseEntity<?> createPaymentCustomer(HttpServletRequest req,RequestCustomerTransaction transaction);
+    ResponseWalletScreen responseWalletScreen();
 }
