@@ -7,4 +7,8 @@ import java.util.List;
 @Mapper
 public interface LicensePlateMapper {
     List<LicensePlate> getListLicensePlateByCustomerID(String customerID);
+
+    int deleteLicensePlate(String licensePlateID, String customerID);
+
+    void createLicensePlate(String licensePlate, String customerID);
 }
