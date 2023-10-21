@@ -32,4 +32,46 @@
         FROM Reservation
         WHERE startTime >= #{startTime} AND startTime <![CDATA[<= #{startTime2th} AND ploID = #{ploID}]]>
     </select>
+
+    <select id="getReservationByStatus" resultType="com.project.Eparking.domain.Reservation">
+        SELECT
+            reservationID,
+            customerID,
+            ploID,
+            statusID,
+            licensePlateID,
+            startTime,
+            endTime,
+            price,
+            checkOut,
+            checkIn,
+            methodID
+        FROM
+            reservation
+        WHERE
+            statusID = #{status}
+        AND
+            customerID = #{customerID};
+    </select>
+
+    <select id="getReservationDetailById" resultType="com.project.Eparking.domain.Reservation">
+        SELECT
+            reservationID,
+            customerID,
+            ploID,
+            statusID,
+            licensePlateID,
+            startTime,
+            endTime,
+            price,
+            checkOut,
+            checkIn,
+            methodID
+        FROM
+            reservation
+        WHERE
+            reservationID = #{reservationID}
+        AND
+            customerID = #{customerID};
+    </select>
 </mapper>

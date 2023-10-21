@@ -1,10 +1,12 @@
 package com.project.Eparking.dao;
 
+import com.project.Eparking.domain.Reservation;
 import com.project.Eparking.domain.response.ResponseReservation;
 import com.project.Eparking.domain.response.ResponseRevenuePLO;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.sql.Date;
+import java.util.List;
 
 @Mapper
 public interface ReservationMapper {
@@ -12,4 +14,8 @@ public interface ReservationMapper {
     Double sumPriceReservationCurrentDateByPLO(String ploID);
     ResponseRevenuePLO getReservationMethodByMethodID(String ploID);
     Double getSumByDateANDPLOID(Date startTime,Date startTime2th,String ploID);
+
+    List<Reservation> getReservationByStatus(int status, String customerID);
+
+    Reservation getReservationDetailById(int reservationID, String customerID);
 }

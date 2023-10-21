@@ -87,6 +87,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests().antMatchers(GET, "/custAndPlo/getTotalCustAndPlo").hasAnyAuthority("ADMIN");
         http.authorizeRequests().antMatchers(GET, "/ploTransaction/searchWithdrawalByKeyword").hasAnyAuthority("ADMIN");
         http.authorizeRequests().antMatchers(GET, "/user/getNotifcations").hasAnyAuthority("ADMIN","PLO","CUSTOMER");
+        http.authorizeRequests().antMatchers(GET, "/reservation/reservationHistory").hasAnyAuthority("CUSTOMER");
+        http.authorizeRequests().antMatchers(GET, "/reservation/reservationHistoryDetail").hasAnyAuthority("CUSTOMER");
         http.authorizeRequests().anyRequest().authenticated();
         http.addFilter(customAuthenticationFilter);
         http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
