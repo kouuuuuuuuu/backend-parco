@@ -3,10 +3,13 @@ package com.project.Eparking.service.interf;
 import com.project.Eparking.domain.dto.CustomerDTO;
 import com.project.Eparking.domain.request.RequestChangePassword;
 import com.project.Eparking.domain.request.RequestChangePasswordUser;
+import com.project.Eparking.domain.request.RequestCustomerTransaction;
 import com.project.Eparking.domain.request.RequestCustomerUpdateProfile;
 import com.project.Eparking.domain.response.Page;
 import com.project.Eparking.domain.response.ResponseCustomer;
+import org.springframework.http.ResponseEntity;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 public interface CustomerService {
@@ -16,4 +19,5 @@ public interface CustomerService {
     ResponseCustomer getResponseCustomerByCustomerID();
     String updateCustomerProfile(RequestCustomerUpdateProfile profile);
     List<String> updatePassswordCustomer(RequestChangePasswordUser customer);
+    ResponseEntity<?> createPaymentCustomer(HttpServletRequest req,RequestCustomerTransaction transaction);
 }

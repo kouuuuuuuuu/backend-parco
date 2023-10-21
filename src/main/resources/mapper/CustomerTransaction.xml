@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.project.Eparking.dao.CustomerTransactionMapper">
+
+    <insert id="insertCustomerTransaction" parameterType="com.project.Eparking.domain.request.RequestCustomerTransactionMapper" >
+        INSERT INTO CustomerTransaction (depositAmount, rechargeTime, customerID, bankCode, vnPay_ref)
+        VALUES (#{depositAmount}, #{rechargeTime}, #{customerID}, #{bankCode}, #{vnPay_ref});
+    </insert>
+</mapper>

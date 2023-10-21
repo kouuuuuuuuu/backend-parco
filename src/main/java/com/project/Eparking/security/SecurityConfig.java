@@ -41,6 +41,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/user/checkOTPcode",
                         "/user/updatePassword",
                         "/parking/getReturnPayment",
+                        "/customer/returnPayment",
                         "/swagger-ui.html", "/webjars/**", "/v2/api-docs", "/swagger-resources/**").permitAll();
         http.authorizeRequests().antMatchers(GET, "/PLO/profile").hasAnyAuthority("PLO");
         http.authorizeRequests().antMatchers(PUT, "/PLO/updateProfile").hasAnyAuthority("PLO");
@@ -92,6 +93,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests().antMatchers(GET, "/customer/getProfile").hasAnyAuthority("CUSTOMER");
         http.authorizeRequests().antMatchers(POST, "/customer/updateProfile").hasAnyAuthority("CUSTOMER");
         http.authorizeRequests().antMatchers(PUT, "/customer/updatePassword").hasAnyAuthority("CUSTOMER");
+        http.authorizeRequests().antMatchers(POST, "/customer/createPayment").hasAnyAuthority("CUSTOMER");
         http.authorizeRequests().anyRequest().authenticated();
         http.addFilter(customAuthenticationFilter);
         http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
