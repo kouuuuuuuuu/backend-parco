@@ -190,6 +190,7 @@
         FROM PLO
         WHERE ploID = #{ploID}
     </select>
+
     <select id="getListNotificationByID" resultMap="listNotifications">
         SELECT notiID,recipient_type,recipient_id,sender_type,sender_id,content,created_at
         FROM Notifications

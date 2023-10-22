@@ -17,4 +17,5 @@ public class Notifications {
     private String sender_id;
     private String content;
     private Timestamp created_at;
+
 }
