@@ -11,4 +11,6 @@ public interface RatingMapper {
     List<Rating> getWithPaginationByPloId(int pageNum, int pageSize, String ploId);
 
     Integer countRecords(String ploId);
+
+    void sendRating(Rating rating);
 }

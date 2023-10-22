@@ -2,6 +2,8 @@ package com.project.Eparking.controller;
 
 import com.project.Eparking.constant.Message;
 import com.project.Eparking.domain.Rating;
+import com.project.Eparking.domain.dto.CreateRatingDTO;
+import com.project.Eparking.domain.dto.CustomerRatingDTO;
 import com.project.Eparking.domain.dto.RatingDTO;
 import com.project.Eparking.domain.response.Page;
 import com.project.Eparking.domain.response.Response;
@@ -31,4 +33,28 @@ public class RatingController {
             return new Response(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage(), null);
         }
     }
+
+    @GetMapping("/getRatingOfCustomer")
+    public Response getRatingOfCustomer(@RequestParam("ploID") String ploID){
+        try {
+            List<CustomerRatingDTO> customerRatingDTOS = ratingService.getRatingOfCustomer(ploID);
+            if (customerRatingDTOS.isEmpty()) {
+                return new Response(HttpStatus.NOT_FOUND.value(), Message.NOT_FOUND_RATING_OF_CUSTOMER, null);
+            }
+            return new Response(HttpStatus.OK.value(), Message.GET_RATING_OF_CUSTOMER_SUCCESS, customerRatingDTOS);
+        }catch (Exception e){
+            return new Response(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage(), null);
+        }
+    }
+
+    @PostMapping("/sendRating")
+    public Response sendRating(@RequestBody CreateRatingDTO createRatingDTO){
+        try {
+            String message = ratingService.createRating(createRatingDTO);
+            return new Response(HttpStatus.OK.value(), message, null);
+        }catch (Exception e){
+            return new Response(HttpStatus.INTERNAL_SERVER_ERROR.value(), Message.ERROR_CREATE_RATING, null);
+        }
+    }
+
 }

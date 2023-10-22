@@ -49,7 +49,7 @@
             Customer
         <if test="keywords != null and !keywords.isEmpty()">
         WHERE
-            fullName like #{keywords}
+            fullName REGEXP #{keywords}
         </if>
     </select>
 
@@ -68,7 +68,7 @@
         FROM
             Customer
         WHERE
-            fullName like #{name}
+            fullName REGEXP #{name}
         LIMIT
             #{pageSize}
         OFFSET

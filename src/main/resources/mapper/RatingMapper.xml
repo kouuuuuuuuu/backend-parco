@@ -59,4 +59,25 @@
             </if>
     </select>
 
+    <insert id="sendRating" parameterType="com.project.Eparking.domain.Rating">
+        INSERT INTO rating
+        (
+            star,
+            content,
+            customerID,
+            ploID,
+            reservationID,
+            feedbackDate
+        )
+        VALUES
+        (
+            #{star},
+            #{content},
+            #{customerID},
+            #{ploID},
+            #{reservationID},
+            #{feedbackDate}
+        );
+    </insert>
+
 </mapper>

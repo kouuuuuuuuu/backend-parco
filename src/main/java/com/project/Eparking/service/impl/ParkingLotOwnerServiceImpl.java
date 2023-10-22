@@ -12,8 +12,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -84,7 +86,7 @@ public class ParkingLotOwnerServiceImpl implements ParkingLotOwnerService {
         int pageNumOffset = pageNum == 0 ? 0 : (pageNum - 1) * pageSize;
         // 1. Get list Registration by parking status from database
         List<Integer> parkingStatus = List.of(status);
-        String searchKeyword = "%" + keywords.trim() + "%";
+        String searchKeyword = keywords.trim();
         ploList = parkingLotOwnerMapper.getListPloByParkingStatusWithPagination(parkingStatus, pageNumOffset, pageSize, searchKeyword);
         if (ploList.isEmpty()){
             return new Page<RegistrationHistoryDTO>(parkingLotOwnerDTOList, pageNum, pageSize, 0);
@@ -171,7 +173,7 @@ public class ParkingLotOwnerServiceImpl implements ParkingLotOwnerService {
         int pageNumOffset = pageNum == 0 ? 0 : (pageNum - 1) * pageSize;
         // 1. Get list Registration by parking status from database
         List<Integer> parkingStatus = List.of(status );
-        String searchKeyword = "%" + keywords.trim() + "%";
+        String searchKeyword =keywords.trim();
         ploList = parkingLotOwnerMapper.getListPloByParkingStatusWithPagination(parkingStatus, pageNumOffset, pageSize, searchKeyword);
         if (ploList.isEmpty()){
             return new Page<ListPloDTO>(parkingLotOwnerDTOList, pageNum, pageSize, 0);
@@ -201,9 +203,19 @@ public class ParkingLotOwnerServiceImpl implements ParkingLotOwnerService {
             isSuccess = false;
         }
 
+        Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
+        //* plus month by contractionDuration request
+        Timestamp newContractionDuration = Timestamp.valueOf(currentTimestamp
+                .toLocalDateTime().plusMonths(updatePloStatusDTO.getContractDuration()));
+
         //2. Update parking status by plo id
         plo.setParkingStatusID(updatePloStatusDTO.getNewStatus());
-        parkingLotOwnerMapper.updateParkingStatusByPloId(plo.getPloID(), plo.getParkingStatusID());
+        plo.setContractDuration(newContractionDuration);
+        plo.setBrowseContract(currentTimestamp);
+        plo.setContractLink(updatePloStatusDTO.getContractLink());
+        plo.setLongtitude(updatePloStatusDTO.getLongtitude());
+        plo.setLatitude(updatePloStatusDTO.getLatitude());
+        parkingLotOwnerMapper.updateParkingStatusByPloId(plo);
 
         return isSuccess;
     }
@@ -225,7 +237,7 @@ public class ParkingLotOwnerServiceImpl implements ParkingLotOwnerService {
         if (status == 2){
             parkingStatus = List.of(6);
         }
-        String searchKeyword = "%" + keyword.trim() + "%";
+        String searchKeyword = keyword.trim();
         List<PLO> ploList = parkingLotOwnerMapper.getListPloByKeywordsWithPagination(searchKeyword,
                 parkingStatus, pageNumOffset, pageSize);
 

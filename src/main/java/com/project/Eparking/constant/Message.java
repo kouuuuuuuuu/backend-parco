@@ -44,4 +44,8 @@ public class Message {
     public static final String GET_TOP_5_CUSTOMER_FAIL = "Get Top 5 Customer Failure";
     public static final String GET_TOP_5_CUSTOMER_SUCCESS = "Get Top 5 Customer Success";
 
+    public static final String GET_RATING_OF_CUSTOMER_SUCCESS = "Get Rating List Success";
+    public static final String NOT_FOUND_RATING_OF_CUSTOMER = "Not Found Rating List";
+    public static final String ERROR_CREATE_RATING = "Error When Send Rating";
+    public static final String CREATE_RATING_SUCCESS = "Send Rating Success";
 }

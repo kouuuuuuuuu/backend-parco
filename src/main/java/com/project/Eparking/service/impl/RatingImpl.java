@@ -1,9 +1,12 @@
 package com.project.Eparking.service.impl;
 
+import com.project.Eparking.constant.Message;
 import com.project.Eparking.dao.CustomerMapper;
 import com.project.Eparking.dao.RatingMapper;
 import com.project.Eparking.domain.Customer;
 import com.project.Eparking.domain.Rating;
+import com.project.Eparking.domain.dto.CreateRatingDTO;
+import com.project.Eparking.domain.dto.CustomerRatingDTO;
 import com.project.Eparking.domain.dto.ListPloDTO;
 import com.project.Eparking.domain.dto.RatingDTO;
 import com.project.Eparking.domain.response.Page;
@@ -15,8 +18,13 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Objects;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -24,6 +32,7 @@ public class RatingImpl implements RatingService {
     private final RatingMapper ratingMapper;
 
     private final CustomerMapper customerMapper;
+    private final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss dd//MM//yyyy");
     @Override
     public List<Rating> getRatingListByPLOID() {
         try{
@@ -54,6 +63,49 @@ public class RatingImpl implements RatingService {
         }
         int totalRecords = this.countRecords(ploId);
         return new Page<RatingDTO>(ratingDTOS, pageNum, pageSize, totalRecords);
+    }
+
+    @Override
+    public List<CustomerRatingDTO> getRatingOfCustomer(String ploID) {
+        List<CustomerRatingDTO> customerRatingDTOList = new ArrayList<>();
+
+        //1. Get rating list by ploID
+        List<Rating> ratingList = ratingMapper.getRatingListByPLOID(ploID);
+        if (ratingList.isEmpty()){
+            return customerRatingDTOList;
+        }
+
+        //2. Mapping data
+        for (Rating rating : ratingList){
+            //2.1 Get customer information from rating customer ID
+            Customer customer = customerMapper.getCustomerById(rating.getCustomerID());
+            CustomerRatingDTO customerRatingDTO = new CustomerRatingDTO();
+            customerRatingDTO.setCustomerID(customer.getCustomerID());
+            customerRatingDTO.setCustomerName(customer.getFullName());
+            customerRatingDTO.setRating(rating.getStar());
+            customerRatingDTO.setContent(rating.getContent());
+            customerRatingDTO.setFeedbackDate(Objects.nonNull(rating.getFeedbackDate())?
+                    dateFormat.format(rating.getFeedbackDate()) : "");
+            customerRatingDTOList.add(customerRatingDTO);
+        }
+        return customerRatingDTOList;
+    }
+
+    @Override
+    public String createRating(CreateRatingDTO createRatingDTO) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String id = authentication.getName();
+        Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
+
+        Rating rating = new Rating();
+        rating.setCustomerID(id);
+        rating.setPloID(createRatingDTO.getPloID());
+        rating.setReservationID(createRatingDTO.getReservationID());
+        rating.setStar(createRatingDTO.getStar());
+        rating.setContent(createRatingDTO.getContent());
+        rating.setFeedbackDate(currentTimestamp);
+        ratingMapper.sendRating(rating);
+        return Message.CREATE_RATING_SUCCESS;
     }
 
     private Integer countRecords(String ploId){

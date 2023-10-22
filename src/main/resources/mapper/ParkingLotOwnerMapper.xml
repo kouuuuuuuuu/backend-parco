@@ -43,8 +43,8 @@
         </foreach>
         <if test="keywords != null and keywords != ''">
             AND (
-            fullName like #{keywords} OR
-            parkingName like #{keywords})
+            fullName REGEXP #{keywords} OR
+            parkingName REGEXP #{keywords})
         </if>
         LIMIT
             #{pageSize}
@@ -123,19 +123,25 @@
             #{status}
         </foreach>
         AND (
-            fullName like #{keyword} OR
-            phoneNumber like #{keyword} OR
-            parkingName like #{keyword} OR
-            address like #{keyword} )
+            fullName REGEXP #{keyword} OR
+            phoneNumber REGEXP #{keyword} OR
+            parkingName REGEXP #{keyword} OR
+            address REGEXP #{keyword} )
         LIMIT
             #{pageSize}
         OFFSET
             #{pageNum};
     </select>
 
-    <update id="updateParkingStatusByPloId" parameterType="map">
+    <update id="updateParkingStatusByPloId" parameterType="com.project.Eparking.domain.PLO">
         UPDATE plo
-        SET parkingStatusID = #{parkingStatusID}
+        SET
+            parkingStatusID = #{parkingStatusID},
+            browseContract = #{browseContract},
+            contractDuration = #{contractDuration},
+            contractLink = #{contractLink},
+            latitude = #{latitude},
+            longtitude = #{longtitude}
         WHERE ploID = #{ploID}
     </update>
 
@@ -154,10 +160,10 @@
         </if>
         <if test="keywords != null and keywords != ''">
             AND (
-            fullName like #{keywords} OR
-            phoneNumber like #{keywords} OR
-            parkingName like #{keywords} OR
-            address like #{keywords} )
+            fullName REGEXP #{keywords} OR
+            phoneNumber REGEXP #{keywords} OR
+            parkingName REGEXP #{keywords} OR
+            address REGEXP #{keywords} )
         </if>
     </select>
 
