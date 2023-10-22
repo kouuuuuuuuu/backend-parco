@@ -22,7 +22,8 @@
         description = #{description},
         parkingStatusID = #{parkingStatusID},
         currentSlot = #{currentSlot},
-        parkingStatusID = #{parkingStatusID}
+        parkingStatusID = #{parkingStatusID},
+        registerContract = #{registerParking}
         WHERE ploID = #{ploID}
     </update>
 
@@ -79,6 +80,7 @@
         JOIN Customer C ON R.customerID = C.customerID
         JOIN ReservationMethod RM ON R.methodID = RM.methodID
         WHERE R.statusID = 1 AND R.ploID = #{ploID}
+        ORDER BY R.startTime DESC;
     </select>
 
     <select id="showListVehicleInParking" resultType="com.project.Eparking.domain.response.ResponseShowVehicleInParking">

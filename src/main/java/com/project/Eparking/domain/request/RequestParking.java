@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 @Data
@@ -20,5 +21,5 @@ public class RequestParking {
     private String description;
     private int parkingStatusID;
     private int currentSlot;
-
+    private Timestamp registerParking;
 }
