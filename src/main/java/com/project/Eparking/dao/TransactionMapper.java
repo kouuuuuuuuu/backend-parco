@@ -28,7 +28,6 @@ public interface TransactionMapper {
     void insertTransactionPLOByPLOID(RequestPLOTransactionWithdrawa requestPLOTransactionWithdrawa);
     void insertBatchTransactionMethod(List<TransactionMethod> item);
   
-    List<PLOTransaction> getPagePloTransactionByStatus(List<Integer> status, int pageNum, int pageSize);
 
     Integer countRecords(List<Integer> status, String keywords);
 

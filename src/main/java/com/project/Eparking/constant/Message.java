@@ -29,4 +29,6 @@ public class Message {
     public static final String NOT_FOUND_PLO_TRANSACTION_BY_KEYWORD = "Not Found Withdrawal By Keyword";
     public static final String SEARCH_PLO_TRANSACTION_BY_KEYWORD_SUCCESS = "Search Withdrawal By Keyword";
 
+    public static final String GET_TOP_5_CUSTOMER_FAIL = "Get Top 5 Customer Failure";
+    public static final String GET_TOP_5_CUSTOMER_SUCCESS = "Get Top 5 Customer Success";
 }
