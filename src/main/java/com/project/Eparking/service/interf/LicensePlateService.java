@@ -6,4 +6,10 @@ import java.util.List;
 
 public interface LicensePlateService {
     List<LicensePlate> getListLicensePlateByCustomerID(String customerID);
+
+    List<LicensePlate> getListLicensePlate();
+
+    boolean deleteLicensePlateByLicensePlateID(int licensePlateID);
+
+    String addLicensePlate(String licensePlate);
 }

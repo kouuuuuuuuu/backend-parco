@@ -18,4 +18,17 @@
         FROM Licenseplate
         WHERE customerID = #{customerID};
     </select>
+
+    <delete id="deleteLicensePlate" parameterType="String">
+        DELETE FROM Licenseplate
+        WHERE
+            licensePlateID = #{licensePlateID}
+        AND
+            customerID = #{customerID}
+    </delete>
+
+    <insert id="createLicensePlate" parameterType="String">
+        INSERT INTO licenseplate (customerID,licensePlate)
+        VALUES (#{customerID}, #{licensePlate});
+    </insert>
 </mapper>
