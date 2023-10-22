@@ -38,7 +38,7 @@ public class PaymentImpl implements PaymentService {
     private final TransactionMapper transactionMapper;
     private final CustomerTransactionMapper transactionMapperCustomer;
     private final CustomerMapper customerMapper;
-    private final String urlResponseCustomer= "http://localhost:8000/customer/returnPayment";
+    private final String urlResponseCustomer= "https://eparking.azurewebsites.net/customer/returnPayment";
     public ResponseEntity<?> createPayment(HttpServletRequest req, Payment payment,String UUID) throws UnsupportedEncodingException {
         try {
             String vnp_Version = "2.1.0";
@@ -307,7 +307,7 @@ public class PaymentImpl implements PaymentService {
                     transactionMapperCustomer.insertCustomerTransaction(customerTransactionMapper);
                     Customer customer = userService.getCustomerByCustomerID(request.getParameter("vnp_OrderInfo"));
                     Double amount = Double.parseDouble(request.getParameter("vnp_Amount")) / 100;
-                    Double balance = customer.getWallet_balance() + amount;
+                    Double balance = customer.getWalletBalance() + amount;
                     customerMapper.updateBalance(request.getParameter("vnp_OrderInfo"),balance);
                 }catch (ApiRequestException e){
                     return ResponseEntity.ok("Payment handled failed");

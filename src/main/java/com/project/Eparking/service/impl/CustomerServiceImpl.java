@@ -1,6 +1,7 @@
 package com.project.Eparking.service.impl;
 
 import com.project.Eparking.dao.CustomerMapper;
+import com.project.Eparking.dao.CustomerTransactionMapper;
 import com.project.Eparking.dao.LicensePlateMapper;
 import com.project.Eparking.dao.UserMapper;
 import com.project.Eparking.domain.Customer;
@@ -13,6 +14,7 @@ import com.project.Eparking.domain.request.RequestCustomerTransaction;
 import com.project.Eparking.domain.request.RequestCustomerUpdateProfile;
 import com.project.Eparking.domain.response.Page;
 import com.project.Eparking.domain.response.ResponseCustomer;
+import com.project.Eparking.domain.response.ResponseWalletScreen;
 import com.project.Eparking.exception.ApiRequestException;
 import com.project.Eparking.service.interf.CustomerService;
 import com.project.Eparking.service.interf.PaymentService;
@@ -39,6 +41,7 @@ public class CustomerServiceImpl implements CustomerService {
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
     private final PaymentService paymentService;
+    private final CustomerTransactionMapper transactionMapper;
 
 
     private SimpleDateFormat dateFormat = new SimpleDateFormat("DD/MM/YYYY");
@@ -168,5 +171,20 @@ public class CustomerServiceImpl implements CustomerService {
        }catch (Exception e){
            throw new ApiRequestException("Failed to create payment customer" +e.getMessage());
        }
+    }
+
+    @Override
+    public ResponseWalletScreen responseWalletScreen() {
+        try{
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String id = authentication.getName();
+            ResponseWalletScreen responseWalletScreen = new ResponseWalletScreen();
+            double wallet1 = userMapper.getCustomerByCustomerID(id).getWalletBalance();
+            responseWalletScreen.setWallet_balance(userMapper.getCustomerByCustomerID(id).getWalletBalance());
+            responseWalletScreen.setHistoryBalanceCustomerList(transactionMapper.getListTransactionCustomer(id));
+            return responseWalletScreen;
+        }catch (Exception e){
+            throw new ApiRequestException("Failed to response wallet screen" +e.getMessage());
+        }
     }
 }
