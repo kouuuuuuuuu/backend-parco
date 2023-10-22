@@ -87,6 +87,7 @@
         SET password = #{password}
         WHERE customerID = #{customerID}
     </update>
+
     <update id="updateBalance" parameterType="com.project.Eparking.domain.Customer">
         UPDATE Customer
         Set wallet_balance = #{balance}

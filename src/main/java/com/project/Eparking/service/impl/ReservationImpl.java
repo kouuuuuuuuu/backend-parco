@@ -13,7 +13,6 @@ import com.project.Eparking.dao.UserMapper;
 import com.project.Eparking.domain.PLO;
 import com.project.Eparking.domain.ReservationMethod;
 import com.project.Eparking.domain.dto.Top5CustomerDTO;
-import com.project.Eparking.domain.request.RequestMothANDYear;
 import com.project.Eparking.domain.request.RequestMonthANDYear;
 
 import com.project.Eparking.domain.request.RequestUpdateStatusReservation;
@@ -164,7 +163,7 @@ public class ReservationImpl implements ReservationService {
     }
 
     @Override
-    public List<Top5CustomerDTO> getTop5Customer(RequestMothANDYear requestMonthANDYear) throws ParseException {
+    public List<Top5CustomerDTO> getTop5Customer(RequestMonthANDYear requestMonthANDYear) throws ParseException {
         Date inputDate = new SimpleDateFormat("yyyy-MM").parse(requestMonthANDYear.getMonthAndYear());
         java.sql.Date sqlDate = new java.sql.Date(inputDate.getTime());
         return reservationMapper.getTop5CustomerHaveMostReservation(sqlDate);

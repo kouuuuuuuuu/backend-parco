@@ -4,7 +4,8 @@ package com.project.Eparking.controller.admin;
 import com.project.Eparking.constant.Message;
 import com.project.Eparking.domain.dto.CustomerDTO;
 import com.project.Eparking.domain.dto.Top5CustomerDTO;
-import com.project.Eparking.domain.request.RequestMothANDYear;
+import com.project.Eparking.domain.request.RequestMonthANDYear;
+
 import com.project.Eparking.domain.response.Page;
 import com.project.Eparking.domain.response.Response;
 import com.project.Eparking.exception.ApiRequestException;
@@ -59,7 +60,7 @@ public class CustomerController {
     public Response getTop5CustomerReservation(@RequestParam String month,
                                                @RequestParam String year) throws ParseException {
         try {
-            RequestMothANDYear requestMonthANDYear = new RequestMothANDYear(year + "-" + month);
+            RequestMonthANDYear requestMonthANDYear = new RequestMonthANDYear(year + "-" + month);
             List<Top5CustomerDTO> top5CustomerDTOS = reservationService.getTop5Customer(requestMonthANDYear);
             return new Response (HttpStatus.OK.value(), Message.GET_TOP_5_CUSTOMER_SUCCESS, top5CustomerDTOS);
         }catch (Exception e){
