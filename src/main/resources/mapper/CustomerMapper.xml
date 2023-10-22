@@ -81,4 +81,10 @@
             email = #{profile.email}
         WHERE customerID = #{customerID}
     </update>
+
+    <update id="updatePasswordCustomer" parameterType="com.project.Eparking.domain.Customer">
+        UPDATE Customer
+        SET password = #{password}
+        WHERE customerID = #{customerID}
+    </update>
 </mapper>

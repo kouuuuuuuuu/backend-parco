@@ -16,4 +16,5 @@ public interface CustomerMapper {
 
     List<Customer> getListCustomerByName(String name, int pageNum, int pageSize);
     void updateCustomerProfile(RequestCustomerUpdateProfile profile,String customerID);
+    void updatePasswordCustomer(String password,String customerID);
 }
