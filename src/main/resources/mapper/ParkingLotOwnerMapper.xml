@@ -144,7 +144,7 @@
             COUNT(*)
         FROM
             plo
-        <if test="parkingStatus != null and parkingStatus != ''">
+        <if test="parkingStatus != null and parkingStatus.size() > 0">
             WHERE
                 parkingStatusID
             IN

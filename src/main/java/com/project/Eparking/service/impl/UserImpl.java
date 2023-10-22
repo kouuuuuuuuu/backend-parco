@@ -295,7 +295,8 @@ public class UserImpl implements UserService, UserDetailsService {
                 if(!passwordEncoder.matches(password.getCurrentPassword(),customer.getPassword())){
                     check = false;
                     response.add("The current password is wrong!");
-                } else if (!password.getNewPassword().equals(password.getReNewPassword())) {
+                }
+                if (!password.getNewPassword().equals(password.getReNewPassword())) {
                     check = false;
                     response.add("The new password is not match");
                 }

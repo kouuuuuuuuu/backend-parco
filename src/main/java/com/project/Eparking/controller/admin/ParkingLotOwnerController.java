@@ -2,11 +2,17 @@ package com.project.Eparking.controller.admin;
 
 import com.project.Eparking.constant.Message;
 import com.project.Eparking.domain.dto.*;
+import com.project.Eparking.domain.request.RequestMonthANDYear;
 import com.project.Eparking.domain.response.Page;
 import com.project.Eparking.domain.response.Response;
+import com.project.Eparking.domain.response.ResponseTop5Parking;
+import com.project.Eparking.domain.response.ResponseTop5Revenue;
+import com.project.Eparking.exception.ApiRequestException;
 import com.project.Eparking.service.interf.ParkingLotOwnerService;
+import com.project.Eparking.service.interf.ReservationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,6 +25,7 @@ import java.util.Objects;
 public class ParkingLotOwnerController {
 
     private final ParkingLotOwnerService parkingLotOwnerService;
+    private final ReservationService reservationService;
 
 
     @GetMapping("/getPloByParkingStatus")
@@ -120,6 +127,24 @@ public class ParkingLotOwnerController {
             return new Response(HttpStatus.OK.value(), Message.GET_LIST_REGISTRATION_HISTORY_SUCCESS, listRegistration);
         }catch (Exception e){
             return new Response(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage(), null);
+        }
+    }
+    @GetMapping("/getTop5Parking")
+    public ResponseEntity<List<ResponseTop5Parking>> getTop5ParkingMostReservation(@RequestParam String month, @RequestParam String year){
+        try {
+            RequestMonthANDYear requestMonthANDYear = new RequestMonthANDYear(year + "-" + month);
+            return ResponseEntity.ok(reservationService.getTop5Parking(requestMonthANDYear));
+        }catch (ApiRequestException e){
+            throw e;
+        }
+    }
+    @GetMapping("/getTop5ParkingRevenue")
+    public ResponseEntity<List<ResponseTop5Revenue>> getTop5ParkingMostRevenue(@RequestParam String month, @RequestParam String year){
+        try {
+            RequestMonthANDYear requestMonthANDYear = new RequestMonthANDYear(year + "-" + month);
+            return ResponseEntity.ok(reservationService.getTop5Revenue(requestMonthANDYear));
+        }catch (ApiRequestException e){
+            throw e;
         }
     }
 }

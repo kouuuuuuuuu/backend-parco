@@ -38,4 +38,8 @@ public class Message {
     public static final String DUPLICATE_LICENSE_PLATE = "The License Plate Has Exist";
     public static final String NOT_VALID_LICENSE_PLATE = "The License Plate Has Not Valid" ;
     public static final String ADD_LICENSE_PLATE_SUCCESS = "The License Plate Has Create Success";
+
+    public static final String GET_TOP_5_CUSTOMER_FAIL = "Get Top 5 Customer Failure";
+    public static final String GET_TOP_5_CUSTOMER_SUCCESS = "Get Top 5 Customer Success";
+
 }
