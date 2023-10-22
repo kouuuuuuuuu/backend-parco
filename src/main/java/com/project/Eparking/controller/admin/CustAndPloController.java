@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class CustAndPloController {
     private final CustAndPloService custAndPloService;
 
-    @GetMapping("getTotalCustAndPlo")
+    @GetMapping("/getTotalCustAndPlo")
     public Response getTotalCustAndPlo() {
         CustAndPloDTO totalCustAndPlo = custAndPloService.getTotalCustAndPlo();
         return new Response(HttpStatus.OK.value(), Message.GET_TOTAL_CUST_AND_PLO_SUCCESS, totalCustAndPlo);

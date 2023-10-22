@@ -6,8 +6,10 @@ import com.project.Eparking.dao.ReservationMethodMapper;
 import com.project.Eparking.dao.UserMapper;
 import com.project.Eparking.domain.PLO;
 import com.project.Eparking.domain.ReservationMethod;
+import com.project.Eparking.domain.request.RequestMonthANDYear;
 import com.project.Eparking.domain.request.RequestUpdateStatusReservation;
 import com.project.Eparking.domain.response.ResponseReservation;
+import com.project.Eparking.domain.response.ResponseTop5Parking;
 import com.project.Eparking.exception.ApiRequestException;
 import com.project.Eparking.service.interf.ParkingService;
 import com.project.Eparking.service.interf.ReservationService;
@@ -19,7 +21,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.util.Date;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -95,18 +100,33 @@ public class ReservationImpl implements ReservationService {
 
     @Override
     public String checkOutStatusReservationByReservationID(int reservationID) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String id = authentication.getName();
-        reservationMethodMapper.updateStatusReservation(reservationID,4);
-        long epochMilli = Instant.now().toEpochMilli();
-        Timestamp timestamp = new Timestamp(epochMilli);
-        reservationMethodMapper.updateCheckoutReservation(reservationID,timestamp);
-        PLO plo = userMapper.getPLOByPLOID(id);
-        int currentSlot = plo.getCurrentSlot() - 1;
-        if(currentSlot < 0){
-            return "Something error with currentSlot plo";
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String id = authentication.getName();
+            reservationMethodMapper.updateStatusReservation(reservationID, 4);
+            long epochMilli = Instant.now().toEpochMilli();
+            Timestamp timestamp = new Timestamp(epochMilli);
+            reservationMethodMapper.updateCheckoutReservation(reservationID, timestamp);
+            PLO plo = userMapper.getPLOByPLOID(id);
+            int currentSlot = plo.getCurrentSlot() - 1;
+            if (currentSlot < 0) {
+                return "Something error with currentSlot plo";
+            }
+            parkingMapper.updateCurrentSlot(currentSlot, plo.getPloID());
+            return "Update successfully!";
+        }catch (Exception e){
+            throw new ApiRequestException("Failed checkOut user" + e.getMessage());
         }
-        parkingMapper.updateCurrentSlot(currentSlot,plo.getPloID());
-        return "Update successfully!";
+    }
+
+    @Override
+    public List<ResponseTop5Parking> getTop5Parking(RequestMonthANDYear requestMonthANDYear) {
+        try{
+            Date inputDate = new SimpleDateFormat("yyyy-MM").parse(requestMonthANDYear.getMonthAndYear());
+            java.sql.Date sqlDate = new java.sql.Date(inputDate.getTime());
+            return reservationMapper.getTop5ParkingHaveMostReservation(sqlDate);
+        }catch (Exception e){
+            throw new ApiRequestException("Failed to get top 5 parking have most reservation" + e.getMessage());
+        }
     }
 }
