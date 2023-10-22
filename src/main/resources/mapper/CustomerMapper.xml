@@ -74,4 +74,17 @@
         OFFSET
             #{pageNum};
     </select>
+
+    <update id="updateCustomerProfile" parameterType="com.project.Eparking.domain.request.RequestCustomerUpdateProfile">
+        UPDATE Customer
+            SET fullName = #{profile.fullName},
+            email = #{profile.email}
+        WHERE customerID = #{customerID}
+    </update>
+
+    <update id="updatePasswordCustomer" parameterType="com.project.Eparking.domain.Customer">
+        UPDATE Customer
+        SET password = #{password}
+        WHERE customerID = #{customerID}
+    </update>
 </mapper>

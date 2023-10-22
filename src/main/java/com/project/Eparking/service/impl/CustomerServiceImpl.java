@@ -2,14 +2,22 @@ package com.project.Eparking.service.impl;
 
 import com.project.Eparking.dao.CustomerMapper;
 import com.project.Eparking.dao.LicensePlateMapper;
+import com.project.Eparking.dao.UserMapper;
 import com.project.Eparking.domain.Customer;
 import com.project.Eparking.domain.LicensePlate;
 import com.project.Eparking.domain.dto.CustomerDTO;
-import com.project.Eparking.domain.dto.ListPloDTO;
+import com.project.Eparking.domain.request.RequestChangePassword;
+import com.project.Eparking.domain.request.RequestChangePasswordUser;
+import com.project.Eparking.domain.request.RequestCustomerUpdateProfile;
 import com.project.Eparking.domain.response.Page;
+import com.project.Eparking.domain.response.ResponseCustomer;
+import com.project.Eparking.exception.ApiRequestException;
 import com.project.Eparking.service.interf.CustomerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
@@ -22,8 +30,9 @@ import java.util.List;
 public class CustomerServiceImpl implements CustomerService {
 
     private final CustomerMapper customerMapper;
-
     private final LicensePlateMapper licensePlateMapper;
+    private final UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
 
 
     private SimpleDateFormat dateFormat = new SimpleDateFormat("DD/MM/YYYY");
@@ -95,4 +104,52 @@ public class CustomerServiceImpl implements CustomerService {
         return customerMapper.countRecords(keyword);
     }
 
+    @Override
+    public ResponseCustomer getResponseCustomerByCustomerID() {
+        try{
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String id = authentication.getName();
+            return userMapper.getResponseCustomerByCustomerID(id);
+        }catch (Exception e){
+            throw new ApiRequestException("Failed to get customer profile" +e.getMessage());
+        }
+    }
+
+    @Override
+    public String updateCustomerProfile(RequestCustomerUpdateProfile profile) {
+        try{
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String id = authentication.getName();
+            customerMapper.updateCustomerProfile(profile,id);
+            return "Update profile successfully";
+        }catch (Exception e){
+            throw new ApiRequestException("Failed to update customer profile" +e.getMessage());
+        }
+    }
+
+    @Override
+    public List<String> updatePassswordCustomer(RequestChangePasswordUser customerParam) {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String id = authentication.getName();
+            List<String> response = new ArrayList<>();
+            boolean check = true;
+            Customer customer = userMapper.getCustomerByCustomerID(id);
+            if(!passwordEncoder.matches(customerParam.getCurrentPassword(),customer.getPassword())){
+                check = false;
+                response.add("The current password is wrong!");
+            }
+            if (!customerParam.getNewPassword().equals(customerParam.getReNewPassword())) {
+                check = false;
+                response.add("The new password is not match");
+            }
+            if(check){
+                customerMapper.updatePasswordCustomer(passwordEncoder.encode(customerParam.getNewPassword()),id);
+                response.add("Update new password successfully");
+            }
+            return response;
+        }catch (Exception e){
+            throw new ApiRequestException("Failed to update password customer" +e.getMessage());
+        }
+    }
 }

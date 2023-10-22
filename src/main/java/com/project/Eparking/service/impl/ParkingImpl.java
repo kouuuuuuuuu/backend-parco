@@ -336,7 +336,7 @@ public class ParkingImpl implements ParkingService {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String id = authentication.getName();
             PLO plo = userMapper.getPLOByPLOID(id);
-            if(plo.getBalance() - drawlRequest.getAmount() <0){
+            if(plo.getBalance() - drawlRequest.getAmount() < 0){
                 return "The balance is not enough to withdraw";
             }
             List<HistoryResponse> historyResponses = transactionMapper.historyTransactionByPLOandStatus(id,2);
@@ -353,6 +353,18 @@ public class ParkingImpl implements ParkingService {
             transactionMapper.insertTransactionPLOByPLOID(withdrawa);
             String pattern = "^[^-]+-[^-]+-[^-]+$";
             Pattern regex = Pattern.compile(pattern);
+            if(drawlRequest.getMethod2() == null || drawlRequest.getMethod2().equals("")){
+                Matcher matcher1 = regex.matcher(drawlRequest.getMethod1());
+                if(!matcher1.matches()){
+                    return "Method 1 is not correct format";
+                }
+                PLOTransaction ploTransaction = transactionMapper.getTransactionPLOByID(new RequestGetTransactionPLOByID(id,2));
+                List<TransactionMethod> list = new ArrayList<>();
+                String[] partsMethod1 = drawlRequest.getMethod1().split("-");
+                list.add(new TransactionMethod(null,ploTransaction.getHistoryID(),partsMethod1[0].trim(),partsMethod1[1].trim(),partsMethod1[2].trim()));
+                transactionMapper.insertBatchTransactionMethod(list);
+                return "Withdrawal application has been successfully submitted";
+            }
             Matcher matcher1 = regex.matcher(drawlRequest.getMethod1());
             Matcher matcher2 = regex.matcher(drawlRequest.getMethod1());
             if(!matcher1.matches()){

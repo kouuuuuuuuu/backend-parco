@@ -82,11 +82,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests().antMatchers(GET, "/customer/listCustomerByName").hasAnyAuthority("ADMIN");
         http.authorizeRequests().antMatchers(GET, "/plo/getRegistrationByParkingStatus").hasAnyAuthority("ADMIN");
         http.authorizeRequests().antMatchers(GET, "/plo/getRegistrationHistory").hasAnyAuthority("ADMIN");
+        http.authorizeRequests().antMatchers(GET, "/plo/getTop5Parking").hasAnyAuthority("ADMIN");
+        http.authorizeRequests().antMatchers(GET, "/plo/getTop5ParkingRevenue").hasAnyAuthority("ADMIN");
         http.authorizeRequests().antMatchers(GET, "/ploTransaction/getListWithdrawalByStatus").hasAnyAuthority("ADMIN");
         http.authorizeRequests().antMatchers(GET, "/ploTransaction/updateWithdrawalStatus").hasAnyAuthority("ADMIN");
         http.authorizeRequests().antMatchers(GET, "/custAndPlo/getTotalCustAndPlo").hasAnyAuthority("ADMIN");
         http.authorizeRequests().antMatchers(GET, "/ploTransaction/searchWithdrawalByKeyword").hasAnyAuthority("ADMIN");
         http.authorizeRequests().antMatchers(GET, "/user/getNotifcations").hasAnyAuthority("ADMIN","PLO","CUSTOMER");
+        http.authorizeRequests().antMatchers(GET, "/customer/getProfile").hasAnyAuthority("CUSTOMER");
+        http.authorizeRequests().antMatchers(POST, "/customer/updateProfile").hasAnyAuthority("CUSTOMER");
+        http.authorizeRequests().antMatchers(PUT, "/customer/updatePassword").hasAnyAuthority("CUSTOMER");
         http.authorizeRequests().anyRequest().authenticated();
         http.addFilter(customAuthenticationFilter);
         http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
