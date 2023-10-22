@@ -19,6 +19,18 @@
         WHERE customerID = #{customerID};
     </select>
 
+
+    <select id="getLicensePlateById" resultType="com.project.Eparking.domain.LicensePlate">
+        SELECT
+            licensePlateID,
+            customerID,
+            licensePlate
+        FROM
+            Licenseplate
+        WHERE
+            licensePlateID = #{licensePlateID};
+    </select>
+
     <delete id="deleteLicensePlate" parameterType="String">
         DELETE FROM Licenseplate
         WHERE
@@ -31,4 +43,5 @@
         INSERT INTO licenseplate (customerID,licensePlate)
         VALUES (#{customerID}, #{licensePlate});
     </insert>
+
 </mapper>

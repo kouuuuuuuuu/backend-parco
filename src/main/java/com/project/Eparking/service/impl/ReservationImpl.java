@@ -1,5 +1,11 @@
 package com.project.Eparking.service.impl;
 
+
+import com.project.Eparking.dao.*;
+import com.project.Eparking.domain.*;
+import com.project.Eparking.domain.dto.ReservationDTO;
+import com.project.Eparking.domain.dto.ReservationDetailDTO;
+
 import com.project.Eparking.dao.ParkingMapper;
 import com.project.Eparking.dao.ReservationMapper;
 import com.project.Eparking.dao.ReservationMethodMapper;
@@ -9,12 +15,12 @@ import com.project.Eparking.domain.ReservationMethod;
 import com.project.Eparking.domain.dto.Top5CustomerDTO;
 import com.project.Eparking.domain.request.RequestMothANDYear;
 import com.project.Eparking.domain.request.RequestMonthANDYear;
+
 import com.project.Eparking.domain.request.RequestUpdateStatusReservation;
 import com.project.Eparking.domain.response.ResponseReservation;
 import com.project.Eparking.domain.response.ResponseTop5Parking;
 import com.project.Eparking.domain.response.ResponseTop5Revenue;
 import com.project.Eparking.exception.ApiRequestException;
-import com.project.Eparking.service.interf.ParkingService;
 import com.project.Eparking.service.interf.ReservationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,11 +30,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
+
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.Date;
 import java.util.List;
+
 
 @Service
 @RequiredArgsConstructor
@@ -38,6 +52,10 @@ public class ReservationImpl implements ReservationService {
     private final ReservationMapper reservationMapper;
     private final UserMapper userMapper;
     private final ParkingMapper parkingMapper;
+    private final ParkingLotOwnerMapper parkingLotOwnerMapper;
+    private final LicensePlateMapper licensePlateMapper;
+    private final ReservationStatusMapper reservationStatusMapper;
+    private final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss - dd//MM//yyyy");
     @Override
     @Transactional
     public String checkOutStatusReservation(RequestUpdateStatusReservation reservation) {
@@ -150,5 +168,65 @@ public class ReservationImpl implements ReservationService {
         Date inputDate = new SimpleDateFormat("yyyy-MM").parse(requestMonthANDYear.getMonthAndYear());
         java.sql.Date sqlDate = new java.sql.Date(inputDate.getTime());
         return reservationMapper.getTop5CustomerHaveMostReservation(sqlDate);
+    }
+
+    @Override
+    public List<ReservationDTO> getReservationHistory() {
+        List<ReservationDTO> reservationDTOS = new ArrayList<>();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String id = authentication.getName();
+        int status = 4;
+
+        List<Reservation> responseReservations = reservationMapper.getReservationByStatus(status, id);
+        if (responseReservations.isEmpty()){
+            return reservationDTOS;
+        }
+        for (Reservation reservation : responseReservations){
+            ReservationDTO reservationDTO = new ReservationDTO();
+            PLO plo = parkingLotOwnerMapper.getPloById(reservation.getPloID());
+            ReservationMethod reservationMethod = reservationMethodMapper.getReservationMethodById(reservation.getMethodID());
+            reservationDTO.setReservationID(reservation.getReservationID());
+            reservationDTO.setAddress(plo.getAddress());
+            reservationDTO.setParkingName(plo.getParkingName());
+            reservationDTO.setMethodName(reservationMethod.getMethodName());
+            reservationDTO.setCheckIn(Objects.nonNull(reservation.getCheckIn())?
+                   dateFormat.format(reservation.getCheckIn()) : "");
+            reservationDTO.setCheckOut(Objects.nonNull(reservation.getCheckOut())?
+                    dateFormat.format(reservation.getCheckOut()) : "");
+            reservationDTOS.add(reservationDTO);
+        }
+
+        return reservationDTOS;
+    }
+
+    @Override
+    public ReservationDetailDTO getReservationDetailHistory(int reservationID) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String id = authentication.getName();
+        Reservation reservation = reservationMapper.getReservationDetailById(reservationID, id);
+        if (Objects.isNull(reservation)){
+            return null;
+        }
+        ReservationDetailDTO reservationDetailDTO = new ReservationDetailDTO();
+        PLO plo = parkingLotOwnerMapper.getPloById(reservation.getPloID());
+        ReservationMethod reservationMethod = reservationMethodMapper.getReservationMethodById(reservation.getMethodID());
+        LicensePlate licensePlate = licensePlateMapper.getLicensePlateById(reservation.getLicensePlateID());
+        ReservationStatus reservationStatus = reservationStatusMapper.getReservationStatusByID(reservation.getStatusID());
+        reservationDetailDTO.setFee(reservation.getPrice());
+        reservationDetailDTO.setParkingName(plo.getParkingName());
+        reservationDetailDTO.setAddress(plo.getAddress());
+        reservationDetailDTO.setMethodName(reservationMethod.getMethodName());
+        reservationDetailDTO.setLicensePlate(licensePlate.getLicensePlate());
+        reservationDetailDTO.setStatusName(reservationStatus.getStatusName());
+        reservationDetailDTO.setStartTime(Objects.nonNull(reservation.getStartTime())?
+                dateFormat.format(reservation.getStartTime()) : "");
+        reservationDetailDTO.setEndTime(Objects.nonNull(reservation.getEndTime())?
+                dateFormat.format(reservation.getEndTime()) : "");
+        reservationDetailDTO.setCheckIn(Objects.nonNull(reservation.getCheckIn())?
+                dateFormat.format(reservation.getCheckIn()) : "");
+        reservationDetailDTO.setCheckOut(Objects.nonNull(reservation.getCheckOut())?
+                dateFormat.format(reservation.getCheckOut()) : "");
+
+        return reservationDetailDTO;
     }
 }

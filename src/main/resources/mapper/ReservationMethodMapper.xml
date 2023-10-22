@@ -29,4 +29,16 @@
         WHERE reservationID = #{reservationID};
     </update>
 
+    <select id="getReservationMethodById" resultType="com.project.Eparking.domain.ReservationMethod">
+        SELECT
+            methodID,
+            methodName,
+            startTime,
+            endTime
+        FROM
+            reservationmethod
+        WHERE
+            methodID = #{methodID};
+    </select>
+
 </mapper>
