@@ -1,8 +1,14 @@
 package com.project.Eparking.dao;
 
+
 import com.project.Eparking.domain.Reservation;
+
+import com.project.Eparking.domain.dto.Top5CustomerDTO;
+
 import com.project.Eparking.domain.response.ResponseReservation;
 import com.project.Eparking.domain.response.ResponseRevenuePLO;
+import com.project.Eparking.domain.response.ResponseTop5Parking;
+import com.project.Eparking.domain.response.ResponseTop5Revenue;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.sql.Date;
@@ -18,4 +24,9 @@ public interface ReservationMapper {
     List<Reservation> getReservationByStatus(int status, String customerID);
 
     Reservation getReservationDetailById(int reservationID, String customerID);
+  
+    List<Top5CustomerDTO> getTop5CustomerHaveMostReservation(Date sqlDate);
+    List<ResponseTop5Parking> getTop5ParkingHaveMostReservation(Date inputDate);
+    List<ResponseTop5Revenue> getTop5ParkingHaveHighestRevenue(Date inputDate);
+
 }

@@ -29,65 +29,6 @@ public class PloTransactionServiceImpl implements PloTransactionService {
     private final TransactionMapper transactionMapper;
 
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-    @Override
-    public Page<PloWithdrawalDTO> getListWithdrawalByStatus(int status, int pageNum, int pageSize) {
-        List<PloWithdrawalDTO> ploWithdrawalDTOS = new ArrayList<>();
-
-
-        //1. Get list ploTransaction by status
-        List<Integer> withdrawalStatus = null;
-        if (status == 1 ){
-            withdrawalStatus = List.of(2);
-        }
-
-        if (status == 2){
-            withdrawalStatus = List.of(3,4);
-        }
-
-        int pageNumOffset = pageNum == 0 ? 0 : (pageNum - 1) * pageSize;
-        List<PLOTransaction> listPloTransaction = transactionMapper.getPagePloTransactionByStatus(withdrawalStatus, pageNumOffset, pageSize);
-
-        if (listPloTransaction.isEmpty()){
-            return new Page<PloWithdrawalDTO>(ploWithdrawalDTOS, pageNum, pageSize, 0);
-        }
-
-        //2. Mapping data to DTO
-        for (PLOTransaction ploTransaction : listPloTransaction){
-            List<WithdrawalTransactionMethodDTO> transactionMethodDTOS = new ArrayList<>();
-            //2.1 Get plo by ploId
-            PLO plo = parkingLotOwnerMapper.getPloById(ploTransaction.getPloID());
-
-            //2.2 Get transaction method by history id
-            List<TransactionMethod> transactionMethods = transactionMethodMapper.getListTransactionMethodByHistoryId(ploTransaction.getHistoryID());
-
-            PloWithdrawalDTO ploWithdrawalDTO = new PloWithdrawalDTO();
-            ploWithdrawalDTO.setTransactionID(ploTransaction.getHistoryID());
-            ploWithdrawalDTO.setPloID(plo.getPloID());
-            ploWithdrawalDTO.setStatusName((ploTransaction.getStatus() == 2) ?
-                    "Chờ phê duyệt" : (ploTransaction.getStatus() == 3)? "Chấp nhận" : "Từ chối");
-            ploWithdrawalDTO.setAddress(plo.getAddress());
-            ploWithdrawalDTO.setParkingName(plo.getParkingName());
-            ploWithdrawalDTO.setFullName(plo.getFullName());
-            ploWithdrawalDTO.setDepositAmount(ploTransaction.getDepositAmount());
-            ploWithdrawalDTO.setBalance(plo.getBalance());
-            ploWithdrawalDTO.setTransactionDate(Objects.nonNull(ploTransaction.getTransactionDate())?
-                    dateFormat.format(ploTransaction.getTransactionDate()) : "");
-            ploWithdrawalDTO.setTransactionResultDate(Objects.nonNull(ploTransaction.getTransactionResultDate())?
-                    dateFormat.format(ploTransaction.getTransactionResultDate()) : "");
-            ploWithdrawalDTO.setPhoneNumber(plo.getPhoneNumber());
-
-            for (TransactionMethod transactionMethod : transactionMethods){
-                WithdrawalTransactionMethodDTO transactionMethodDTO = new WithdrawalTransactionMethodDTO();
-                transactionMethodDTO.setBankName(transactionMethod.getBankName());
-                transactionMethodDTO.setBankNumber(transactionMethod.getBankNumber());
-                transactionMethodDTOS.add(transactionMethodDTO);
-            }
-            ploWithdrawalDTO.setTransactionMethod(transactionMethodDTOS);
-            ploWithdrawalDTOS.add(ploWithdrawalDTO);
-        }
-        int totalRecords = this.countRecords(withdrawalStatus, "");
-        return new Page<PloWithdrawalDTO>(ploWithdrawalDTOS, pageNum, pageSize, totalRecords);
-    }
 
     @Override
     public boolean updateWithdrawalStatus(int transactionId, int status) {

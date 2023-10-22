@@ -57,30 +57,6 @@
         </foreach>
     </insert>
 
-    <select id="getPagePloTransactionByStatus" resultType="com.project.Eparking.domain.PLOTransaction">
-        SELECT
-            historyID,
-            ploID,
-            status,
-            depositAmount,
-            transactionDate,
-            transactionResultDate,
-            vnPay_ref,
-            UUID
-        FROM
-            PloTransaction
-        WHERE
-            status
-        IN
-        <foreach collection="status" item="status" open="(" separator="," close=")">
-            #{status}
-        </foreach>
-        LIMIT
-            #{pageSize}
-        OFFSET
-            #{pageNum};
-
-    </select>
 
     <select id="countRecords" resultType="java.lang.Integer">
         SELECT

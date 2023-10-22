@@ -41,6 +41,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/user/checkOTPcode",
                         "/user/updatePassword",
                         "/parking/getReturnPayment",
+                        "/customer/returnPayment",
                         "/swagger-ui.html", "/webjars/**", "/v2/api-docs", "/swagger-resources/**").permitAll();
         http.authorizeRequests().antMatchers(GET, "/PLO/profile").hasAnyAuthority("PLO");
         http.authorizeRequests().antMatchers(PUT, "/PLO/updateProfile").hasAnyAuthority("PLO");
@@ -66,7 +67,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests().antMatchers(GET, "/plo/getPloByParkingStatus").hasAnyAuthority("ADMIN");
         http.authorizeRequests().antMatchers(GET, "/plo/searchListPloByKeywords").hasAnyAuthority("ADMIN");
         http.authorizeRequests().antMatchers(GET, "/plo/getRegistrationDetail").hasAnyAuthority("ADMIN");
-        http.authorizeRequests().antMatchers(GET, "/plo/updatePloStatus").hasAnyAuthority("ADMIN");
+        http.authorizeRequests().antMatchers(PUT, "/plo/updatePloStatus").hasAnyAuthority("ADMIN");
         http.authorizeRequests().antMatchers(GET, "/PLO/getParkingInformation").hasAnyAuthority("PLO");
         http.authorizeRequests().antMatchers(GET, "/parking/getParkingSetting").hasAnyAuthority("PLO");
         http.authorizeRequests().antMatchers(GET, "/parking//showListVehicleInParkingByParkingStatus").hasAnyAuthority("PLO");
@@ -82,13 +83,23 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests().antMatchers(GET, "/customer/listCustomerByName").hasAnyAuthority("ADMIN");
         http.authorizeRequests().antMatchers(GET, "/plo/getRegistrationByParkingStatus").hasAnyAuthority("ADMIN");
         http.authorizeRequests().antMatchers(GET, "/plo/getRegistrationHistory").hasAnyAuthority("ADMIN");
+        http.authorizeRequests().antMatchers(GET, "/plo/getTop5Parking").hasAnyAuthority("ADMIN");
+        http.authorizeRequests().antMatchers(GET, "/plo/getTop5ParkingRevenue").hasAnyAuthority("ADMIN");
         http.authorizeRequests().antMatchers(GET, "/ploTransaction/getListWithdrawalByStatus").hasAnyAuthority("ADMIN");
-        http.authorizeRequests().antMatchers(GET, "/ploTransaction/updateWithdrawalStatus").hasAnyAuthority("ADMIN");
+        http.authorizeRequests().antMatchers(PUT, "/ploTransaction/updateWithdrawalStatus").hasAnyAuthority("ADMIN");
         http.authorizeRequests().antMatchers(GET, "/custAndPlo/getTotalCustAndPlo").hasAnyAuthority("ADMIN");
         http.authorizeRequests().antMatchers(GET, "/ploTransaction/searchWithdrawalByKeyword").hasAnyAuthority("ADMIN");
         http.authorizeRequests().antMatchers(GET, "/user/getNotifcations").hasAnyAuthority("ADMIN","PLO","CUSTOMER");
         http.authorizeRequests().antMatchers(GET, "/reservation/reservationHistory").hasAnyAuthority("CUSTOMER");
         http.authorizeRequests().antMatchers(GET, "/reservation/reservationHistoryDetail").hasAnyAuthority("CUSTOMER");
+        http.authorizeRequests().antMatchers(GET, "/licensePlate/getLicensePlate").hasAnyAuthority("CUSTOMER");
+        http.authorizeRequests().antMatchers(DELETE, "/licensePlate/deleteLicensePlate").hasAnyAuthority("CUSTOMER");
+        http.authorizeRequests().antMatchers(POST, "/licensePlate/addLicensePlate").hasAnyAuthority("CUSTOMER");
+        http.authorizeRequests().antMatchers(GET, "/customer/getProfile").hasAnyAuthority("CUSTOMER");
+        http.authorizeRequests().antMatchers(POST, "/customer/updateProfile").hasAnyAuthority("CUSTOMER");
+        http.authorizeRequests().antMatchers(PUT, "/customer/updatePassword").hasAnyAuthority("CUSTOMER");
+        http.authorizeRequests().antMatchers(POST, "/customer/createPayment").hasAnyAuthority("CUSTOMER");
+        http.authorizeRequests().antMatchers(GET, "/customer/walletScreen").hasAnyAuthority("CUSTOMER");
         http.authorizeRequests().anyRequest().authenticated();
         http.addFilter(customAuthenticationFilter);
         http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);

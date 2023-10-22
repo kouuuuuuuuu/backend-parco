@@ -17,21 +17,6 @@ public class PloTransactionController {
 
     private final PloTransactionService ploTransactionService;
 
-    @GetMapping("/getListWithdrawalByStatus")
-    public Response getListWithdrawalByStatus(@RequestParam("status") int status,
-                                              @RequestParam(name = "pageNum", defaultValue = "1") int pageNum,
-                                              @RequestParam(name = "pageSize", defaultValue = "5") int pageSize){
-        try {
-            Page<PloWithdrawalDTO> pageListWithdrawal = ploTransactionService.getListWithdrawalByStatus(status, pageNum, pageSize);
-            if (pageListWithdrawal.getContent().isEmpty()){
-                return new Response(HttpStatus.NOT_FOUND.value(), Message.NOT_FOUND_PLO_WITHDRAWAL_BY_STATUS, null);
-            }
-            return new Response(HttpStatus.OK.value(), Message.GET_LIST_PLO_WITHDRAWAL_SUCCESS, pageListWithdrawal);
-        }catch (Exception e){
-            return new Response(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage(), null);
-        }
-    }
-
     @PutMapping("/updateWithdrawalStatus")
     public Response updateWithdrawalStatus(@RequestParam("status") int status,
                                            @RequestParam("transactionID") int transactionId){
