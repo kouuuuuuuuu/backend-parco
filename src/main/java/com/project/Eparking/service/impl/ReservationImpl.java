@@ -76,7 +76,7 @@ public class ReservationImpl implements ReservationService {
             PLO plo = userMapper.getPLOByPLOID(responseReservation.getPloID());
             int currentSlot = plo.getCurrentSlot() - 1;
             if(currentSlot < 0){
-                return "Something error with currentSlot plo";
+                throw new ApiRequestException("Something error with currentSlot plo");
             }
             parkingMapper.updateCurrentSlot(currentSlot,plo.getPloID());
             response = "Update successfully!";
