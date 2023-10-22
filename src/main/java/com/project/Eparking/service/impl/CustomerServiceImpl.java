@@ -82,7 +82,7 @@ public class CustomerServiceImpl implements CustomerService {
 
         int pageNumOffset = pageNum == 0 ? 0 : (pageNum - 1) * pageSize;
         //1. Get list customer from database
-        String searchKeyword = "%" + name.trim() + "%";
+        String searchKeyword =name.trim();
         List<Customer> listCustomers = customerMapper.getListCustomerByName(searchKeyword, pageNumOffset, pageSize);
         if(listCustomers.isEmpty()){
             return new Page<CustomerDTO>(customerDTOList, pageNum, pageSize, 0);

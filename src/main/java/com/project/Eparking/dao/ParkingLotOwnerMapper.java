@@ -13,7 +13,7 @@ public interface ParkingLotOwnerMapper {
 
     List<PLO> getListPloByParkingStatusWithPagination(List<Integer> parkingStatus, int pageNum, int pageSize, String keywords);
 
-    void updateParkingStatusByPloId(String ploID, int parkingStatusID);
+    void updateParkingStatusByPloId(PLO plo);
 
     Integer countRecords(List<Integer> parkingStatus, String keywords);
 

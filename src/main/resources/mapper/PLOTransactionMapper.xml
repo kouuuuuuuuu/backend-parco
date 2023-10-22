@@ -73,8 +73,8 @@
             </foreach>
             <if test="keywords != null and !keywords.isEmpty()">
                 AND (
-                pl.fullName like #{keywords} OR
-                pl.parkingName like #{keywords})
+                pl.fullName REGEXP #{keywords} OR
+                pl.parkingName REGEXP #{keywords})
             </if>
     </select>
 
@@ -125,8 +125,8 @@
             </foreach>
             <if test="keyword != null and !keyword.isEmpty()">
                 AND (
-                pl.fullName like #{keyword} OR
-                pl.parkingName like #{keyword})
+                pl.fullName REGEXP #{keyword} OR
+                pl.parkingName REGEXP #{keyword})
             </if>
         LIMIT
             #{pageSize}

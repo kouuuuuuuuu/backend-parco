@@ -1,14 +1,17 @@
 package com.project.Eparking.domain.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
-@Getter
-@Setter
+import java.math.BigDecimal;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class UpdatePloStatusDTO {
     private String ploId;
     private int newStatus;
-
-    public UpdatePloStatusDTO() {
-    }
+    private String contractLink;
+    private int contractDuration;
+    private BigDecimal latitude;
+    private BigDecimal longtitude;
 }

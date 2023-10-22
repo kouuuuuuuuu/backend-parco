@@ -67,7 +67,7 @@ public class PloTransactionServiceImpl implements PloTransactionService {
         }
 
         int pageNumOffset = pageNum == 0 ? 0 : (pageNum - 1) * pageSize;
-        String searchKeyword = "%" + keywords.trim() + "%";
+        String searchKeyword =keywords.trim();
         List<PLOTransaction> ploTransactions = transactionMapper.searchPloTransactionByKeyword(withdrawalStatus, searchKeyword, pageNumOffset, pageSize);
         if (ploTransactions.isEmpty()){
             return new Page<PloWithdrawalDTO>(ploWithdrawalDTOS, pageNum, pageSize, 0);
