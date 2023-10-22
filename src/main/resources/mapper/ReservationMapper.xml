@@ -48,7 +48,7 @@
     </select>
 
     <select id="getSumByDateANDPLOID" resultType="Double">
-        SELECT SUM(price) AS totalPrice
+        SELECT IFNULL(SUM(price), 0) AS totalPrice
         FROM Reservation
         WHERE startTime >= #{startTime} AND startTime <![CDATA[<= CONCAT(#{startTime2th}, ' 23:59:59') AND ploID = #{ploID}]]>
     </select>
@@ -131,6 +131,7 @@
             statusID = #{status}
         AND
             customerID = #{customerID};
+        ORDER BY startTime DESC;
     </select>
 
     <select id="getReservationDetailById" resultType="com.project.Eparking.domain.Reservation">
@@ -153,5 +154,20 @@
         AND
             customerID = #{customerID};
     </select>
-
+    <select id="getReservationByReservationID" resultType="com.project.Eparking.domain.Reservation">
+        SELECT
+            reservationID,
+            customerID,
+            ploID,
+            statusID,
+            licensePlateID,
+            startTime,
+            endTime,
+            price,
+            checkOut,
+            checkIn,
+            methodID
+        FROM Reservation
+        WHERE reservationID = #{reservationID}
+    </select>
 </mapper>

@@ -64,7 +64,10 @@ public class ReservationImpl implements ReservationService {
             String id = authentication.getName();
             ResponseReservation responseReservation = reservationMapper.findReservationByLicensePlate(id,2,reservation.getLicensePlate());
             if(responseReservation == null){
-                return "Dont have any reservation with license plate";
+                throw new ApiRequestException("Dont have any reservation with license plate");
+            }
+            if(responseReservation.getStatus() != 2 || responseReservation.getStatus() != 3){
+                throw new ApiRequestException("Wrong status");
             }
             reservationMethodMapper.updateStatusReservation(responseReservation.getReservationID(),4);
             long epochMilli = Instant.now().toEpochMilli();
@@ -78,7 +81,7 @@ public class ReservationImpl implements ReservationService {
             parkingMapper.updateCurrentSlot(currentSlot,plo.getPloID());
             response = "Update successfully!";
         }catch (Exception e){
-            throw new ApiRequestException("Failed checkIn user" + e.getMessage());
+            throw new ApiRequestException("Failed checkOut user." + e.getMessage());
         }
         return response;
     }
@@ -91,7 +94,10 @@ public class ReservationImpl implements ReservationService {
             String id = authentication.getName();
             ResponseReservation responseReservation = reservationMapper.findReservationByLicensePlate(id,1,reservation.getLicensePlate());
             if(responseReservation == null){
-                return "Dont have any reservation with license plate";
+                throw new ApiRequestException("Dont have any reservation with license plate");
+            }
+            if(responseReservation.getStatus() != 1){
+                throw new ApiRequestException("Wrong status");
             }
             reservationMethodMapper.updateStatusReservation(responseReservation.getReservationID(), 2);
             long epochMilli = Instant.now().toEpochMilli();
@@ -99,7 +105,7 @@ public class ReservationImpl implements ReservationService {
             reservationMethodMapper.updateCheckinReservation(responseReservation.getReservationID(),timestamp);;
             response = "Update successfully!";
         }catch (Exception e){
-            throw new ApiRequestException("Failed checkIn user" + e.getMessage());
+            throw new ApiRequestException("Failed checkIn user." + e.getMessage());
         }
         return response;
     }
@@ -107,21 +113,27 @@ public class ReservationImpl implements ReservationService {
     @Override
     public String checkInStatusReservationByReservationID(int reservationID) {
         try{
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String id = authentication.getName();
+            Reservation reservation = reservationMapper.getReservationByReservationID(reservationID);
+            if(reservation.getStatusID() != 1){
+                throw new ApiRequestException("Wrong status");
+            }
             reservationMethodMapper.updateStatusReservation(reservationID, 2);
             long epochMilli = Instant.now().toEpochMilli();
             Timestamp timestamp = new Timestamp(epochMilli);
             reservationMethodMapper.updateCheckinReservation(reservationID,timestamp);
             return "Update successfully!";
         }catch (Exception e){
-            throw new ApiRequestException("Failed checkIn user" + e.getMessage());
+            throw new ApiRequestException("Failed checkIn user." + e.getMessage());
         }
     }
 
     @Override
     public String checkOutStatusReservationByReservationID(int reservationID) {
         try {
+            Reservation reservation = reservationMapper.getReservationByReservationID(reservationID);
+            if(reservation.getStatusID() != 2 || reservation.getStatusID() != 3){
+                throw new ApiRequestException("Wrong status");
+            }
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String id = authentication.getName();
             reservationMethodMapper.updateStatusReservation(reservationID, 4);
@@ -131,12 +143,12 @@ public class ReservationImpl implements ReservationService {
             PLO plo = userMapper.getPLOByPLOID(id);
             int currentSlot = plo.getCurrentSlot() - 1;
             if (currentSlot < 0) {
-                return "Something error with currentSlot plo";
+                throw new ApiRequestException("Something error with currentSlot plo");
             }
             parkingMapper.updateCurrentSlot(currentSlot, plo.getPloID());
             return "Update successfully!";
         }catch (Exception e){
-            throw new ApiRequestException("Failed checkOut user" + e.getMessage());
+            throw new ApiRequestException("Failed checkOut user." + e.getMessage());
         }
     }
 
