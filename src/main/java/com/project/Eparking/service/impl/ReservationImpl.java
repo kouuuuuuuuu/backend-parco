@@ -10,6 +10,7 @@ import com.project.Eparking.domain.request.RequestMonthANDYear;
 import com.project.Eparking.domain.request.RequestUpdateStatusReservation;
 import com.project.Eparking.domain.response.ResponseReservation;
 import com.project.Eparking.domain.response.ResponseTop5Parking;
+import com.project.Eparking.domain.response.ResponseTop5Revenue;
 import com.project.Eparking.exception.ApiRequestException;
 import com.project.Eparking.service.interf.ParkingService;
 import com.project.Eparking.service.interf.ReservationService;
@@ -125,6 +126,17 @@ public class ReservationImpl implements ReservationService {
             Date inputDate = new SimpleDateFormat("yyyy-MM").parse(requestMonthANDYear.getMonthAndYear());
             java.sql.Date sqlDate = new java.sql.Date(inputDate.getTime());
             return reservationMapper.getTop5ParkingHaveMostReservation(sqlDate);
+        }catch (Exception e){
+            throw new ApiRequestException("Failed to get top 5 parking have most reservation" + e.getMessage());
+        }
+    }
+
+    @Override
+    public List<ResponseTop5Revenue> getTop5Revenue(RequestMonthANDYear requestMonthANDYear) {
+        try{
+            Date inputDate = new SimpleDateFormat("yyyy-MM").parse(requestMonthANDYear.getMonthAndYear());
+            java.sql.Date sqlDate = new java.sql.Date(inputDate.getTime());
+            return reservationMapper.getTop5ParkingHaveHighestRevenue(sqlDate);
         }catch (Exception e){
             throw new ApiRequestException("Failed to get top 5 parking have most reservation" + e.getMessage());
         }

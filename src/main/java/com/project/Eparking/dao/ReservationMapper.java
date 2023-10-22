@@ -3,6 +3,7 @@ package com.project.Eparking.dao;
 import com.project.Eparking.domain.response.ResponseReservation;
 import com.project.Eparking.domain.response.ResponseRevenuePLO;
 import com.project.Eparking.domain.response.ResponseTop5Parking;
+import com.project.Eparking.domain.response.ResponseTop5Revenue;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.sql.Date;
@@ -15,4 +16,5 @@ public interface ReservationMapper {
     ResponseRevenuePLO getReservationMethodByMethodID(String ploID);
     Double getSumByDateANDPLOID(Date startTime,Date startTime2th,String ploID);
     List<ResponseTop5Parking> getTop5ParkingHaveMostReservation(Date inputDate);
+    List<ResponseTop5Revenue> getTop5ParkingHaveHighestRevenue(Date inputDate);
 }
