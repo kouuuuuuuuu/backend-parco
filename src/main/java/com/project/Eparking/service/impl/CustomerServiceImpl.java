@@ -7,6 +7,7 @@ import com.project.Eparking.domain.Customer;
 import com.project.Eparking.domain.LicensePlate;
 import com.project.Eparking.domain.dto.CustomerDTO;
 import com.project.Eparking.domain.dto.ListPloDTO;
+import com.project.Eparking.domain.request.RequestCustomerUpdateProfile;
 import com.project.Eparking.domain.response.Page;
 import com.project.Eparking.domain.response.ResponseCustomer;
 import com.project.Eparking.exception.ApiRequestException;
@@ -109,6 +110,18 @@ public class CustomerServiceImpl implements CustomerService {
             return userMapper.getResponseCustomerByCustomerID(id);
         }catch (Exception e){
             throw new ApiRequestException("Failed to get customer profile" +e.getMessage());
+        }
+    }
+
+    @Override
+    public String updateCustomerProfile(RequestCustomerUpdateProfile profile) {
+        try{
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String id = authentication.getName();
+            customerMapper.updateCustomerProfile(profile,id);
+            return "Update profile successfully";
+        }catch (Exception e){
+            throw new ApiRequestException("Failed to update customer profile" +e.getMessage());
         }
     }
 }
