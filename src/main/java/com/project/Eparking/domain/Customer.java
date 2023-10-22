@@ -10,7 +10,7 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 public class Customer {
     private String customerID;
-    private Double wallet_balance;
+    private double wallet_balance;
     private String identify;
     private String role;
     private String phoneNumber;

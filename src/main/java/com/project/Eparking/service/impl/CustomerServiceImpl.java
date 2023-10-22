@@ -5,21 +5,26 @@ import com.project.Eparking.dao.LicensePlateMapper;
 import com.project.Eparking.dao.UserMapper;
 import com.project.Eparking.domain.Customer;
 import com.project.Eparking.domain.LicensePlate;
+import com.project.Eparking.domain.Payment;
 import com.project.Eparking.domain.dto.CustomerDTO;
 import com.project.Eparking.domain.request.RequestChangePassword;
 import com.project.Eparking.domain.request.RequestChangePasswordUser;
+import com.project.Eparking.domain.request.RequestCustomerTransaction;
 import com.project.Eparking.domain.request.RequestCustomerUpdateProfile;
 import com.project.Eparking.domain.response.Page;
 import com.project.Eparking.domain.response.ResponseCustomer;
 import com.project.Eparking.exception.ApiRequestException;
 import com.project.Eparking.service.interf.CustomerService;
+import com.project.Eparking.service.interf.PaymentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +38,7 @@ public class CustomerServiceImpl implements CustomerService {
     private final LicensePlateMapper licensePlateMapper;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
+    private final PaymentService paymentService;
 
 
     private SimpleDateFormat dateFormat = new SimpleDateFormat("DD/MM/YYYY");
@@ -151,5 +157,16 @@ public class CustomerServiceImpl implements CustomerService {
         }catch (Exception e){
             throw new ApiRequestException("Failed to update password customer" +e.getMessage());
         }
+    }
+
+    @Override
+    public ResponseEntity<?> createPaymentCustomer(HttpServletRequest req,RequestCustomerTransaction transaction) {
+       try{
+           Payment payment = new Payment();
+           payment.setAmountParam(String.valueOf(transaction.getAmount()));
+           return paymentService.createPaymentCustomer(req,payment);
+       }catch (Exception e){
+           throw new ApiRequestException("Failed to create payment customer" +e.getMessage());
+       }
     }
 }

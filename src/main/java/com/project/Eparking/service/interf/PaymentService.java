@@ -9,4 +9,6 @@ import java.io.UnsupportedEncodingException;
 public interface PaymentService {
     ResponseEntity<?> createPayment(HttpServletRequest req, Payment payment,String UUID) throws UnsupportedEncodingException;
     ResponseEntity<?> paymentReturn(HttpServletRequest request) throws UnsupportedEncodingException;
+    ResponseEntity<?> createPaymentCustomer(HttpServletRequest req, Payment payment) throws UnsupportedEncodingException;
+    ResponseEntity<?> paymentReturnCustomer(HttpServletRequest request) throws UnsupportedEncodingException;
 }

@@ -298,7 +298,7 @@ public class ParkingImpl implements ParkingService {
     }
 
     @Override
-    public Map<String, Object> paymentParkingRegister(HttpServletRequest req) {
+    public Map<String, Object>  paymentParkingRegister(HttpServletRequest req) {
         try{
             Payment payment = new Payment();
             payment.setAmountParam("350000");

@@ -37,6 +37,7 @@
 
         <mapper resource="mapper/TransactionMethodMapper.xml"></mapper>
 
+        <mapper resource="mapper/CustomerTransaction.xml"></mapper>
     </mappers>
 
 </configuration>

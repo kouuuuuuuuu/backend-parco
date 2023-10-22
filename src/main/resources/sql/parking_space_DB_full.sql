@@ -253,7 +253,7 @@ REFERENCES PLO(ploID);
 
 -- ('CUST000000010', 850.0, 'some_identity_data_10', 'customer', '1234567800', 'Nguyễn Thị K', 'hashed_password_10', 'nguyen.thi.k@example.com', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 1);
 
--- INSERT INTO CustomerTransaction (depositAmount, customerID, bankCode, status)
+-- INSERT INTO CustomerTransaction.xml (depositAmount, customerID, bankCode, status)
 -- VALUES
 -- (100.0, 'CUST000000001', 'XYZBank', 1),
 
