@@ -60,8 +60,8 @@ public class ParkingImpl implements ParkingService {
             requestParking.setDescription(registerParking.getDescription());
             requestParking.setParkingStatusID(2);
             requestParking.setCurrentSlot(0);
-            Long time = System.currentTimeMillis();
-            requestParking.setRegisterParking(new Timestamp(time));
+            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+            requestParking.setRegisterContract(timestamp);
             parkingMapper.registerParking(requestParking);
             if (!registerParking.getImages().isEmpty()) {
                 imageMapper.deleteImageByPLOID(id);
