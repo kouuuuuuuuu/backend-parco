@@ -1,7 +1,9 @@
 package com.project.Eparking.service.interf;
 
 import com.project.Eparking.domain.dto.*;
+import com.project.Eparking.domain.request.RequestMonthANDYear;
 import com.project.Eparking.domain.response.Page;
+import com.project.Eparking.domain.response.Response4week;
 
 public interface ParkingLotOwnerService {
 
@@ -11,6 +13,6 @@ public interface ParkingLotOwnerService {
     Page<ListPloDTO> getListRegistrationByParkingStatus(int status, int pageNum, int pageSize, String keywords);
     boolean updatePloStatusById(UpdatePloStatusDTO updatePloStatusDTO);
     Page<ListPloDTO> getPloByParkingStatus(int status, int pageNum, int pageSize);
-
     Page<RegistrationHistoryDTO> getListRegistrationHistory(int status, int pageNum, int pageSize, String keywords);
+    Response4week chartPLO(RequestMonthANDYear requestMonthANDYear);
 }

@@ -6,7 +6,10 @@ import com.project.Eparking.domain.dto.*;
 import com.project.Eparking.domain.Image;
 import com.project.Eparking.domain.ParkingMethod;
 import com.project.Eparking.domain.ReservationMethod;
+import com.project.Eparking.domain.request.RequestMonthANDYear;
 import com.project.Eparking.domain.response.Page;
+import com.project.Eparking.domain.response.Response4week;
+import com.project.Eparking.exception.ApiRequestException;
 import com.project.Eparking.service.interf.ParkingLotOwnerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -347,5 +350,16 @@ public class ParkingLotOwnerServiceImpl implements ParkingLotOwnerService {
 
     private Integer countRecords(List<Integer> parkingStatus, String keywords){
         return parkingLotOwnerMapper.countRecords(parkingStatus, keywords);
+    }
+
+    @Override
+    public Response4week chartPLO(RequestMonthANDYear requestMonthANDYear) {
+        try {
+            Date inputDate = new SimpleDateFormat("yyyy-MM").parse(requestMonthANDYear.getMonthAndYear());
+            java.sql.Date sqlDate = new java.sql.Date(inputDate.getTime());
+            return parkingLotOwnerMapper.countRecordsByWeekPLO(sqlDate);
+        }catch (Exception e){
+            throw new ApiRequestException("Failed to get chart week for PLO" +e.getMessage());
+        }
     }
 }
