@@ -8,11 +8,13 @@ import com.project.Eparking.domain.request.RequestMonthANDYear;
 
 import com.project.Eparking.domain.response.Page;
 import com.project.Eparking.domain.response.Response;
+import com.project.Eparking.domain.response.Response4week;
 import com.project.Eparking.exception.ApiRequestException;
 import com.project.Eparking.service.interf.CustomerService;
 import com.project.Eparking.service.interf.ReservationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
@@ -67,5 +69,13 @@ public class CustomerController {
             return new Response(HttpStatus.INTERNAL_SERVER_ERROR.value(), Message.GET_TOP_5_CUSTOMER_FAIL, null);
         }
     }
-
+    @GetMapping("/registerChartCustomer")
+    public ResponseEntity<Response4week> getCustomerRegisterChart(@RequestParam String month,@RequestParam String year){
+        try{
+            RequestMonthANDYear requestMonthANDYear = new RequestMonthANDYear(year + "-" + month);
+            return ResponseEntity.ok(customerService.countRecordsByWeekCustomer(requestMonthANDYear));
+        }catch (ApiRequestException e){
+            throw e;
+        }
+    }
 }
