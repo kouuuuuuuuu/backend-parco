@@ -3,10 +3,7 @@ package com.project.Eparking.controller.admin;
 import com.project.Eparking.constant.Message;
 import com.project.Eparking.domain.dto.*;
 import com.project.Eparking.domain.request.RequestMonthANDYear;
-import com.project.Eparking.domain.response.Page;
-import com.project.Eparking.domain.response.Response;
-import com.project.Eparking.domain.response.ResponseTop5Parking;
-import com.project.Eparking.domain.response.ResponseTop5Revenue;
+import com.project.Eparking.domain.response.*;
 import com.project.Eparking.exception.ApiRequestException;
 import com.project.Eparking.service.interf.ParkingLotOwnerService;
 import com.project.Eparking.service.interf.ReservationService;
@@ -143,6 +140,15 @@ public class ParkingLotOwnerController {
         try {
             RequestMonthANDYear requestMonthANDYear = new RequestMonthANDYear(year + "-" + month);
             return ResponseEntity.ok(reservationService.getTop5Revenue(requestMonthANDYear));
+        }catch (ApiRequestException e){
+            throw e;
+        }
+    }
+    @GetMapping("/getChartPLO")
+    public ResponseEntity<Response4week> getPLORegisterChart(@RequestParam String month, @RequestParam String year){
+        try{
+            RequestMonthANDYear requestMonthANDYear = new RequestMonthANDYear(year + "-" + month);
+            return ResponseEntity.ok(parkingLotOwnerService.chartPLO(requestMonthANDYear));
         }catch (ApiRequestException e){
             throw e;
         }
