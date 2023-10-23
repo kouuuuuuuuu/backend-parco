@@ -178,17 +178,17 @@
     <select id="countRecordsByWeekPLO" resultType="com.project.Eparking.domain.response.Response4week">
         <![CDATA[
             SELECT
-                SUM(CASE WHEN browseContract >= DATE_ADD(STR_TO_DATE(CONCAT(#{year}, '-', #{month}, '-01'), '%Y-%m-%d'), INTERVAL 0 WEEK)
-                              AND browseContract < DATE_ADD(STR_TO_DATE(CONCAT(#{year}, '-', #{month}, '-01'), '%Y-%m-%d'), INTERVAL 1 WEEK) THEN 1 ELSE 0 END) AS Week1,
+                SUM(CASE WHEN browseContract >= DATE_ADD(STR_TO_DATE(CONCAT(#{year}, '-', #{month}, '-01 00:00:00'), '%Y-%m-%d'), INTERVAL 0 WEEK)
+                              AND browseContract < DATE_ADD(STR_TO_DATE(CONCAT(#{year}, '-', #{month}, '-01 00:00:00'), '%Y-%m-%d'), INTERVAL 1 WEEK) THEN 1 ELSE 0 END) AS Week1,
 
-                SUM(CASE WHEN browseContract >= DATE_ADD(STR_TO_DATE(CONCAT(#{year}, '-', #{month}, '-01'), '%Y-%m-%d'), INTERVAL 1 WEEK)
-                              AND browseContract < DATE_ADD(STR_TO_DATE(CONCAT(#{year}, '-', #{month}, '-01'), '%Y-%m-%d'), INTERVAL 2 WEEK) THEN 1 ELSE 0 END) AS Week2,
+                SUM(CASE WHEN browseContract >= DATE_ADD(STR_TO_DATE(CONCAT(#{year}, '-', #{month}, '-01 00:00:00'), '%Y-%m-%d'), INTERVAL 1 WEEK)
+                              AND browseContract < DATE_ADD(STR_TO_DATE(CONCAT(#{year}, '-', #{month}, '-01 00:00:00'), '%Y-%m-%d'), INTERVAL 2 WEEK) THEN 1 ELSE 0 END) AS Week2,
 
-                SUM(CASE WHEN browseContract >= DATE_ADD(STR_TO_DATE(CONCAT(#{year}, '-', #{month}, '-01'), '%Y-%m-%d'), INTERVAL 2 WEEK)
-                              AND browseContract < DATE_ADD(STR_TO_DATE(CONCAT(#{year}, '-', #{month}, '-01'), '%Y-%m-%d'), INTERVAL 3 WEEK) THEN 1 ELSE 0 END) AS Week3,
+                SUM(CASE WHEN browseContract >= DATE_ADD(STR_TO_DATE(CONCAT(#{year}, '-', #{month}, '-01 00:00:00'), '%Y-%m-%d'), INTERVAL 2 WEEK)
+                              AND browseContract < DATE_ADD(STR_TO_DATE(CONCAT(#{year}, '-', #{month}, '-01 00:00:00'), '%Y-%m-%d'), INTERVAL 3 WEEK) THEN 1 ELSE 0 END) AS Week3,
 
-                SUM(CASE WHEN browseContract >= DATE_ADD(STR_TO_DATE(CONCAT(#{year}, '-', #{month}, '-01'), '%Y-%m-%d'), INTERVAL 3 WEEK)
-                              AND browseContract < DATE_ADD(STR_TO_DATE(CONCAT(#{year}, '-', #{month}, '-01'), '%Y-%m-%d'), INTERVAL 4 WEEK) THEN 1 ELSE 0 END) AS Week4
+                SUM(CASE WHEN browseContract >= DATE_ADD(STR_TO_DATE(CONCAT(#{year}, '-', #{month}, '-01 00:00:00'), '%Y-%m-%d'), INTERVAL 3 WEEK)
+                              AND browseContract < DATE_ADD(STR_TO_DATE(CONCAT(#{year}, '-', #{month}, '-01 00:00:00'), '%Y-%m-%d'), INTERVAL 4 WEEK) THEN 1 ELSE 0 END) AS Week4
             FROM PLO
             WHERE MONTH(browseContract) = MONTH(#{inputDate}) AND YEAR(browseContract) = YEAR(#{inputDate});
         ]]>
