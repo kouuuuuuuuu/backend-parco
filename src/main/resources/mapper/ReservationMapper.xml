@@ -131,7 +131,6 @@
             statusID = #{status}
         AND
             customerID = #{customerID};
-        ORDER BY startTime DESC;
     </select>
 
     <select id="getReservationDetailById" resultType="com.project.Eparking.domain.Reservation">
