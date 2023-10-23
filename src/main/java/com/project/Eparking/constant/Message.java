@@ -48,4 +48,7 @@ public class Message {
     public static final String NOT_FOUND_RATING_OF_CUSTOMER = "Not Found Rating List";
     public static final String ERROR_CREATE_RATING = "Error When Send Rating";
     public static final String CREATE_RATING_SUCCESS = "Send Rating Success";
+    public static final String GET_CUSTOMER_BALANCE_FAIL = "Get Customer Wallet Fail";
+    public static final String GET_CUSTOMER_BALANCE_SUCCESS = "Get Customer Wallet Success";
+    public static final String ERROR_GET_CUSTOMER_BALANCE = "Error When Get Customer Wallet";
 }

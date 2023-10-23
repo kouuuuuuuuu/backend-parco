@@ -8,6 +8,7 @@ import com.project.Eparking.domain.Customer;
 import com.project.Eparking.domain.LicensePlate;
 import com.project.Eparking.domain.Payment;
 import com.project.Eparking.domain.dto.CustomerDTO;
+import com.project.Eparking.domain.dto.CustomerWalletDTO;
 import com.project.Eparking.domain.request.RequestChangePassword;
 import com.project.Eparking.domain.request.RequestChangePasswordUser;
 import com.project.Eparking.domain.request.RequestCustomerTransaction;
@@ -44,7 +45,7 @@ public class CustomerServiceImpl implements CustomerService {
     private final CustomerTransactionMapper transactionMapper;
 
 
-    private SimpleDateFormat dateFormat = new SimpleDateFormat("DD/MM/YYYY");
+    private SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
     @Override
     public Page<CustomerDTO> getListCustomer(int pageNum, int pageSize) {
         List<CustomerDTO> customerDTOList = new ArrayList<>();
@@ -186,5 +187,16 @@ public class CustomerServiceImpl implements CustomerService {
         }catch (Exception e){
             throw new ApiRequestException("Failed to response wallet screen" +e.getMessage());
         }
+    }
+
+    @Override
+    public CustomerWalletDTO getCustomerBalance() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String id = authentication.getName();
+        Customer customer = customerMapper.getCustomerBalance(id);
+        CustomerWalletDTO customerWalletDTO = new CustomerWalletDTO();
+//        customerWalletDTO.setCustomerID(customer.getCustomerID());
+        customerWalletDTO.setWallet_balance(customer.getWalletBalance());
+        return  customerWalletDTO;
     }
 }

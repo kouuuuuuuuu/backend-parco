@@ -18,4 +18,6 @@ public interface CustomerMapper {
     void updateCustomerProfile(RequestCustomerUpdateProfile profile,String customerID);
     void updatePasswordCustomer(String password,String customerID);
     void updateBalance(String customerID,Double balance);
+
+    Customer getCustomerBalance(String customerID);
 }
