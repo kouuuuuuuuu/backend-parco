@@ -21,5 +21,5 @@ public class RequestParking {
     private String description;
     private int parkingStatusID;
     private int currentSlot;
-    private Timestamp registerParking;
+    private Timestamp registerContract;
 }

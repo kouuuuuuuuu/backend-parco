@@ -14,16 +14,17 @@
 
     <update id="registerParking" parameterType="com.project.Eparking.domain.request.RequestParking">
         UPDATE PLO
-        SET parkingName = #{parkingName},
-        length = #{length},
-        width = #{width},
-        slot = #{slot},
-        address = #{address},
-        description = #{description},
-        parkingStatusID = #{parkingStatusID},
-        currentSlot = #{currentSlot},
-        parkingStatusID = #{parkingStatusID},
-        registerContract = #{registerParking}
+        SET
+            parkingName = #{parkingName},
+            length = #{length},
+            width = #{width},
+            slot = #{slot},
+            address = #{address},
+            description = #{description},
+            parkingStatusID = #{parkingStatusID},
+            currentSlot = #{currentSlot},
+            parkingStatusID = #{parkingStatusID},
+            registerContract = #{registerContract}
         WHERE ploID = #{ploID}
     </update>
 
