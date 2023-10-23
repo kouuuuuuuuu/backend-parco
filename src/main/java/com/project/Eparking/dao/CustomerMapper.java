@@ -2,8 +2,10 @@ package com.project.Eparking.dao;
 
 import com.project.Eparking.domain.Customer;
 import com.project.Eparking.domain.request.RequestCustomerUpdateProfile;
+import com.project.Eparking.domain.response.Response4week;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.sql.Date;
 import java.util.List;
 
 @Mapper
@@ -18,4 +20,5 @@ public interface CustomerMapper {
     void updateCustomerProfile(RequestCustomerUpdateProfile profile,String customerID);
     void updatePasswordCustomer(String password,String customerID);
     void updateBalance(String customerID,Double balance);
+    Response4week countRecordsByWeekCustomer(Date inputDate);
 }

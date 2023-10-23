@@ -93,4 +93,26 @@
         Set wallet_balance = #{balance}
         WHERE customerID = #{customerID}
     </update>
+
+    <select id="countRecordsByWeekCustomer" resultType="com.project.Eparking.domain.response.Response4week">
+        <![CDATA[
+        SELECT
+            SUM(CASE WHEN registrationDate >= DATE_ADD(STR_TO_DATE(CONCAT(#{year}, '-', #{month}, '-01'), '%Y-%m-%d'), INTERVAL 0 WEEK)
+                          AND registrationDate < DATE_ADD(STR_TO_DATE(CONCAT(#{year}, '-', #{month}, '-01'), '%Y-%m-%d'), INTERVAL 1 WEEK) THEN 1 ELSE 0 END) AS Week1,
+
+            SUM(CASE WHEN registrationDate >= DATE_ADD(STR_TO_DATE(CONCAT(#{year}, '-', #{month}, '-01'), '%Y-%m-%d'), INTERVAL 1 WEEK)
+                          AND registrationDate < DATE_ADD(STR_TO_DATE(CONCAT(#{year}, '-', #{month}, '-01'), '%Y-%m-%d'), INTERVAL 2 WEEK) THEN 1 ELSE 0 END) AS Week2,
+
+            SUM(CASE WHEN registrationDate >= DATE_ADD(STR_TO_DATE(CONCAT(#{year}, '-', #{month}, '-01'), '%Y-%m-%d'), INTERVAL 2 WEEK)
+                          AND registrationDate < DATE_ADD(STR_TO_DATE(CONCAT(#{year}, '-', #{month}, '-01'), '%Y-%m-%d'), INTERVAL 3 WEEK) THEN 1 ELSE 0 END) AS Week3,
+
+            SUM(CASE WHEN registrationDate >= DATE_ADD(STR_TO_DATE(CONCAT(#{year}, '-', #{month}, '-01'), '%Y-%m-%d'), INTERVAL 3 WEEK)
+                          AND registrationDate < DATE_ADD(STR_TO_DATE(CONCAT(#{year}, '-', #{month}, '-01'), '%Y-%m-%d'), INTERVAL 4 WEEK) THEN 1 ELSE 0 END) AS Week4
+        FROM customer
+        WHERE MONTH(registrationDate) = MONTH(#{inputDate}) AND YEAR(registrationDate) = YEAR(#{inputDate});
+    ]]>
+    </select>
+
+
+
 </mapper>

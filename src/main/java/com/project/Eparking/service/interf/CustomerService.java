@@ -1,11 +1,9 @@
 package com.project.Eparking.service.interf;
 
 import com.project.Eparking.domain.dto.CustomerDTO;
-import com.project.Eparking.domain.request.RequestChangePassword;
-import com.project.Eparking.domain.request.RequestChangePasswordUser;
-import com.project.Eparking.domain.request.RequestCustomerTransaction;
-import com.project.Eparking.domain.request.RequestCustomerUpdateProfile;
+import com.project.Eparking.domain.request.*;
 import com.project.Eparking.domain.response.Page;
+import com.project.Eparking.domain.response.Response4week;
 import com.project.Eparking.domain.response.ResponseCustomer;
 import com.project.Eparking.domain.response.ResponseWalletScreen;
 import org.springframework.http.ResponseEntity;
@@ -22,4 +20,5 @@ public interface CustomerService {
     List<String> updatePassswordCustomer(RequestChangePasswordUser customer);
     ResponseEntity<?> createPaymentCustomer(HttpServletRequest req,RequestCustomerTransaction transaction);
     ResponseWalletScreen responseWalletScreen();
+    Response4week countRecordsByWeekCustomer(RequestMonthANDYear requestMonthANDYear);
 }

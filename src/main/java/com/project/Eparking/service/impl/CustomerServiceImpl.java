@@ -8,11 +8,9 @@ import com.project.Eparking.domain.Customer;
 import com.project.Eparking.domain.LicensePlate;
 import com.project.Eparking.domain.Payment;
 import com.project.Eparking.domain.dto.CustomerDTO;
-import com.project.Eparking.domain.request.RequestChangePassword;
-import com.project.Eparking.domain.request.RequestChangePasswordUser;
-import com.project.Eparking.domain.request.RequestCustomerTransaction;
-import com.project.Eparking.domain.request.RequestCustomerUpdateProfile;
+import com.project.Eparking.domain.request.*;
 import com.project.Eparking.domain.response.Page;
+import com.project.Eparking.domain.response.Response4week;
 import com.project.Eparking.domain.response.ResponseCustomer;
 import com.project.Eparking.domain.response.ResponseWalletScreen;
 import com.project.Eparking.exception.ApiRequestException;
@@ -29,6 +27,7 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -185,6 +184,17 @@ public class CustomerServiceImpl implements CustomerService {
             return responseWalletScreen;
         }catch (Exception e){
             throw new ApiRequestException("Failed to response wallet screen" +e.getMessage());
+        }
+    }
+
+    @Override
+    public Response4week countRecordsByWeekCustomer(RequestMonthANDYear requestMonthANDYear) {
+        try {
+            Date inputDate = new SimpleDateFormat("yyyy-MM").parse(requestMonthANDYear.getMonthAndYear());
+            java.sql.Date sqlDate = new java.sql.Date(inputDate.getTime());
+            return customerMapper.countRecordsByWeekCustomer(sqlDate);
+        }catch (Exception e){
+            throw new ApiRequestException("Failed to get chart week for customer" +e.getMessage());
         }
     }
 }
