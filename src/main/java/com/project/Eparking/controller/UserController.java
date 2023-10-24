@@ -8,10 +8,12 @@ import com.project.Eparking.domain.*;
 import com.project.Eparking.domain.request.*;
 import com.project.Eparking.domain.response.*;
 import com.project.Eparking.exception.ApiRequestException;
+import com.project.Eparking.service.PushNotificationService;
 import com.project.Eparking.service.interf.LicensePlateService;
 import com.project.Eparking.service.interf.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -39,6 +41,7 @@ public class UserController {
     private final UserMapper userMapper;
     private final UserService userService;
     private final LicensePlateService licensePlateService;
+    private final PushNotificationService pushNotificationService;
 
     @Value("${SECRET_KEY}")
     private String secret;
