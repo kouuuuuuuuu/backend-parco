@@ -15,10 +15,7 @@ import com.project.Eparking.domain.request.RequestChangePassword;
 import com.project.Eparking.domain.request.RequestChangePasswordUser;
 import com.project.Eparking.domain.request.RequestCustomerTransaction;
 import com.project.Eparking.domain.request.RequestCustomerUpdateProfile;
-import com.project.Eparking.domain.response.Page;
-import com.project.Eparking.domain.response.Response4week;
-import com.project.Eparking.domain.response.ResponseCustomer;
-import com.project.Eparking.domain.response.ResponseWalletScreen;
+import com.project.Eparking.domain.response.*;
 import com.project.Eparking.exception.ApiRequestException;
 import com.project.Eparking.service.interf.CustomerService;
 import com.project.Eparking.service.interf.PaymentService;
@@ -194,11 +191,17 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public Response4week countRecordsByWeekCustomer(RequestMonthANDYear requestMonthANDYear) {
+    public List<WeekData> countRecordsByWeekCustomer(RequestMonthANDYear requestMonthANDYear) {
         try {
             Date inputDate = new SimpleDateFormat("yyyy-MM").parse(requestMonthANDYear.getMonthAndYear());
             java.sql.Date sqlDate = new java.sql.Date(inputDate.getTime());
-            return customerMapper.countRecordsByWeekCustomer(sqlDate);
+            Response4week week = customerMapper.countRecordsByWeekCustomer(sqlDate);
+            List<WeekData> result = new ArrayList<>();
+            result.add(new WeekData("Tuần 1", week.getWeek1()));
+            result.add(new WeekData("Tuần 2", week.getWeek2()));
+            result.add(new WeekData("Tuần 3", week.getWeek3()));
+            result.add(new WeekData("Tuần 4", week.getWeek4()));
+            return result;
         }catch (Exception e){
             throw new ApiRequestException("Failed to get chart week for customer" +e.getMessage());
         }

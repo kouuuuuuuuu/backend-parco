@@ -9,6 +9,7 @@ import com.project.Eparking.domain.ReservationMethod;
 import com.project.Eparking.domain.request.RequestMonthANDYear;
 import com.project.Eparking.domain.response.Page;
 import com.project.Eparking.domain.response.Response4week;
+import com.project.Eparking.domain.response.WeekData;
 import com.project.Eparking.exception.ApiRequestException;
 import com.project.Eparking.service.interf.ParkingLotOwnerService;
 import lombok.RequiredArgsConstructor;
@@ -353,11 +354,17 @@ public class ParkingLotOwnerServiceImpl implements ParkingLotOwnerService {
     }
 
     @Override
-    public Response4week chartPLO(RequestMonthANDYear requestMonthANDYear) {
+    public List<WeekData> chartPLO(RequestMonthANDYear requestMonthANDYear) {
         try {
             Date inputDate = new SimpleDateFormat("yyyy-MM").parse(requestMonthANDYear.getMonthAndYear());
             java.sql.Date sqlDate = new java.sql.Date(inputDate.getTime());
-            return parkingLotOwnerMapper.countRecordsByWeekPLO(sqlDate);
+            Response4week week = parkingLotOwnerMapper.countRecordsByWeekPLO(sqlDate);
+            List<WeekData> result = new ArrayList<>();
+            result.add(new WeekData("Tuần 1", week.getWeek1()));
+            result.add(new WeekData("Tuần 2", week.getWeek2()));
+            result.add(new WeekData("Tuần 3", week.getWeek3()));
+            result.add(new WeekData("Tuần 4", week.getWeek4()));
+            return result;
         }catch (Exception e){
             throw new ApiRequestException("Failed to get chart week for PLO" +e.getMessage());
         }

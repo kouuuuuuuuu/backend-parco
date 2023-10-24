@@ -9,6 +9,7 @@ import com.project.Eparking.domain.request.RequestMonthANDYear;
 import com.project.Eparking.domain.response.Page;
 import com.project.Eparking.domain.response.Response;
 import com.project.Eparking.domain.response.Response4week;
+import com.project.Eparking.domain.response.WeekData;
 import com.project.Eparking.exception.ApiRequestException;
 import com.project.Eparking.service.interf.CustomerService;
 import com.project.Eparking.service.interf.ReservationService;
@@ -70,7 +71,7 @@ public class CustomerController {
         }
     }
     @GetMapping("/registerChartCustomer")
-    public ResponseEntity<Response4week> getCustomerRegisterChart(@RequestParam String month,@RequestParam String year){
+    public ResponseEntity<List<WeekData>> getCustomerRegisterChart(@RequestParam String month, @RequestParam String year){
         try{
             RequestMonthANDYear requestMonthANDYear = new RequestMonthANDYear(year + "-" + month);
             return ResponseEntity.ok(customerService.countRecordsByWeekCustomer(requestMonthANDYear));
