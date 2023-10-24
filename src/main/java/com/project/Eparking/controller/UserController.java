@@ -173,7 +173,7 @@ public class UserController {
         String cleaned = input.replaceAll("[\r\n]", "");
         return cleaned;
     }
-    @PostMapping("/regiterUser")
+    @PostMapping("/registerUser")
     public ResponseEntity<String> registerUser(RequestRegisterUser user){
         try{
             if(user.getRole().equalsIgnoreCase("PLO")){

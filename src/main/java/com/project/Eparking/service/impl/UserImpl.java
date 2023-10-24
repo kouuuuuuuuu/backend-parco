@@ -131,11 +131,11 @@ public class UserImpl implements UserService, UserDetailsService {
             try{
                 ResponsePLO existingPLO = userMapper.getPLOResponseByPhonenumber(user.getPhoneNumber());
                 if(existingPLO != null){
-                    return response = "The PLO is already exists";
+                    throw new ApiRequestException("The PLO is already exists");
                 }
                 ResponseSendOTP responseSendOTP = esmService.sendOTP(user.getPhoneNumber());
                 if(!responseSendOTP.getCodeResult().equals("100")){
-                    return response = "Can not send OTP to user";
+                    throw new ApiRequestException("Can not send OTP to user");
                 }
                 response = "Send OTP successfully";
             }catch (Exception e){
@@ -152,11 +152,11 @@ public class UserImpl implements UserService, UserDetailsService {
             try{
                 ResponseCustomer existingCustomer = userMapper.getCustomerResponseByPhonenumber(user.getPhoneNumber());
                 if(existingCustomer != null){
-                    return response = "The Customer is already exists";
+                    throw new ApiRequestException("The Customer is already exists");
                 }
                 ResponseSendOTP responseSendOTP = esmService.sendOTP(user.getPhoneNumber());
                 if(!responseSendOTP.getCodeResult().equals("100")){
-                    return response = "Can not send OTP to user";
+                    throw new ApiRequestException("Can not send OTP to user");
                 }
                 response = "Send OTP successfully";
             }catch (Exception e){
@@ -176,7 +176,7 @@ public class UserImpl implements UserService, UserDetailsService {
                     userMapper.createCustomer(requestConfirmOTP,"CU"+requestConfirmOTP.getPhoneNumber(),0.0,2);
                     return "Successful register account";
                 } else {
-                    return "OTP code is invalid";
+                    throw new ApiRequestException("OTP code is invalid");
                 }
             } else if (requestConfirmOTP.getRole().equalsIgnoreCase("PLO")) {
                 ResponseCheckOTP responseCheckOTP = esmService.checkOTP(requestConfirmOTP.getPhoneNumber(), requestConfirmOTP.getOTPcode());
@@ -185,13 +185,13 @@ public class UserImpl implements UserService, UserDetailsService {
                     userMapper.createPLO(requestConfirmOTP,"PL"+requestConfirmOTP.getPhoneNumber(),0.0,2,1);
                     return "Successful register account";
                 } else {
-                    return "OTP code is invalid";
+                    throw new ApiRequestException("OTP code is invalid");
                 }
             }else{
                 return "Cannot check OTP";
             }
         }catch (Exception e){
-            throw new ApiRequestException("Failed to confirm password" + e.getMessage());
+            throw new ApiRequestException("Failed to confirm password." + e.getMessage());
         }
     }
     @Override
@@ -201,29 +201,29 @@ public class UserImpl implements UserService, UserDetailsService {
             if(requestForgotPassword.getRole().equalsIgnoreCase("PLO")){
                 ResponsePLO responsePLO = userMapper.getPLOResponseByPhonenumber(requestForgotPassword.getPhoneNumber());
                 if(responsePLO == null){
-                    response =  "PLO is not exists!";
+                    throw new ApiRequestException("PLO is not exists!");
                 }else{
                     ResponseSendOTP responseSendOTP = esmService.sendOTP(requestForgotPassword.getPhoneNumber());
                     if(!responseSendOTP.getCodeResult().equals("100")){
-                        return response = "Can not send OTP to user";
+                        throw new ApiRequestException("Can not send OTP to user");
                     }
                     response =  "PLO is exists!";
                 }
             } else if (requestForgotPassword.getRole().equalsIgnoreCase("CUSTOMER")) {
                 ResponseCustomer responseCustomer = userMapper.getCustomerResponseByPhonenumber(requestForgotPassword.getPhoneNumber());
                 if(responseCustomer == null){
-                    response =  "CUSTOMER is not exists!";
+                    throw new ApiRequestException("CUSTOMER is not exists!");
                 }else {
                     ResponseSendOTP responseSendOTP = esmService.sendOTP(requestForgotPassword.getPhoneNumber());
                     if(!responseSendOTP.getCodeResult().equals("100")){
-                        return response = "Can not send OTP to user";
+                        throw new ApiRequestException("Can not send OTP to user");
                     }
                     response = "CUSTOMER is exists!";
                 }
             }
             return response;
         }catch (Exception e){
-            throw new ApiRequestException("Failed to check the phoneNumber" + e.getMessage());
+            throw new ApiRequestException("Failed to check the phoneNumber." + e.getMessage());
         }
     }
 
@@ -234,10 +234,10 @@ public class UserImpl implements UserService, UserDetailsService {
             if (responseCheckOTP.getCodeResult().equalsIgnoreCase("100")) {
                 return "OTP code is valid!";
             } else {
-                return "OTP code is invalid";
+                throw new ApiRequestException("OTP code is invalid");
             }
         }catch (Exception e){
-            throw new ApiRequestException("Failed to check the OTP code" + e.getMessage());
+            throw new ApiRequestException("Failed to check the OTP code." + e.getMessage());
         }
     }
 
