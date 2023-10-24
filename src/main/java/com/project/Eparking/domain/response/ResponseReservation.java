@@ -12,7 +12,7 @@ public class ResponseReservation {
     private int reservationID;
     private String customerID;
     private String ploID;
-    private int status;
+    private int statusID;
     private String licensePlate;
     private Timestamp startTime;
     private Timestamp endTime;
