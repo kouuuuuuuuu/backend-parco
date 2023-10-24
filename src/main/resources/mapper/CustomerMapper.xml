@@ -132,4 +132,22 @@
             customerID = #{customerID};
     </select>
 
+
+    <select id="getCustomerBalance" resultType="com.project.Eparking.domain.Customer">
+        SELECT
+            customerID,
+            wallet_balance,
+            identify,
+            role,
+            phoneNumber,
+            fullName,
+            password,
+            email,
+            registrationDate,
+            status
+        FROM
+            Customer
+        WHERE
+            customerID = #{customerID};
+    </select>
 </mapper>

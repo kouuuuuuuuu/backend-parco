@@ -3,6 +3,7 @@ package com.project.Eparking.service.interf;
 import com.project.Eparking.domain.dto.CustomerDTO;
 import com.project.Eparking.domain.request.*;
 import com.project.Eparking.domain.dto.CustomerWalletDTO;
+import com.project.Eparking.domain.dto.CustomerWalletDTO;
 import com.project.Eparking.domain.request.RequestChangePassword;
 import com.project.Eparking.domain.request.RequestChangePasswordUser;
 import com.project.Eparking.domain.request.RequestCustomerTransaction;
@@ -26,6 +27,8 @@ public interface CustomerService {
     ResponseEntity<?> createPaymentCustomer(HttpServletRequest req,RequestCustomerTransaction transaction);
     ResponseWalletScreen responseWalletScreen();
     Response4week countRecordsByWeekCustomer(RequestMonthANDYear requestMonthANDYear);
+
+    CustomerWalletDTO getCustomerBalance();
 
     CustomerWalletDTO getCustomerBalance();
 }
