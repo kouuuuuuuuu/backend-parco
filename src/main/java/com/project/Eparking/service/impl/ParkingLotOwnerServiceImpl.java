@@ -359,6 +359,7 @@ public class ParkingLotOwnerServiceImpl implements ParkingLotOwnerService {
             Date inputDate = new SimpleDateFormat("yyyy-MM").parse(requestMonthANDYear.getMonthAndYear());
             java.sql.Date sqlDate = new java.sql.Date(inputDate.getTime());
             Response4week week = parkingLotOwnerMapper.countRecordsByWeekPLO(sqlDate);
+            week.getWeek1();
             List<WeekData> result = new ArrayList<>();
             result.add(new WeekData("Tuần 1", week.getWeek1()));
             result.add(new WeekData("Tuần 2", week.getWeek2()));
