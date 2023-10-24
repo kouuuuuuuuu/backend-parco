@@ -12,6 +12,6 @@ public class UpdatePloStatusDTO {
     private int newStatus;
     private String contractLink;
     private int contractDuration;
-    private BigDecimal latitude;
-    private BigDecimal longtitude;
+//    private BigDecimal latitude;
+//    private BigDecimal longtitude;
 }

@@ -139,9 +139,9 @@
             parkingStatusID = #{parkingStatusID},
             browseContract = #{browseContract},
             contractDuration = #{contractDuration},
-            contractLink = #{contractLink},
-            latitude = #{latitude},
-            longtitude = #{longtitude}
+            contractLink = #{contractLink}
+<!--            latitude = #{latitude},-->
+<!--            longtitude = #{longtitude}-->
         WHERE ploID = #{ploID}
     </update>
 

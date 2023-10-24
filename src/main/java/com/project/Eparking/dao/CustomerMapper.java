@@ -21,4 +21,6 @@ public interface CustomerMapper {
     void updatePasswordCustomer(String password,String customerID);
     void updateBalance(String customerID,Double balance);
     Response4week countRecordsByWeekCustomer(Date inputDate);
+
+    Customer getCustomerBalance(String customerID);
 }

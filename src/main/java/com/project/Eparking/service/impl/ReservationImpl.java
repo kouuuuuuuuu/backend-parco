@@ -206,7 +206,6 @@ public class ReservationImpl implements ReservationService {
                     dateFormat.format(reservation.getCheckOut()) : "");
             reservationDTOS.add(reservationDTO);
         }
-
         return reservationDTOS;
     }
 

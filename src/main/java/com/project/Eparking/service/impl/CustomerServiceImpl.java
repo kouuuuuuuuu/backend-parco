@@ -9,6 +9,11 @@ import com.project.Eparking.domain.LicensePlate;
 import com.project.Eparking.domain.Payment;
 import com.project.Eparking.domain.dto.CustomerDTO;
 import com.project.Eparking.domain.request.*;
+import com.project.Eparking.domain.dto.CustomerWalletDTO;
+import com.project.Eparking.domain.request.RequestChangePassword;
+import com.project.Eparking.domain.request.RequestChangePasswordUser;
+import com.project.Eparking.domain.request.RequestCustomerTransaction;
+import com.project.Eparking.domain.request.RequestCustomerUpdateProfile;
 import com.project.Eparking.domain.response.Page;
 import com.project.Eparking.domain.response.Response4week;
 import com.project.Eparking.domain.response.ResponseCustomer;
@@ -43,7 +48,7 @@ public class CustomerServiceImpl implements CustomerService {
     private final CustomerTransactionMapper transactionMapper;
 
 
-    private SimpleDateFormat dateFormat = new SimpleDateFormat("DD/MM/YYYY");
+    private SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
     @Override
     public Page<CustomerDTO> getListCustomer(int pageNum, int pageSize) {
         List<CustomerDTO> customerDTOList = new ArrayList<>();
@@ -196,5 +201,16 @@ public class CustomerServiceImpl implements CustomerService {
         }catch (Exception e){
             throw new ApiRequestException("Failed to get chart week for customer" +e.getMessage());
         }
+    }
+
+    @Override
+    public CustomerWalletDTO getCustomerBalance() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String id = authentication.getName();
+        Customer customer = customerMapper.getCustomerBalance(id);
+        CustomerWalletDTO customerWalletDTO = new CustomerWalletDTO();
+//        customerWalletDTO.setCustomerID(customer.getCustomerID());
+        customerWalletDTO.setWallet_balance(customer.getWalletBalance());
+        return  customerWalletDTO;
     }
 }

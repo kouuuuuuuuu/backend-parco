@@ -216,8 +216,8 @@ public class ParkingLotOwnerServiceImpl implements ParkingLotOwnerService {
         plo.setContractDuration(newContractionDuration);
         plo.setBrowseContract(currentTimestamp);
         plo.setContractLink(updatePloStatusDTO.getContractLink());
-        plo.setLongtitude(updatePloStatusDTO.getLongtitude());
-        plo.setLatitude(updatePloStatusDTO.getLatitude());
+//        plo.setLongtitude(updatePloStatusDTO.getLongtitude());
+//        plo.setLatitude(updatePloStatusDTO.getLatitude());
         parkingLotOwnerMapper.updateParkingStatusByPloId(plo);
 
         return isSuccess;

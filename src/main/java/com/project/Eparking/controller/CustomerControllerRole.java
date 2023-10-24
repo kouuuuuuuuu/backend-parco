@@ -1,21 +1,27 @@
 package com.project.Eparking.controller;
 
+import com.project.Eparking.constant.Message;
 import com.project.Eparking.domain.Payment;
+import com.project.Eparking.domain.dto.CustomerWalletDTO;
+import com.project.Eparking.domain.dto.ReservationDTO;
 import com.project.Eparking.domain.request.RequestChangePasswordUser;
 import com.project.Eparking.domain.request.RequestCustomerTransaction;
 import com.project.Eparking.domain.request.RequestCustomerUpdateProfile;
+import com.project.Eparking.domain.response.Response;
 import com.project.Eparking.domain.response.ResponseCustomer;
 import com.project.Eparking.domain.response.ResponseWalletScreen;
 import com.project.Eparking.exception.ApiRequestException;
 import com.project.Eparking.service.interf.CustomerService;
 import com.project.Eparking.service.interf.PaymentService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
+import java.util.Objects;
 
 @CrossOrigin
 @RestController
@@ -72,6 +78,19 @@ public class CustomerControllerRole {
             return ResponseEntity.ok(customerService.responseWalletScreen());
         }catch (ApiRequestException e){
             throw e;
+        }
+    }
+
+    @GetMapping("/customerBalance")
+    public Response getCustomerBalance(){
+        try {
+            CustomerWalletDTO customerWalletDTO = customerService.getCustomerBalance();
+            if (Objects.isNull(customerWalletDTO)){
+                return new Response(HttpStatus.NOT_FOUND.value(), Message.GET_CUSTOMER_BALANCE_FAIL, null);
+            }
+            return new Response(HttpStatus.OK.value(), Message.GET_CUSTOMER_BALANCE_SUCCESS, customerWalletDTO);
+        }catch (Exception e){
+            return new Response(HttpStatus.INTERNAL_SERVER_ERROR.value(), Message.ERROR_GET_CUSTOMER_BALANCE, null);
         }
     }
 }
