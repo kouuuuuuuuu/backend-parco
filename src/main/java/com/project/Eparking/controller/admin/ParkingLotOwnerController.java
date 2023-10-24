@@ -145,7 +145,7 @@ public class ParkingLotOwnerController {
         }
     }
     @GetMapping("/getChartPLO")
-    public ResponseEntity<Response4week> getPLORegisterChart(@RequestParam String month, @RequestParam String year){
+    public ResponseEntity<List<WeekData>> getPLORegisterChart(@RequestParam String month, @RequestParam String year){
         try{
             RequestMonthANDYear requestMonthANDYear = new RequestMonthANDYear(year + "-" + month);
             return ResponseEntity.ok(parkingLotOwnerService.chartPLO(requestMonthANDYear));
