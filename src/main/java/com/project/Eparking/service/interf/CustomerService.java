@@ -28,7 +28,7 @@ public interface CustomerService {
     ResponseWalletScreen responseWalletScreen();
     Response4week countRecordsByWeekCustomer(RequestMonthANDYear requestMonthANDYear);
 
-    CustomerWalletDTO getCustomerBalance();
+//    CustomerWalletDTO getCustomerBalance();
 
     CustomerWalletDTO getCustomerBalance();
 }

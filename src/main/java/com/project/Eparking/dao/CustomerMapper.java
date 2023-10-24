@@ -22,7 +22,7 @@ public interface CustomerMapper {
     void updateBalance(String customerID,Double balance);
     Response4week countRecordsByWeekCustomer(Date inputDate);
 
-    Customer getCustomerBalance(String customerID);
+//    Customer getCustomerBalance(String customerID);
 
     Customer getCustomerBalance(String customerID);
 }

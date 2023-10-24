@@ -204,16 +204,16 @@ public class CustomerServiceImpl implements CustomerService {
         }
     }
 
-    @Override
-    public CustomerWalletDTO getCustomerBalance() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String id = authentication.getName();
-        Customer customer = customerMapper.getCustomerBalance(id);
-        CustomerWalletDTO customerWalletDTO = new CustomerWalletDTO();
-//        customerWalletDTO.setCustomerID(customer.getCustomerID());
-        customerWalletDTO.setWallet_balance(customer.getWalletBalance());
-        return  customerWalletDTO;
-    }
+//    @Override
+//    public CustomerWalletDTO getCustomerBalance() {
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        String id = authentication.getName();
+//        Customer customer = customerMapper.getCustomerBalance(id);
+//        CustomerWalletDTO customerWalletDTO = new CustomerWalletDTO();
+////        customerWalletDTO.setCustomerID(customer.getCustomerID());
+//        customerWalletDTO.setWallet_balance(customer.getWalletBalance());
+//        return  customerWalletDTO;
+//    }
 
     @Override
     public CustomerWalletDTO getCustomerBalance() {
