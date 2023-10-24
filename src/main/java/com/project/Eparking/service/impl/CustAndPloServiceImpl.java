@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -22,8 +23,8 @@ public class CustAndPloServiceImpl implements CustAndPloService {
     @Override
     public CustAndPloDTO getTotalCustAndPlo() {
         long totalCustomerList = customerMapper.countRecords("");
-
-        long totalPloList = parkingLotOwnerMapper.countRecords(new ArrayList<>(), "");
+        List<Integer> parkingStatus = List.of(3,4,5);
+        long totalPloList = parkingLotOwnerMapper.countRecords(parkingStatus, "");
         CustAndPloDTO custAndPloDTO = new CustAndPloDTO(totalCustomerList, totalPloList);
 
         return custAndPloDTO;

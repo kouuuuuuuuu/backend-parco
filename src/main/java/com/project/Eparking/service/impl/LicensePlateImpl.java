@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 public class LicensePlateImpl implements LicensePlateService {
     private final LicensePlateMapper licensePlateMapper;
 
-    private static final String LICENSE_PLATE_PATTERN = "^[1-9]{1}[0-9]{1}[A-Z]{1}[0-9]{1}-[0-9]{3}\\.[0-9]{2}$";
+//    private static final String LICENSE_PLATE_PATTERN = "^[1-9]{1}[0-9]{1}[A-Z]{1}[0-9]{1}-[0-9]{3}\\.[0-9]{2}$";
 
 
     @Override
@@ -62,12 +62,9 @@ public class LicensePlateImpl implements LicensePlateService {
         String id = authentication.getName();
         List<String> licensePlates = licensePlateMapper.getListLicensePlateByCustomerID(id)
                 .stream().map(LicensePlate::getLicensePlate).collect(Collectors.toList());
-
-        if (!licensePlates.contains(licensePlate)){
-            if (!licensePlate.matches(LICENSE_PLATE_PATTERN)){
-                return Message.NOT_VALID_LICENSE_PLATE;
-            }
-
+        List<String> cleanLicensePlates = licensePlates.stream().map(t -> t.replaceAll("[-.]","")).collect(Collectors.toList());
+        String cleanLicensePlate = licensePlate.replaceAll("[-.]","");
+        if (!cleanLicensePlates.contains(cleanLicensePlate)){
             licensePlateMapper.createLicensePlate(licensePlate, id);
             return Message.ADD_LICENSE_PLATE_SUCCESS;
         }else {
