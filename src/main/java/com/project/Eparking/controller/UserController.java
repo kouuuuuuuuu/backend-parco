@@ -9,6 +9,8 @@ import com.project.Eparking.domain.request.*;
 import com.project.Eparking.domain.response.*;
 import com.project.Eparking.exception.ApiRequestException;
 import com.project.Eparking.service.PushNotificationService;
+import com.project.Eparking.service.impl.FirebaseTokenImpl;
+import com.project.Eparking.service.interf.FirebaseTokenService;
 import com.project.Eparking.service.interf.LicensePlateService;
 import com.project.Eparking.service.interf.UserService;
 import lombok.RequiredArgsConstructor;
@@ -42,6 +44,7 @@ public class UserController {
     private final UserService userService;
     private final LicensePlateService licensePlateService;
     private final PushNotificationService pushNotificationService;
+    private final FirebaseTokenService firebaseTokenService;
 
     @Value("${SECRET_KEY}")
     private String secret;
@@ -234,6 +237,22 @@ public class UserController {
     public ResponseEntity<List<ResponseNotifications>> getListNotification(){
         try {
             return ResponseEntity.ok(userService.getListNotificationByID());
+        }catch (ApiRequestException e){
+            throw e;
+        }
+    }
+    @PostMapping("/addDeviceToken")
+    public ResponseEntity<String> addDeviceToken(@RequestBody RequestFirebaseToken firebaseToken){
+        try {
+            return ResponseEntity.ok(firebaseTokenService.addDeviceToken(firebaseToken));
+        }catch (ApiRequestException e){
+            throw e;
+        }
+    }
+    @DeleteMapping("/deleteDeviceToken")
+    public ResponseEntity<String> deleteDeviceToken(@RequestParam String deviceToken){
+        try {
+            return ResponseEntity.ok(firebaseTokenService.deleteTokenByTokenDevice(deviceToken));
         }catch (ApiRequestException e){
             throw e;
         }
