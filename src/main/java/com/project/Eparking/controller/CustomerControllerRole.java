@@ -3,6 +3,7 @@ package com.project.Eparking.controller;
 import com.project.Eparking.constant.Message;
 import com.project.Eparking.domain.Payment;
 import com.project.Eparking.domain.dto.CustomerWalletDTO;
+import com.project.Eparking.domain.dto.PloDetailForCustomerDTO;
 import com.project.Eparking.domain.dto.ReservationDTO;
 import com.project.Eparking.domain.request.RequestChangePasswordUser;
 import com.project.Eparking.domain.request.RequestCustomerTransaction;
@@ -91,6 +92,19 @@ public class CustomerControllerRole {
             return new Response(HttpStatus.OK.value(), Message.GET_CUSTOMER_BALANCE_SUCCESS, customerWalletDTO);
         }catch (Exception e){
             return new Response(HttpStatus.INTERNAL_SERVER_ERROR.value(), Message.ERROR_GET_CUSTOMER_BALANCE, null);
+        }
+    }
+
+    @GetMapping("/detailPloForCustomer")
+    public Response getPloDetailForCustomer(@RequestParam("ploID") String ploID){
+        try{
+            PloDetailForCustomerDTO ploDetailForCustomerDTO = customerService.getPloDetailForCustomer(ploID);
+            if (Objects.isNull(ploDetailForCustomerDTO)){
+                return new Response(HttpStatus.NOT_FOUND.value(), Message.GET_PLO_DETAIL_FOR_CUSTOMER_FAIL, null);
+            }
+            return new Response(HttpStatus.OK.value(), Message.GET_PLO_DETAIL_FOR_CUSTOMER_SUCCESS, ploDetailForCustomerDTO);
+        } catch (Exception e){
+            return new Response(HttpStatus.INTERNAL_SERVER_ERROR.value(), Message.ERROR_GET_PLO_DETAIL_FOR_CUSTOMER, null);
         }
     }
 }

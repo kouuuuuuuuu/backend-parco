@@ -169,4 +169,14 @@
         FROM Reservation
         WHERE reservationID = #{reservationID}
     </select>
+
+    <select id="findReservationByLicensePlateAndPloId" resultType="com.project.Eparking.domain.Reservation">
+        SELECT R.reservationID,R.customerID,R.ploID,R.statusID,R.licensePlateID,R.startTime,R.endTime,R.price,R.checkOut,R.checkIn, R.methodID
+        FROM Reservation AS R
+        JOIN LicensePlate AS LP ON R.licensePlateID = LP.licensePlateID
+        JOIN ReservationMethod RM ON R.methodID = RM.methodID
+        WHERE R.ploID = #{ploId}
+        AND R.statusID != #{status}
+        AND LP.licensePlate = #{licensePlate};
+    </select>
 </mapper>

@@ -29,4 +29,6 @@ public interface ReservationMapper {
     List<ResponseTop5Parking> getTop5ParkingHaveMostReservation(Date inputDate);
     List<ResponseTop5Revenue> getTop5ParkingHaveHighestRevenue(Date inputDate);
     Reservation getReservationByReservationID(int reservationID);
+
+    Reservation findReservationByLicensePlateAndPloId(String licensePlate, String ploId, int status);
 }

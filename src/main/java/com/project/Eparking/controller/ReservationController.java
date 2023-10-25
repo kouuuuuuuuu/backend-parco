@@ -4,6 +4,7 @@ import com.project.Eparking.constant.Message;
 import com.project.Eparking.domain.ParkingInformation;
 import com.project.Eparking.domain.dto.ReservationDTO;
 import com.project.Eparking.domain.dto.ReservationDetailDTO;
+import com.project.Eparking.domain.dto.ReservationInforDTO;
 import com.project.Eparking.domain.request.RequestUpdateReservation;
 import com.project.Eparking.domain.request.RequestUpdateStatusReservation;
 import com.project.Eparking.domain.response.Response;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 
 @CrossOrigin
 @RestController
@@ -80,6 +82,20 @@ public class ReservationController {
             return new Response(HttpStatus.OK.value(), Message.GET_RESERVATION_HISTORY_SUCCESS, reservationDetailDTO);
         }catch (Exception e){
             return new Response(HttpStatus.INTERNAL_SERVER_ERROR.value(), Message.ERROR_GET_RESERVATION_HISTORY, null);
+        }
+    }
+
+    @GetMapping("/getInforReservationByLicensePlate")
+    public Response getInforReservationByLicensePlate(@RequestParam("licensePlate") String licensePlate){
+        try {
+
+            ReservationInforDTO reservationInforDTO = reservationService.getInforReservationByLicensesPlate(licensePlate);
+            if (Objects.isNull(reservationInforDTO)){
+                return new Response(HttpStatus.NOT_FOUND.value(), Message.NOT_FOUND_RESERVATION_BY_LICENSEPLATE, null);
+            }
+            return new Response(HttpStatus.OK.value(), Message.GET_RESERVATION_BY_LICENSE_PLATE_SUCCESS, reservationInforDTO);
+        }catch (Exception e){
+            return new Response(HttpStatus.INTERNAL_SERVER_ERROR.value(), Message.ERR_GET_INFOR_RESERVATION_BY_LICENSE_PLATE, null);
         }
     }
 }

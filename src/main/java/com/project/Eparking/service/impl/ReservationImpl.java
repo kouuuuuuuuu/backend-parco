@@ -12,6 +12,7 @@ import com.project.Eparking.dao.ReservationMethodMapper;
 import com.project.Eparking.dao.UserMapper;
 import com.project.Eparking.domain.PLO;
 import com.project.Eparking.domain.ReservationMethod;
+import com.project.Eparking.domain.dto.ReservationInforDTO;
 import com.project.Eparking.domain.dto.Top5CustomerDTO;
 import com.project.Eparking.domain.request.RequestMonthANDYear;
 
@@ -54,7 +55,8 @@ public class ReservationImpl implements ReservationService {
     private final ParkingLotOwnerMapper parkingLotOwnerMapper;
     private final LicensePlateMapper licensePlateMapper;
     private final ReservationStatusMapper reservationStatusMapper;
-    private final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss - dd//MM//yyyy");
+    private final CustomerMapper customerMapper;
+    private final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss - dd/MM/yyyy");
     @Override
     @Transactional
     public String checkOutStatusReservation(RequestUpdateStatusReservation reservation) {
@@ -178,6 +180,48 @@ public class ReservationImpl implements ReservationService {
         }catch (Exception e){
             throw new ApiRequestException("Failed to get top 5 parking have most reservation" + e.getMessage());
         }
+    }
+
+    @Override
+    public ReservationInforDTO getInforReservationByLicensesPlate(String licensePlate) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String id = authentication.getName();
+        int status = 4;
+        Reservation reservation;
+        reservation = reservationMapper.findReservationByLicensePlateAndPloId(licensePlate, id, status);
+        if (Objects.isNull(reservation)){
+            return null;
+        }
+
+        if (reservation.getStatusID() == 2){
+            Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+            if (currentTime.after(reservation.getEndTime())){
+                reservationMethodMapper.updateStatusReservation(reservation.getReservationID(), 3);
+                reservation = reservationMapper.findReservationByLicensePlateAndPloId(licensePlate, id, status);
+            }
+        }
+
+        Customer customer = customerMapper.getCustomerById(reservation.getCustomerID());
+        ReservationMethod reservationMethod = reservationMethodMapper.getReservationMethodById(reservation.getMethodID());
+        ReservationStatus reservationStatus = reservationStatusMapper.getReservationStatusByID(reservation.getStatusID());
+        LicensePlate licensePlates = licensePlateMapper.getLicensePlateById(reservation.getLicensePlateID());
+
+        ReservationInforDTO reservationInforDTO = new ReservationInforDTO();
+        reservationInforDTO.setCustomerName(customer.getFullName());
+        reservationInforDTO.setMethodName(reservationMethod.getMethodName());
+        reservationInforDTO.setStatus(reservationStatus.getStatusID());
+        reservationInforDTO.setStatusName(reservationStatus.getStatusName());
+        reservationInforDTO.setLicensePlate(licensePlates.getLicensePlate());
+        reservationInforDTO.setCheckIn(Objects.nonNull(reservation.getCheckIn())?
+                dateFormat.format(reservation.getCheckIn()) : "");
+        reservationInforDTO.setCheckOut(Objects.nonNull(reservation.getCheckOut())?
+                dateFormat.format(reservation.getCheckOut()) : "");
+        reservationInforDTO.setStartTime(Objects.nonNull(reservation.getStartTime())?
+                dateFormat.format(reservation.getStartTime()) : "");
+        reservationInforDTO.setEndTime(Objects.nonNull(reservation.getEndTime())?
+                dateFormat.format(reservation.getEndTime()) : "");
+
+        return reservationInforDTO;
     }
 
     @Override
