@@ -13,12 +13,11 @@ import com.project.Eparking.dao.UserMapper;
 import com.project.Eparking.domain.PLO;
 import com.project.Eparking.domain.ReservationMethod;
 import com.project.Eparking.domain.dto.Top5CustomerDTO;
+import com.project.Eparking.domain.request.RequestFindParkingList;
 import com.project.Eparking.domain.request.RequestMonthANDYear;
 
 import com.project.Eparking.domain.request.RequestUpdateStatusReservation;
-import com.project.Eparking.domain.response.ResponseReservation;
-import com.project.Eparking.domain.response.ResponseTop5Parking;
-import com.project.Eparking.domain.response.ResponseTop5Revenue;
+import com.project.Eparking.domain.response.*;
 import com.project.Eparking.exception.ApiRequestException;
 import com.project.Eparking.service.interf.ReservationService;
 import lombok.RequiredArgsConstructor;
@@ -244,5 +243,34 @@ public class ReservationImpl implements ReservationService {
                 dateFormat.format(reservation.getCheckOut()) : "");
 
         return reservationDetailDTO;
+    }
+    public static double haversine(double lat1, double lon1, double lat2, double lon2) {
+        lat1 = Math.toRadians(lat1);
+        lon1 = Math.toRadians(lon1);
+        lat2 = Math.toRadians(lat2);
+        lon2 = Math.toRadians(lon2);
+
+        double R = 6371;
+
+        double dlon = lon2 - lon1;
+        double dlat = lat2 - lat1;
+        double a = Math.sin(dlat / 2) * Math.sin(dlat / 2) + Math.cos(lat1) * Math.cos(lat2) * Math.sin(dlon / 2) * Math.sin(dlon / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        double distance = R * c;
+
+        return distance;
+    }
+
+    @Override
+    public List<ResponseFindParkingList> nearestParkingList(RequestFindParkingList findParkingList) {
+        try {
+            List<ResponseCoordinates> coordinates = reservationMapper.getAllCoordinatesPLO();
+            if (coordinates == null) {
+                throw new ApiRequestException("There is dont have any parking");
+            }
+            return null;
+        } catch (Exception e) {
+            throw new ApiRequestException("Failed to get nearest parking list." + e.getMessage());
+        }
     }
 }
