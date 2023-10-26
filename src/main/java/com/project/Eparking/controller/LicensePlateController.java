@@ -53,6 +53,9 @@ public class LicensePlateController {
     public Response addLicensePlate(@RequestParam("licensePlate") String licensePlate){
         try {
             String message = licensePlateService.addLicensePlate(licensePlate);
+            if (message.equals(Message.DUPLICATE_LICENSE_PLATE)){
+                return new  Response(HttpStatus.BAD_REQUEST.value(), message , null);
+            }
             return new  Response(HttpStatus.OK.value(), message , null);
         }catch (Exception e){
             return new Response(HttpStatus.INTERNAL_SERVER_ERROR.value(), Message.ERROR_ADD_LICENSE_PLATE, null);

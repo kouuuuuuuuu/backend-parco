@@ -288,21 +288,21 @@ public class ParkingLotOwnerServiceImpl implements ParkingLotOwnerService {
 
         List<ReservationMethod> reservationMethods = reservationMethodMapper.getAllReservationMethod();
         for (ReservationMethod reservationMethod : reservationMethods){
-            if (reservationMethod.getMethodName().equals("Morning")){
+            if (reservationMethod.getMethodID() == 1){
                 morningMethod =
                         parkingMethod.stream().
                                 filter(t -> t.getMethodID() == reservationMethod.getMethodID())
                                 .findFirst().orElse(null);
             }
 
-            if (reservationMethod.getMethodName().equals("Evening")){
+            if (reservationMethod.getMethodID() == 2){
                 eveningMethod =
                         parkingMethod.stream().
                                 filter(t -> t.getMethodID() == reservationMethod.getMethodID())
                                 .findFirst().orElse(null);
             }
 
-            if (reservationMethod.getMethodName().equals("Overnight")){
+            if (reservationMethod.getMethodID() == 3){
                 overnightMethod =
                         parkingMethod.stream().
                                 filter(t -> t.getMethodID() == reservationMethod.getMethodID())

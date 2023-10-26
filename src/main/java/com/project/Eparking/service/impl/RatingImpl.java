@@ -32,7 +32,7 @@ public class RatingImpl implements RatingService {
     private final RatingMapper ratingMapper;
 
     private final CustomerMapper customerMapper;
-    private final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss dd//MM//yyyy");
+    private final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss dd/MM/yyyy");
     @Override
     public List<Rating> getRatingListByPLOID() {
         try{

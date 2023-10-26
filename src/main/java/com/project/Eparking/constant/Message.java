@@ -51,4 +51,10 @@ public class Message {
     public static final String GET_CUSTOMER_BALANCE_FAIL = "Get Customer Wallet Fail";
     public static final String GET_CUSTOMER_BALANCE_SUCCESS = "Get Customer Wallet Success";
     public static final String ERROR_GET_CUSTOMER_BALANCE = "Error When Get Customer Wallet";
+    public static final String ERR_GET_INFOR_RESERVATION_BY_LICENSE_PLATE = "Error When Get Reservation Information By License Plate";
+    public static final String NOT_FOUND_RESERVATION_BY_LICENSEPLATE = "Not Found Reservation By License PLate";
+    public static final String GET_RESERVATION_BY_LICENSE_PLATE_SUCCESS = "Get Reservation By License Plate Success";
+    public static final String GET_PLO_DETAIL_FOR_CUSTOMER_FAIL = "Get Plo Detail For Customer Fail";
+    public static final String GET_PLO_DETAIL_FOR_CUSTOMER_SUCCESS = "Get Plo Detail For Customer Success";
+    public static final String ERROR_GET_PLO_DETAIL_FOR_CUSTOMER = "Error When Get Plo Detail For Customer";
 }

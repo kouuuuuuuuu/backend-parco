@@ -1,15 +1,9 @@
 package com.project.Eparking.service.impl;
 
-import com.project.Eparking.dao.CustomerMapper;
-import com.project.Eparking.dao.CustomerTransactionMapper;
-import com.project.Eparking.dao.LicensePlateMapper;
-import com.project.Eparking.dao.UserMapper;
-import com.project.Eparking.domain.Customer;
-import com.project.Eparking.domain.LicensePlate;
-import com.project.Eparking.domain.Payment;
-import com.project.Eparking.domain.dto.CustomerDTO;
+import com.project.Eparking.dao.*;
+import com.project.Eparking.domain.*;
+import com.project.Eparking.domain.dto.*;
 import com.project.Eparking.domain.request.*;
-import com.project.Eparking.domain.dto.CustomerWalletDTO;
 import com.project.Eparking.domain.dto.CustomerWalletDTO;
 import com.project.Eparking.domain.request.RequestChangePassword;
 import com.project.Eparking.domain.request.RequestChangePasswordUser;
@@ -32,6 +26,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -44,6 +39,10 @@ public class CustomerServiceImpl implements CustomerService {
     private final PasswordEncoder passwordEncoder;
     private final PaymentService paymentService;
     private final CustomerTransactionMapper transactionMapper;
+    private final ImageMapper imageMapper;
+    private final ParkingLotOwnerMapper parkingLotOwnerMapper;
+    private final ParkingMethodMapper parkingMethodMapper;
+    private final ReservationMethodMapper reservationMethodMapper;
 
 
     private SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
@@ -226,5 +225,70 @@ public class CustomerServiceImpl implements CustomerService {
 //        customerWalletDTO.setCustomerID(customer.getCustomerID());
         customerWalletDTO.setWallet_balance(customer.getWalletBalance());
         return  customerWalletDTO;
+    }
+
+    @Override
+    public PloDetailForCustomerDTO getPloDetailForCustomer(String ploID) {
+        //1. Get Image by ploId
+        List<Image> images = imageMapper.getImageByPloId(ploID);
+
+        //3. Get Plo by ploId;
+        PLO ploEntity = parkingLotOwnerMapper.getPloById(ploID);
+        if (Objects.isNull(ploEntity)){
+            return null;
+        }
+
+        //4. Get Fee by parking method
+        List<ParkingMethod> parkingMethod = parkingMethodMapper.getParkingMethodById(ploID);
+        ParkingMethod morningMethod = new ParkingMethod();
+        ParkingMethod eveningMethod = new ParkingMethod();
+        ParkingMethod overnightMethod = new ParkingMethod();
+
+        List<ReservationMethod> reservationMethods = reservationMethodMapper.getAllReservationMethod();
+        for (ReservationMethod reservationMethod : reservationMethods){
+            if (reservationMethod.getMethodID() == 1){
+                morningMethod =
+                        parkingMethod.stream().
+                                filter(t -> t.getMethodID() == reservationMethod.getMethodID())
+                                .findFirst().orElse(null);
+            }
+
+            if (reservationMethod.getMethodID() == 2){
+                eveningMethod =
+                        parkingMethod.stream().
+                                filter(t -> t.getMethodID() == reservationMethod.getMethodID())
+                                .findFirst().orElse(null);
+            }
+
+            if (reservationMethod.getMethodID() == 3){
+                overnightMethod =
+                        parkingMethod.stream().
+                                filter(t -> t.getMethodID() == reservationMethod.getMethodID())
+                                .findFirst().orElse(null);
+            }
+        }
+
+        List<ImageDTO> imageDTOS = new ArrayList<>();
+        //4. Mapping to dto
+        if (!images.isEmpty()){
+            for (Image image : images){
+                ImageDTO imageDTO = new ImageDTO();
+                imageDTO.setImageID(image.getImageID());
+                imageDTO.setImageLink(image.getImageLink());
+                imageDTOS.add(imageDTO);
+            }
+        }
+
+        PloDetailForCustomerDTO parkingLotOwnerDTO = new PloDetailForCustomerDTO();
+        parkingLotOwnerDTO.setParkingName(ploEntity.getParkingName());
+        parkingLotOwnerDTO.setAddress(ploEntity.getAddress());
+
+        parkingLotOwnerDTO.setMorningFee(morningMethod != null ? morningMethod.getPrice() : 0);
+        parkingLotOwnerDTO.setEveningFee(eveningMethod != null ? eveningMethod.getPrice() : 0);
+        parkingLotOwnerDTO.setOvernightFee(overnightMethod != null ? overnightMethod.getPrice() : 0);
+        parkingLotOwnerDTO.setStar(ploEntity.getStar());
+        parkingLotOwnerDTO.setCurrentSlot(ploEntity.getCurrentSlot());
+        parkingLotOwnerDTO.setImages(imageDTOS);
+        return parkingLotOwnerDTO;
     }
 }

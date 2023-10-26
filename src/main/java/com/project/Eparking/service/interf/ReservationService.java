@@ -4,6 +4,7 @@ package com.project.Eparking.service.interf;
 import com.project.Eparking.domain.dto.ReservationDTO;
 import com.project.Eparking.domain.dto.ReservationDetailDTO;
 
+import com.project.Eparking.domain.dto.ReservationInforDTO;
 import com.project.Eparking.domain.dto.Top5CustomerDTO;
 import com.project.Eparking.domain.request.RequestFindParkingList;
 import com.project.Eparking.domain.request.RequestMonthANDYear;
@@ -30,5 +31,9 @@ public interface ReservationService {
     List<Top5CustomerDTO> getTop5Customer(RequestMonthANDYear requestMonthANDYear) throws ParseException;
     List<ResponseTop5Parking> getTop5Parking(RequestMonthANDYear requestMonthANDYear);
     List<ResponseTop5Revenue> getTop5Revenue(RequestMonthANDYear requestMonthANDYear);
+
+
+    ReservationInforDTO getInforReservationByLicensesPlate(String licensePlate);
+
     List<ResponseFindParkingList> nearestParkingList(RequestFindParkingList findParkingList);
 }
