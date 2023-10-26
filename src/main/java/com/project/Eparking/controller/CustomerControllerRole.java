@@ -8,12 +8,15 @@ import com.project.Eparking.domain.dto.ReservationDTO;
 import com.project.Eparking.domain.request.RequestChangePasswordUser;
 import com.project.Eparking.domain.request.RequestCustomerTransaction;
 import com.project.Eparking.domain.request.RequestCustomerUpdateProfile;
+import com.project.Eparking.domain.request.RequestFindParkingList;
 import com.project.Eparking.domain.response.Response;
 import com.project.Eparking.domain.response.ResponseCustomer;
+import com.project.Eparking.domain.response.ResponseFindParkingList;
 import com.project.Eparking.domain.response.ResponseWalletScreen;
 import com.project.Eparking.exception.ApiRequestException;
 import com.project.Eparking.service.interf.CustomerService;
 import com.project.Eparking.service.interf.PaymentService;
+import com.project.Eparking.service.interf.ReservationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +34,7 @@ import java.util.Objects;
 public class CustomerControllerRole {
     private final CustomerService customerService;
     private final PaymentService paymentService;
+    private final ReservationService reservationService;
     @GetMapping("/getProfile")
     public ResponseEntity<ResponseCustomer> getProfile(){
         try{
@@ -105,6 +109,24 @@ public class CustomerControllerRole {
             return new Response(HttpStatus.OK.value(), Message.GET_PLO_DETAIL_FOR_CUSTOMER_SUCCESS, ploDetailForCustomerDTO);
         } catch (Exception e){
             return new Response(HttpStatus.INTERNAL_SERVER_ERROR.value(), Message.ERROR_GET_PLO_DETAIL_FOR_CUSTOMER, null);
+        }
+    }
+    @GetMapping("/nearestParkingList")
+    public ResponseEntity<List<ResponseFindParkingList>> getNearestParkingList(@RequestParam Double latitude,@RequestParam Double longitude,@RequestParam Double radius){
+        try {
+            RequestFindParkingList requestFindParkingList = new RequestFindParkingList(latitude,longitude,radius);
+            return ResponseEntity.ok(reservationService.nearestParkingList(requestFindParkingList));
+        }catch (ApiRequestException e){
+            throw e;
+        }
+    }
+    @GetMapping("/cheapParkingList")
+    public ResponseEntity<List<ResponseFindParkingList>> getCheapestParkingList(@RequestParam Double latitude,@RequestParam Double longitude,@RequestParam Double radius){
+        try {
+            RequestFindParkingList requestFindParkingList = new RequestFindParkingList(latitude,longitude,radius);
+            return ResponseEntity.ok(reservationService.cheapestParkingList(requestFindParkingList));
+        }catch (ApiRequestException e){
+            throw e;
         }
     }
 }

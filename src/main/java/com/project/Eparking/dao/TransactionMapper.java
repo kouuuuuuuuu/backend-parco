@@ -14,7 +14,7 @@ import java.util.List;
 public interface TransactionMapper {
   
     void insertTransactionPLO(RequestPLOTransaction ploTransaction);
-  
+
     PLOTransaction getTransactionPLOByID(RequestGetTransactionPLOByID transactionPLOByID);
   
     TransactionMethod getTransactionMethodByHistoryID(String historyID);
@@ -22,12 +22,9 @@ public interface TransactionMapper {
     PLOTransaction getTransactionByUUID(String UUID);
   
     void insertTransactionMethod(TransactionMethod transactionMethod);
-  
     List<HistoryResponse> historyTransactionByPLOandStatus(String ploID, int status);
-
     void insertTransactionPLOByPLOID(RequestPLOTransactionWithdrawa requestPLOTransactionWithdrawa);
     void insertBatchTransactionMethod(List<TransactionMethod> item);
-  
 
     Integer countRecords(List<Integer> status, String keywords);
 

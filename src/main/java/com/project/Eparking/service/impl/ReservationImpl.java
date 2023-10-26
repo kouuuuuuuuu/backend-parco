@@ -32,15 +32,13 @@ import java.sql.Timestamp;
 
 import java.text.SimpleDateFormat;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
-import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -55,6 +53,7 @@ public class ReservationImpl implements ReservationService {
     private final LicensePlateMapper licensePlateMapper;
     private final ReservationStatusMapper reservationStatusMapper;
     private final CustomerMapper customerMapper;
+    private final ParkingMethodMapper parkingMethodMapper;
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss - dd/MM/yyyy");
     @Override
     @Transactional
@@ -289,32 +288,101 @@ public class ReservationImpl implements ReservationService {
         return reservationDetailDTO;
     }
     public static double haversine(double lat1, double lon1, double lat2, double lon2) {
-        lat1 = Math.toRadians(lat1);
-        lon1 = Math.toRadians(lon1);
-        lat2 = Math.toRadians(lat2);
-        lon2 = Math.toRadians(lon2);
+        try {
+            lat1 = Math.toRadians(lat1);
+            lon1 = Math.toRadians(lon1);
+            lat2 = Math.toRadians(lat2);
+            lon2 = Math.toRadians(lon2);
 
-        double R = 6371;
+            double R = 6371;
 
-        double dlon = lon2 - lon1;
-        double dlat = lat2 - lat1;
-        double a = Math.sin(dlat / 2) * Math.sin(dlat / 2) + Math.cos(lat1) * Math.cos(lat2) * Math.sin(dlon / 2) * Math.sin(dlon / 2);
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        double distance = R * c;
+            double dlon = lon2 - lon1;
+            double dlat = lat2 - lat1;
+            double a = Math.sin(dlat / 2) * Math.sin(dlat / 2) + Math.cos(lat1) * Math.cos(lat2) * Math.sin(dlon / 2) * Math.sin(dlon / 2);
+            double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            double distance = R * c;
 
-        return distance;
+            return distance;
+        }catch (Exception e){
+            throw new ApiRequestException("Something error with haversine." + e.getMessage());
+        }
     }
 
     @Override
     public List<ResponseFindParkingList> nearestParkingList(RequestFindParkingList findParkingList) {
         try {
+            Date currentDate = new Date();
+            Timestamp currentTimestamp = new Timestamp(currentDate.getTime());
+            ReservationMethod reservationMethod = reservationMethodMapper.getMethodByTime(currentTimestamp);
+            List<ResponseFindParkingList> responseFindParkingLists = new ArrayList<>();
             List<ResponseCoordinates> coordinates = reservationMapper.getAllCoordinatesPLO();
+            List<ResponseFindParkingList> responseFindParkingListsNull = new ArrayList<>();
             if (coordinates == null) {
                 throw new ApiRequestException("There is dont have any parking");
             }
-            return null;
+            for (ResponseCoordinates responseCoordinates:
+                    coordinates) {
+                double distance = haversine(findParkingList.getLatitude(),findParkingList.getLongitude(),responseCoordinates.getLatitude(),responseCoordinates.getLongtitude());
+                if(distance <= findParkingList.getRadius()){
+                    PLO plo = userMapper.getPLOByPLOID(responseCoordinates.getPloID());
+                    Double price = parkingMethodMapper.getParkingMethodByID(plo.getPloID(),reservationMethod.getMethodID());
+                    if(price == null){
+                        responseFindParkingListsNull.add(new ResponseFindParkingList(plo.getParkingName(), plo.getCurrentSlot(), plo.getAddress(),distance,price,currentTimestamp,reservationMethod.getMethodName()));
+                    }else {
+                        responseFindParkingLists.add(new ResponseFindParkingList(plo.getParkingName(), plo.getCurrentSlot(), plo.getAddress(),distance,price,currentTimestamp,reservationMethod.getMethodName()));
+                    }
+                }
+            }
+            List<ResponseFindParkingList> sortedList = responseFindParkingLists.stream()
+                    .sorted(Comparator.comparingDouble(ResponseFindParkingList::getDistance))
+                    .collect(Collectors.toList());
+            List<ResponseFindParkingList> sortedListNull = responseFindParkingListsNull.stream()
+                    .sorted(Comparator.comparingDouble(ResponseFindParkingList::getDistance))
+                    .collect(Collectors.toList());
+            List<ResponseFindParkingList> sortedListComplete = new ArrayList<>(sortedList);
+            sortedListComplete.addAll(sortedListNull);
+            return sortedListComplete;
         } catch (Exception e) {
             throw new ApiRequestException("Failed to get nearest parking list." + e.getMessage());
+        }
+    }
+
+    @Override
+    public List<ResponseFindParkingList> cheapestParkingList(RequestFindParkingList findParkingList) {
+        try {
+            Date currentDate = new Date();
+            Timestamp currentTimestamp = new Timestamp(currentDate.getTime());
+            ReservationMethod reservationMethod = reservationMethodMapper.getMethodByTime(currentTimestamp);
+            List<ResponseFindParkingList> responseFindParkingLists = new ArrayList<>();
+            List<ResponseCoordinates> coordinates = reservationMapper.getAllCoordinatesPLO();
+            List<ResponseFindParkingList> responseFindParkingListsNull = new ArrayList<>();
+            if (coordinates == null) {
+                throw new ApiRequestException("There is dont have any parking");
+            }
+            for (ResponseCoordinates responseCoordinates:
+                    coordinates) {
+                double distance = haversine(findParkingList.getLatitude(),findParkingList.getLongitude(),responseCoordinates.getLatitude(),responseCoordinates.getLongtitude());
+                if(distance <= findParkingList.getRadius()){
+                    PLO plo = userMapper.getPLOByPLOID(responseCoordinates.getPloID());
+                    Double price = parkingMethodMapper.getParkingMethodByID(plo.getPloID(),reservationMethod.getMethodID());
+                    if(price == null){
+                        responseFindParkingListsNull.add(new ResponseFindParkingList(plo.getParkingName(), plo.getCurrentSlot(), plo.getAddress(),distance,price,currentTimestamp,reservationMethod.getMethodName()));
+                    }else {
+                        responseFindParkingLists.add(new ResponseFindParkingList(plo.getParkingName(), plo.getCurrentSlot(), plo.getAddress(),distance,price,currentTimestamp,reservationMethod.getMethodName()));
+                    }
+                }
+            }
+            List<ResponseFindParkingList> sortedList = responseFindParkingLists.stream()
+                    .sorted(Comparator.comparingDouble(ResponseFindParkingList::getPrice))
+                    .collect(Collectors.toList());
+            List<ResponseFindParkingList> sortedListNull = responseFindParkingListsNull.stream()
+                    .sorted(Comparator.comparingDouble(ResponseFindParkingList::getDistance))
+                    .collect(Collectors.toList());
+            List<ResponseFindParkingList> sortedListComplete = new ArrayList<>(sortedList);
+            sortedListComplete.addAll(sortedListNull);
+            return sortedListComplete;
+        } catch (Exception e) {
+            throw new ApiRequestException("Failed to get cheapest parking list." + e.getMessage());
         }
     }
 }
