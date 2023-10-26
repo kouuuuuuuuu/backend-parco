@@ -1,43 +1,44 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE configuration
-        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
-        "https://mybatis.org/dtd/mybatis-3-config.dtd">
-<configuration>
-    <settings>
-        <setting name="mapUnderscoreToCamelCase" value="true"/>
-    </settings>
+    <!DOCTYPE configuration
+            PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+            "https://mybatis.org/dtd/mybatis-3-config.dtd">
+    <configuration>
+        <settings>
+            <setting name="mapUnderscoreToCamelCase" value="true"/>
+        </settings>
+        <mappers>
 
-    <mappers>
+            <mapper resource="mapper/UserMapper.xml"></mapper>
 
-        <mapper resource="mapper/UserMapper.xml"></mapper>
+            <mapper resource="mapper/LicensePlateMapper.xml"></mapper>
 
-        <mapper resource="mapper/LicensePlateMapper.xml"></mapper>
+            <mapper resource="mapper/ParkingMapper.xml"></mapper>
 
-        <mapper resource="mapper/ParkingMapper.xml"></mapper>
+            <mapper resource="mapper/CustomerMapper.xml"></mapper>
 
-        <mapper resource="mapper/CustomerMapper.xml"></mapper>
+            <mapper resource="mapper/ParkingLotOwnerMapper.xml"></mapper>
 
-        <mapper resource="mapper/ParkingLotOwnerMapper.xml"></mapper>
+            <mapper resource="mapper/ImageMapper.xml"></mapper>
 
-        <mapper resource="mapper/ImageMapper.xml"></mapper>
+            <mapper resource="mapper/RatingMapper.xml"></mapper>
 
-        <mapper resource="mapper/RatingMapper.xml"></mapper>
+            <mapper resource="mapper/ParkingMethodMapper.xml"></mapper>
 
-        <mapper resource="mapper/ParkingMethodMapper.xml"></mapper>
+            <mapper resource="mapper/ReservationMethodMapper.xml"></mapper>
 
-        <mapper resource="mapper/ReservationMethodMapper.xml"></mapper>
+            <mapper resource="mapper/ParkingStatusMapper.xml"></mapper>
 
-        <mapper resource="mapper/ParkingStatusMapper.xml"></mapper>
+            <mapper resource="mapper/PLOTransactionMapper.xml"></mapper>
 
-        <mapper resource="mapper/PLOTransactionMapper.xml"></mapper>
+            <mapper resource="mapper/ReservationMapper.xml"></mapper>
 
-        <mapper resource="mapper/ReservationMapper.xml"></mapper>
+            <mapper resource="mapper/TransactionMethodMapper.xml"></mapper>
 
-        <mapper resource="mapper/TransactionMethodMapper.xml"></mapper>
+            <mapper resource="mapper/ReservationStatusMapper.xml"></mapper>
 
-        <mapper resource="mapper/ReservationStatusMapper.xml"></mapper>
+            <mapper resource="mapper/CustomerTransaction.xml"></mapper>
 
-        <mapper resource="mapper/CustomerTransaction.xml"></mapper>
-    </mappers>
+            <mapper resource="mapper/FirebaseTokenMapper.xml"></mapper>
+        </mappers>
 
-</configuration>
+    </configuration>

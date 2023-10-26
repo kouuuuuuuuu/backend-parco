@@ -23,6 +23,12 @@
         <result property = "revenue" column = "revenue"/>
     </resultMap>
 
+    <resultMap id = "ListCoordinates" type = "com.project.Eparking.domain.response.ResponseCoordinates">
+        <result property = "ploID" column = "ploID"/>
+        <result property = "latitude" column = "latitude"/>
+        <result property = "longtitude" column = "longtitude"/>
+    </resultMap>
+
     <select id="findReservationByLicensePlate" resultType="com.project.Eparking.domain.response.ResponseReservation">
         SELECT R.reservationID,R.customerID,R.ploID,R.statusID,LP.licensePlate,R.startTime,R.endTime,R.price,R.checkOut,RM.methodName,R.checkIn
         FROM Reservation AS R
@@ -169,4 +175,10 @@
         FROM Reservation
         WHERE reservationID = #{reservationID}
     </select>
+
+    <select id="getAllCoordinatesPLO" resultMap="ListCoordinates">
+        SELECT ploID, latitude,longtitude
+        FROM PLO
+    </select>
+
 </mapper>

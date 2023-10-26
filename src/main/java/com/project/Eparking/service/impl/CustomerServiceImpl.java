@@ -181,7 +181,6 @@ public class CustomerServiceImpl implements CustomerService {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String id = authentication.getName();
             ResponseWalletScreen responseWalletScreen = new ResponseWalletScreen();
-            double wallet1 = userMapper.getCustomerByCustomerID(id).getWalletBalance();
             responseWalletScreen.setWallet_balance(userMapper.getCustomerByCustomerID(id).getWalletBalance());
             responseWalletScreen.setHistoryBalanceCustomerList(transactionMapper.getListTransactionCustomer(id));
             return responseWalletScreen;
