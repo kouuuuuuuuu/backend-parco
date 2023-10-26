@@ -6,9 +6,11 @@ import com.project.Eparking.domain.dto.ReservationDetailDTO;
 
 import com.project.Eparking.domain.dto.ReservationInforDTO;
 import com.project.Eparking.domain.dto.Top5CustomerDTO;
+import com.project.Eparking.domain.request.RequestFindParkingList;
 import com.project.Eparking.domain.request.RequestMonthANDYear;
 
 import com.project.Eparking.domain.request.RequestUpdateStatusReservation;
+import com.project.Eparking.domain.response.ResponseFindParkingList;
 import com.project.Eparking.domain.response.ResponseTop5Parking;
 import com.project.Eparking.domain.response.ResponseTop5Revenue;
 
@@ -30,5 +32,8 @@ public interface ReservationService {
     List<ResponseTop5Parking> getTop5Parking(RequestMonthANDYear requestMonthANDYear);
     List<ResponseTop5Revenue> getTop5Revenue(RequestMonthANDYear requestMonthANDYear);
 
+
     ReservationInforDTO getInforReservationByLicensesPlate(String licensePlate);
+
+    List<ResponseFindParkingList> nearestParkingList(RequestFindParkingList findParkingList);
 }

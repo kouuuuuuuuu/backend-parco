@@ -5,10 +5,7 @@ import com.project.Eparking.domain.Reservation;
 
 import com.project.Eparking.domain.dto.Top5CustomerDTO;
 
-import com.project.Eparking.domain.response.ResponseReservation;
-import com.project.Eparking.domain.response.ResponseRevenuePLO;
-import com.project.Eparking.domain.response.ResponseTop5Parking;
-import com.project.Eparking.domain.response.ResponseTop5Revenue;
+import com.project.Eparking.domain.response.*;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.sql.Date;
@@ -29,6 +26,6 @@ public interface ReservationMapper {
     List<ResponseTop5Parking> getTop5ParkingHaveMostReservation(Date inputDate);
     List<ResponseTop5Revenue> getTop5ParkingHaveHighestRevenue(Date inputDate);
     Reservation getReservationByReservationID(int reservationID);
-
     Reservation findReservationByLicensePlateAndPloId(String licensePlate, String ploId, int status);
+    List<ResponseCoordinates> getAllCoordinatesPLO();
 }
