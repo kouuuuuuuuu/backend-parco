@@ -16,5 +16,10 @@
             ploId = #{ploId};
     </select>
 
+    <select id="getParkingMethodByID" resultType="Double">
+        SELECT price
+        FROM ParkingMethod
+        WHERE ploID = #{ploID} AND methodID = #{methodID}
+    </select>
 
 </mapper>

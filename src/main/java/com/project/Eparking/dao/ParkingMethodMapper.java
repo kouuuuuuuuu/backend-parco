@@ -8,4 +8,5 @@ import java.util.List;
 @Mapper
 public interface ParkingMethodMapper {
     List<ParkingMethod> getParkingMethodById(String ploId);
+    Double getParkingMethodByID(String ploID,int methodID);
 }

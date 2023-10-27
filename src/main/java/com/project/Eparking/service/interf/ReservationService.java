@@ -32,8 +32,7 @@ public interface ReservationService {
     List<ResponseTop5Parking> getTop5Parking(RequestMonthANDYear requestMonthANDYear);
     List<ResponseTop5Revenue> getTop5Revenue(RequestMonthANDYear requestMonthANDYear);
 
-
     ReservationInforDTO getInforReservationByLicensesPlate(String licensePlate);
-
     List<ResponseFindParkingList> nearestParkingList(RequestFindParkingList findParkingList);
+    List<ResponseFindParkingList> cheapestParkingList(RequestFindParkingList findParkingList);
 }

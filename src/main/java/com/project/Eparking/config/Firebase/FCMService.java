@@ -75,6 +75,7 @@ private Message.Builder getPreconfiguredMessageBuilder(PushNotificationRequest r
     com.google.firebase.messaging.Notification notification = com.google.firebase.messaging.Notification.builder()
             .setTitle(request.getTitle())
             .setBody(request.getMessage())
+            .setImage(request.getImage())
             .build();
 
     return Message.builder()
