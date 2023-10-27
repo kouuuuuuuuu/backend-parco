@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.sql.Timestamp;
 import java.time.Instant;
 
 @Data
@@ -16,10 +17,8 @@ public class ResponseShowVehicleInParking {
     private double price;
     private String phoneNumber;
     private String licensePlate;
-    private Instant startTime;
-    private Instant endTime;
+    private Timestamp startTime;
+    private Timestamp endTime;
     private String methodName;
     private String statusName;
-
-
 }

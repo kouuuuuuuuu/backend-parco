@@ -11,5 +11,5 @@ public class ResponseParkingStatus {
     private String ploID;
     private int parkingStatusID;
     private String statusName;
-    private Double totalPriceToDay;
+//    private Double totalPriceToDay;
 }
