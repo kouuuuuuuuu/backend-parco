@@ -9,7 +9,6 @@ import com.project.Eparking.domain.request.*;
 import com.project.Eparking.domain.response.*;
 import com.project.Eparking.exception.ApiRequestException;
 import com.project.Eparking.service.PushNotificationService;
-import com.project.Eparking.service.impl.FirebaseTokenImpl;
 import com.project.Eparking.service.interf.FirebaseTokenService;
 import com.project.Eparking.service.interf.LicensePlateService;
 import com.project.Eparking.service.interf.UserService;
@@ -21,15 +20,12 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.parameters.P;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.util.MimeTypeUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -254,6 +250,15 @@ public class UserController {
         try {
             return ResponseEntity.ok(firebaseTokenService.deleteTokenByTokenDevice(deviceToken));
         }catch (ApiRequestException e){
+            throw e;
+        }
+    }
+    @PostMapping("/sendNoti")
+    private ResponseEntity sendNoti(@RequestBody PushNotificationRequest request){
+        try {
+            pushNotificationService.sendPushNotificationToToken(request);
+            return new ResponseEntity<>(new PushNotificationResponse(HttpStatus.OK.value(), "Noti has sent"),HttpStatus.OK);
+        }catch (Exception e){
             throw e;
         }
     }
