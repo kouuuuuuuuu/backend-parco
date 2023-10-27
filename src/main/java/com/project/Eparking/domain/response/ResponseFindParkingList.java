@@ -17,4 +17,5 @@ public class ResponseFindParkingList {
     private Double price;
     private Timestamp currentTime;
     private String methodName;
+    private int slot;
 }

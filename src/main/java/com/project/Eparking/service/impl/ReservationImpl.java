@@ -327,9 +327,9 @@ public class ReservationImpl implements ReservationService {
                     PLO plo = userMapper.getPLOByPLOID(responseCoordinates.getPloID());
                     Double price = parkingMethodMapper.getParkingMethodByID(plo.getPloID(),reservationMethod.getMethodID());
                     if(price == null){
-                        responseFindParkingListsNull.add(new ResponseFindParkingList(plo.getParkingName(), plo.getCurrentSlot(), plo.getAddress(),distance,price,currentTimestamp,reservationMethod.getMethodName()));
+                        responseFindParkingListsNull.add(new ResponseFindParkingList(plo.getParkingName(), plo.getCurrentSlot(), plo.getAddress(),distance,price,currentTimestamp,reservationMethod.getMethodName(),plo.getSlot()));
                     }else {
-                        responseFindParkingLists.add(new ResponseFindParkingList(plo.getParkingName(), plo.getCurrentSlot(), plo.getAddress(),distance,price,currentTimestamp,reservationMethod.getMethodName()));
+                        responseFindParkingLists.add(new ResponseFindParkingList(plo.getParkingName(), plo.getCurrentSlot(), plo.getAddress(),distance,price,currentTimestamp,reservationMethod.getMethodName(),plo.getSlot()));
                     }
                 }
             }
@@ -366,9 +366,9 @@ public class ReservationImpl implements ReservationService {
                     PLO plo = userMapper.getPLOByPLOID(responseCoordinates.getPloID());
                     Double price = parkingMethodMapper.getParkingMethodByID(plo.getPloID(),reservationMethod.getMethodID());
                     if(price == null){
-                        responseFindParkingListsNull.add(new ResponseFindParkingList(plo.getParkingName(), plo.getCurrentSlot(), plo.getAddress(),distance,price,currentTimestamp,reservationMethod.getMethodName()));
+                        responseFindParkingListsNull.add(new ResponseFindParkingList(plo.getParkingName(), plo.getCurrentSlot(), plo.getAddress(),distance,price,currentTimestamp,reservationMethod.getMethodName(),plo.getSlot()));
                     }else {
-                        responseFindParkingLists.add(new ResponseFindParkingList(plo.getParkingName(), plo.getCurrentSlot(), plo.getAddress(),distance,price,currentTimestamp,reservationMethod.getMethodName()));
+                        responseFindParkingLists.add(new ResponseFindParkingList(plo.getParkingName(), plo.getCurrentSlot(), plo.getAddress(),distance,price,currentTimestamp,reservationMethod.getMethodName(),plo.getSlot()));
                     }
                 }
             }
