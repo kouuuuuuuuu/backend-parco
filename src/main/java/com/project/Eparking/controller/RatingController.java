@@ -39,7 +39,7 @@ public class RatingController {
         try {
             List<CustomerRatingDTO> customerRatingDTOS = ratingService.getRatingOfCustomer(ploID);
             if (customerRatingDTOS.isEmpty()) {
-                return new Response(HttpStatus.NOT_FOUND.value(), Message.NOT_FOUND_RATING_OF_CUSTOMER, null);
+                return new Response(HttpStatus.NOT_FOUND.value(), Message.NOT_FOUND_RATING_OF_CUSTOMER, " ");
             }
             return new Response(HttpStatus.OK.value(), Message.GET_RATING_OF_CUSTOMER_SUCCESS, customerRatingDTOS);
         }catch (Exception e){

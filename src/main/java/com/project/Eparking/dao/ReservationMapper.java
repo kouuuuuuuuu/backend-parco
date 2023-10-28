@@ -18,7 +18,7 @@ public interface ReservationMapper {
     ResponseRevenuePLO getReservationMethodByMethodID(String ploID);
     Double getSumByDateANDPLOID(Date startTime,Date startTime2th,String ploID);
 
-    List<Reservation> getReservationByStatus(int status, String customerID);
+    List<Reservation> getReservationByStatus(List<Integer> status, String customerID);
 
     Reservation getReservationDetailById(int reservationID, String customerID);
   
@@ -26,6 +26,10 @@ public interface ReservationMapper {
     List<ResponseTop5Parking> getTop5ParkingHaveMostReservation(Date inputDate);
     List<ResponseTop5Revenue> getTop5ParkingHaveHighestRevenue(Date inputDate);
     Reservation getReservationByReservationID(int reservationID);
-    Reservation findReservationByLicensePlateAndPloId(String licensePlate, String ploId, int status);
+    Reservation findReservationByLicensePlateAndPloId(String licensePlate, String ploId, List<Integer> status);
     List<ResponseCoordinates> getAllCoordinatesPLO();
+
+    List<Reservation> getReservationByLicensesPlateId(int licensePlateID);
+
+    void createReservation(Reservation reservation);
 }

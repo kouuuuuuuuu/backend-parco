@@ -14,4 +14,6 @@ public class ReservationDTO {
     private String methodName;
     private String checkIn;
     private String checkOut;
+    private int statusID;
+    private String statusName;
 }

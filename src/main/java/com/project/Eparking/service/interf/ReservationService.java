@@ -1,11 +1,8 @@
 package com.project.Eparking.service.interf;
 
 
-import com.project.Eparking.domain.dto.ReservationDTO;
-import com.project.Eparking.domain.dto.ReservationDetailDTO;
+import com.project.Eparking.domain.dto.*;
 
-import com.project.Eparking.domain.dto.ReservationInforDTO;
-import com.project.Eparking.domain.dto.Top5CustomerDTO;
 import com.project.Eparking.domain.request.RequestFindParkingList;
 import com.project.Eparking.domain.request.RequestMonthANDYear;
 
@@ -17,9 +14,6 @@ import com.project.Eparking.domain.response.ResponseTop5Revenue;
 import java.util.List;
 
 import java.text.ParseException;
-import java.util.List;
-
-import java.util.List;
 
 public interface ReservationService {
     String checkOutStatusReservation(RequestUpdateStatusReservation reservation);
@@ -35,4 +29,8 @@ public interface ReservationService {
     ReservationInforDTO getInforReservationByLicensesPlate(String licensePlate);
     List<ResponseFindParkingList> nearestParkingList(RequestFindParkingList findParkingList);
     List<ResponseFindParkingList> cheapestParkingList(RequestFindParkingList findParkingList);
+
+    boolean cancelReservationByID(int reservationID);
+
+    String bookingReservation(BookingReservationDTO bookingReservationDTO);
 }

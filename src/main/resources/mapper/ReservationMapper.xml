@@ -134,7 +134,11 @@
         FROM
             reservation
         WHERE
-            statusID = #{status}
+            statusID
+        IN
+            <foreach collection="status" item="st" open="(" separator="," close=")">
+               #{st}
+            </foreach>
         AND
             customerID = #{customerID};
     </select>
@@ -183,7 +187,11 @@
         JOIN LicensePlate AS LP ON R.licensePlateID = LP.licensePlateID
         JOIN ReservationMethod RM ON R.methodID = RM.methodID
         WHERE R.ploID = #{ploId}
-        AND R.statusID != #{status}
+        AND R.statusID
+        NOT IN
+            <foreach collection="status" item="st" open="(" separator="," close=")">
+                #{st}
+            </foreach>
         AND LP.licensePlate = #{licensePlate};
     </select>
 
@@ -193,5 +201,47 @@
         WHERE latitude IS NOT NULL AND longtitude IS NOT NULL
     </select>
 
+    <select id="getReservationByLicensesPlateId" resultType="com.project.Eparking.domain.Reservation">
+        SELECT
+            reservationID,
+            customerID,
+            ploID,
+            statusID,
+            licensePlateID,
+            startTime,
+            endTime,
+            price,
+            checkOut,
+            checkIn,
+            methodID
+        FROM
+            Reservation
+        WHERE
+            licensePlateID = #{licensePlateID}
+    </select>
+
+    <insert id="createReservation" parameterType="com.project.Eparking.domain.Reservation">
+        INSERT INTO reservation
+        (   customerID,
+            ploID,
+            statusID,
+            licensePlateID,
+            startTime,
+            endTime,
+            price,
+            methodID
+        )
+        VALUES
+        (
+            #{customerID},
+            #{ploID},
+            #{statusID},
+            #{licensePlateID},
+            #{startTime},
+            #{endTime},
+            #{price},
+            #{methodID}
+        );
+    </insert>
 
 </mapper>

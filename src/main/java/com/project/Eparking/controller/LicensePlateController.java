@@ -7,6 +7,7 @@ import com.project.Eparking.domain.response.Response;
 import com.project.Eparking.service.interf.LicensePlateService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -36,29 +37,29 @@ public class LicensePlateController {
     }
 
     @DeleteMapping("/deleteLicensePlate")
-    public Response deleteLicensePlateByLicensePlateID(@RequestParam("licensePlateID") int licensePlateID) {
+    public ResponseEntity<?> deleteLicensePlateByLicensePlateID(@RequestParam("licensePlateID") int licensePlateID) {
         try {
             boolean isDeleteSuccess = licensePlateService.deleteLicensePlateByLicensePlateID(licensePlateID);
             if (!isDeleteSuccess){
-                return new Response(HttpStatus.BAD_REQUEST.value(), Message.DELETE_LICENSE_PLATE_FAIL, isDeleteSuccess);
+                return ResponseEntity.badRequest().body(Message.DELETE_LICENSE_PLATE_FAIL);
             }
-            return new Response(HttpStatus.OK.value(), Message.DELETE_LICENSE_PLATE_SUCCESS, isDeleteSuccess);
+            return ResponseEntity.ok().body(Message.DELETE_LICENSE_PLATE_SUCCESS);
         }catch (Exception e) {
-            return new Response(HttpStatus.INTERNAL_SERVER_ERROR.value(), Message.ERROR_DELETED_LICENSE_PLATE, null);
+            return ResponseEntity.internalServerError().body(Message.ERROR_DELETED_LICENSE_PLATE);
         }
     }
 
 
     @PostMapping("/addLicensePlate")
-    public Response addLicensePlate(@RequestParam("licensePlate") String licensePlate){
+    public ResponseEntity<?> addLicensePlate(@RequestParam("licensePlate") String licensePlate){
         try {
             String message = licensePlateService.addLicensePlate(licensePlate);
             if (message.equals(Message.DUPLICATE_LICENSE_PLATE)){
-                return new  Response(HttpStatus.BAD_REQUEST.value(), message , null);
+                return ResponseEntity.badRequest().body(message);
             }
-            return new  Response(HttpStatus.OK.value(), message , null);
+            return ResponseEntity.ok().body(message);
         }catch (Exception e){
-            return new Response(HttpStatus.INTERNAL_SERVER_ERROR.value(), Message.ERROR_ADD_LICENSE_PLATE, null);
+            return ResponseEntity.internalServerError().body(Message.ERROR_ADD_LICENSE_PLATE);
         }
     }
 }
