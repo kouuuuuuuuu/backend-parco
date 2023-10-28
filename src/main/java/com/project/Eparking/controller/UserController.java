@@ -271,7 +271,7 @@ public class UserController {
         }
     }
     @PutMapping("/updateProfileUser")
-    public ResponseEntity<String> updateProfileUser(RequestUpdateProfile profile){
+    public ResponseEntity<String> updateProfileUser(@RequestBody RequestUpdateProfile profile){
         try {
             return ResponseEntity.ok(userService.updateProfile(profile));
         }catch (ApiRequestException e){
@@ -279,7 +279,7 @@ public class UserController {
         }
     }
     @PutMapping("/changePassword")
-    public ResponseEntity<List<String>> changePasswordUser(RequestChangePasswordUser password){
+    public ResponseEntity<List<String>> changePasswordUser(@RequestBody RequestChangePasswordUser password){
         try {
             return ResponseEntity.ok(userService.changePasswordUser(password));
         }catch (ApiRequestException e){

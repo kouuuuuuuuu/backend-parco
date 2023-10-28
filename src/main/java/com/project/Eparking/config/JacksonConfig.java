@@ -8,6 +8,7 @@ import com.project.Eparking.exception.ApiException;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.sql.Timestamp;
 import java.util.Date;
 
 @Configuration
@@ -17,7 +18,7 @@ public class JacksonConfig {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         SimpleModule module = new SimpleModule();
-        module.addSerializer(Date.class, new DateConfig());
+        module.addSerializer(Timestamp.class, new DateConfig());
         objectMapper.registerModule(module);
         objectMapper.setConfig(objectMapper.getSerializationConfig().withView(ApiException.class));
         objectMapper.registerModule(new JavaTimeModule());
