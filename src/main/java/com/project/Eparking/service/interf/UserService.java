@@ -19,9 +19,11 @@ public interface UserService {
     String checkPhoneNumber(RequestForgotPassword requestForgotPassword);
     String forgotPasswordCheckOTP(RequestForgotPasswordOTPcode requestForgotPasswordOTPcode);
     String updatePasswordUser(RequestChangePassword password);
-    ResponsePLOProfile getPLOProfileResponseByPLOID();
     ResponsePLOProfile updatePLOprofile(RequestPLOupdateProfile profile);
-    List<String> changePasswordUser(RequestChangePasswordUser password);
+//    List<String> changePasswordUser(RequestChangePasswordUser password);
     double getBalancePlO();
     List<ResponseNotifications> getListNotificationByID();
+    ResponseProfile profileUser();
+    String updateProfile(RequestUpdateProfile requestUpdateProfile);
+    List<String> changePasswordUser(RequestChangePasswordUser changePasswordUser);
 }

@@ -1,11 +1,13 @@
 package com.project.Eparking.service.impl;
 
+import com.project.Eparking.dao.CustomerMapper;
 import com.project.Eparking.dao.ImageMapper;
 import com.project.Eparking.dao.UserMapper;
 import com.project.Eparking.domain.*;
 import com.project.Eparking.domain.request.*;
 import com.project.Eparking.domain.response.*;
 import com.project.Eparking.exception.ApiRequestException;
+import com.project.Eparking.service.interf.CustomerService;
 import com.project.Eparking.service.interf.ESMService;
 import com.project.Eparking.service.interf.UserService;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +32,8 @@ public class UserImpl implements UserService, UserDetailsService {
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
     private final ESMService esmService;
-
+    private final CustomerService customerService;
+    private final CustomerMapper customerMapper;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -260,16 +263,6 @@ public class UserImpl implements UserService, UserDetailsService {
         }
     }
 
-    @Override
-    public ResponsePLOProfile getPLOProfileResponseByPLOID() {
-        try{
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String id = authentication.getName();
-            return userMapper.getPLOProfileResponseByPLOID(id);
-        }catch (Exception e){
-            throw new ApiRequestException("Failed to get PLO profile" + e.getMessage());
-        }
-    }
 
     @Override
     public ResponsePLOProfile updatePLOprofile(RequestPLOupdateProfile profile) {
@@ -289,15 +282,18 @@ public class UserImpl implements UserService, UserDetailsService {
         try{
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String id = authentication.getName();
+            boolean hasError = false;
             if(id.startsWith("cu") || id.startsWith("CU")){
                 boolean check = true;
                 Customer customer = userMapper.getCustomerByCustomerID(id);
                 if(!passwordEncoder.matches(password.getCurrentPassword(),customer.getPassword())){
                     check = false;
+                    hasError = true;
                     response.add("The current password is wrong!");
                 }
                 if (!password.getNewPassword().equals(password.getReNewPassword())) {
                     check = false;
+                    hasError = true;
                     response.add("The new password is not match");
                 }
                 if(check){
@@ -306,14 +302,17 @@ public class UserImpl implements UserService, UserDetailsService {
                     userMapper.updateNewPasswordCustomer(requestChangePassword,id);
                     response.add("Update new password successfully");
                 }
+
             } else if (id.startsWith("pl") || id.startsWith("PL")) {
                 boolean check = true;
                 PLO plo = userMapper.getPLOByPLOID(id);
                 if(!passwordEncoder.matches(password.getCurrentPassword(),plo.getPassword())){
                     check = false;
+                    hasError = true;
                     response.add("The current password is wrong!");
                 }if (!password.getNewPassword().equals(password.getReNewPassword())) {
                     check = false;
+                    hasError = true;
                     response.add("The new password is not match");
                 }
                 if(check){
@@ -323,10 +322,13 @@ public class UserImpl implements UserService, UserDetailsService {
                     response.add("Update new password successfully");
                 }
             }
+            if (hasError) {
+                throw new ApiRequestException("Failed to change password user");
+            }
+            return response;
         }catch (Exception e){
-            throw new ApiRequestException("Failed to change password user" + e.getMessage());
+            throw new ApiRequestException("Failed to change password user." + e.getMessage());
         }
-        return response;
     }
 
     @Override
@@ -363,6 +365,53 @@ public class UserImpl implements UserService, UserDetailsService {
             return listNotiRes;
         }catch (Exception e){
             throw new ApiRequestException("Failed to get notifications by ID" + e.getMessage());
+        }
+    }
+    @Override
+    public ResponseProfile profileUser() {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String id = authentication.getName();
+            ResponseProfile responseProfile = new ResponseProfile();
+            if(id.startsWith("CU") ||id.startsWith("cu")){
+                Customer responseCustomer = customerMapper.getCustomerById(id);
+                responseProfile.setFullName(responseCustomer.getFullName());
+                responseProfile.setPhoneNumber(responseCustomer.getPhoneNumber());
+                responseProfile.setEmail(responseCustomer.getEmail());
+            }else if(id.startsWith("PL") ||id.startsWith("pl")){
+                PLO responsePLOProfile = userMapper.getPLOByPLOID(id);
+                responseProfile.setFullName(responsePLOProfile.getFullName());
+                responseProfile.setEmail(responsePLOProfile.getEmail());
+                responseProfile.setPhoneNumber(responsePLOProfile.getPhoneNumber());
+            }else {
+                throw new ApiRequestException("Something wrong to get user profile");
+            }
+            return responseProfile;
+        }catch (Exception e){
+            throw new ApiRequestException("Failed to get user profile" + e.getMessage());
+        }
+    }
+
+    @Override
+    public String updateProfile(RequestUpdateProfile requestUpdateProfile) {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String id = authentication.getName();
+            String response;
+            if (id.startsWith("CU") || id.startsWith("cu")) {
+                RequestCustomerUpdateProfile updateProfile = new RequestCustomerUpdateProfile(requestUpdateProfile.getFullName(), requestUpdateProfile.getEmail());
+                customerMapper.updateCustomerProfile(updateProfile, id);
+                response = "Update profile customer successfully!";
+            } else if (id.startsWith("PL") || id.startsWith("pl")) {
+                RequestPLOupdateProfile profile = new RequestPLOupdateProfile(requestUpdateProfile.getFullName(), requestUpdateProfile.getEmail());
+                userMapper.updatePLOprofile(profile, id);
+                response = "Update profile PLO successfully!";
+            } else {
+                throw new ApiRequestException("Something wrong to update profile");
+            }
+            return response;
+        } catch (Exception e) {
+            throw new ApiRequestException("Failed to update user profile" + e.getMessage());
         }
     }
 }

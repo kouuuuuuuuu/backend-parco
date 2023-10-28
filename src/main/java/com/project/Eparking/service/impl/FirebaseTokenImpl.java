@@ -25,7 +25,7 @@ public class FirebaseTokenImpl implements FirebaseTokenService {
             String id = authentication.getName();
             FirebaseToken check = tokenMapper.getFirebaseTokenByDeviceToken(firebaseToken.getDeviceToken());
             if(check!=null){
-                throw new ApiRequestException("This token device is exist");
+                return "This token device is exist";
             }
             RequestFirebaseTokenMapper firebaseTokenMapper = new RequestFirebaseTokenMapper();
             firebaseTokenMapper.setDeviceToken(firebaseToken.getDeviceToken());

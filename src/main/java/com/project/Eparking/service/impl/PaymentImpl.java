@@ -4,6 +4,7 @@ import com.project.Eparking.config.VNpayConfig;
 import com.project.Eparking.dao.CustomerMapper;
 import com.project.Eparking.dao.CustomerTransactionMapper;
 import com.project.Eparking.dao.TransactionMapper;
+import com.project.Eparking.dao.UserMapper;
 import com.project.Eparking.domain.Customer;
 import com.project.Eparking.domain.PLOTransaction;
 import com.project.Eparking.domain.Payment;
@@ -34,10 +35,10 @@ import java.util.*;
 @RequiredArgsConstructor
 @Slf4j
 public class PaymentImpl implements PaymentService {
-    private final UserService userService;
     private final TransactionMapper transactionMapper;
     private final CustomerTransactionMapper transactionMapperCustomer;
     private final CustomerMapper customerMapper;
+    private final UserMapper userMapper;
     private final String urlResponseCustomer= "https://eparkingcapstone.azurewebsites.net/customer/returnPayment";
     public ResponseEntity<?> createPayment(HttpServletRequest req, Payment payment,String UUID) throws UnsupportedEncodingException {
         try {
@@ -305,7 +306,7 @@ public class PaymentImpl implements PaymentService {
                     customerTransactionMapper.setRechargeTime(timestamp);
                     customerTransactionMapper.setBankCode(request.getParameter("vnp_BankCode"));
                     transactionMapperCustomer.insertCustomerTransaction(customerTransactionMapper);
-                    Customer customer = userService.getCustomerByCustomerID(request.getParameter("vnp_OrderInfo"));
+                    Customer customer = userMapper.getCustomerByCustomerID(request.getParameter("vnp_OrderInfo"));
                     Double amount = Double.parseDouble(request.getParameter("vnp_Amount")) / 100;
                     Double balance = customer.getWalletBalance() + amount;
                     customerMapper.updateBalance(request.getParameter("vnp_OrderInfo"),balance);
