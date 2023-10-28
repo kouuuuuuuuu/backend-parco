@@ -15,7 +15,6 @@ import java.util.List;
 
 public interface CustomerService {
     Page<CustomerDTO> getListCustomer(int pageNum, int pageSize);
-
     Page<CustomerDTO> getListCustomerByName(String name, int pageNum, int pageSize);
     ResponseCustomer getResponseCustomerByCustomerID();
     String updateCustomerProfile(RequestCustomerUpdateProfile profile);
@@ -23,10 +22,7 @@ public interface CustomerService {
     ResponseEntity<?> createPaymentCustomer(HttpServletRequest req,RequestCustomerTransaction transaction);
     ResponseWalletScreen responseWalletScreen();
     List<WeekData> countRecordsByWeekCustomer(RequestMonthANDYear requestMonthANDYear);
-
 //    CustomerWalletDTO getCustomerBalance();
-
     CustomerWalletDTO getCustomerBalance();
-
     PloDetailForCustomerDTO getPloDetailForCustomer(String ploID);
 }

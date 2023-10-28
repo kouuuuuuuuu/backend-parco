@@ -32,30 +32,30 @@ public class ParkingOwnerController {
             throw e;
         }
     }
-    @GetMapping("/profile")
-    public ResponseEntity<ResponsePLOProfile> responsePLOProfile(){
-        try{
-            return ResponseEntity.ok(userService.getPLOProfileResponseByPLOID());
-        }catch (Exception e){
-            throw e;
-        }
-    }
-    @PutMapping("/updateProfile")
-    public ResponseEntity<ResponsePLOProfile> updateProfilePLO(@RequestBody RequestPLOupdateProfile profile){
-        try{
-            return ResponseEntity.ok(userService.updatePLOprofile(profile));
-        }catch (Exception e){
-            throw e;
-        }
-    }
-    @PutMapping("/changePassword")
-    public ResponseEntity<List<String>> changePasswordUser(@RequestBody RequestChangePasswordUser password){
-        try{
-            return ResponseEntity.ok(userService.changePasswordUser(password));
-        }catch (Exception e){
-            throw e;
-        }
-    }
+//    @GetMapping("/profile")
+//    public ResponseEntity<ResponsePLOProfile> responsePLOProfile(){
+//        try{
+//            return ResponseEntity.ok(userService.getPLOProfileResponseByPLOID());
+//        }catch (Exception e){
+//            throw e;
+//        }
+//    }
+//    @PutMapping("/updateProfile")
+//    public ResponseEntity<ResponsePLOProfile> updateProfilePLO(@RequestBody RequestPLOupdateProfile profile){
+//        try{
+//            return ResponseEntity.ok(userService.updatePLOprofile(profile));
+//        }catch (Exception e){
+//            throw e;
+//        }
+//    }
+//    @PutMapping("/changePassword")
+//    public ResponseEntity<List<String>> changePasswordUser(@RequestBody RequestChangePasswordUser password){
+//        try{
+//            return ResponseEntity.ok(userService.changePasswordUser(password));
+//        }catch (Exception e){
+//            throw e;
+//        }
+//    }
 
     @GetMapping("/getParkingInformation")
     public ResponseEntity<ParkingInformation> getParkingInformation(){

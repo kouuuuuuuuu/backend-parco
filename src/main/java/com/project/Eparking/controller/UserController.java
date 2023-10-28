@@ -254,11 +254,35 @@ public class UserController {
         }
     }
     @PostMapping("/sendNoti")
-    private ResponseEntity sendNoti(@RequestBody PushNotificationRequest request){
+    public ResponseEntity sendNoti(@RequestBody PushNotificationRequest request){
         try {
             pushNotificationService.sendPushNotificationToToken(request);
             return new ResponseEntity<>(new PushNotificationResponse(HttpStatus.OK.value(), "Noti has sent"),HttpStatus.OK);
-        }catch (Exception e){
+        }catch (ApiRequestException e){
+            throw e;
+        }
+    }
+    @GetMapping("/getProfileUser")
+    public ResponseEntity<ResponseProfile> getProfileUser(){
+        try {
+            return ResponseEntity.ok(userService.profileUser());
+        }catch (ApiRequestException e){
+            throw e;
+        }
+    }
+    @PutMapping("/updateProfileUser")
+    public ResponseEntity<String> updateProfileUser(RequestUpdateProfile profile){
+        try {
+            return ResponseEntity.ok(userService.updateProfile(profile));
+        }catch (ApiRequestException e){
+            throw e;
+        }
+    }
+    @PutMapping("/changePassword")
+    public ResponseEntity<List<String>> changePasswordUser(RequestChangePasswordUser password){
+        try {
+            return ResponseEntity.ok(userService.changePasswordUser(password));
+        }catch (ApiRequestException e){
             throw e;
         }
     }

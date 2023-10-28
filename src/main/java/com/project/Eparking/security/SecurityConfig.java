@@ -43,13 +43,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/customer/returnPayment",
                         "/user/sendNoti",
                         "/swagger-ui.html", "/webjars/**", "/v2/api-docs", "/swagger-resources/**").permitAll();
-        http.authorizeRequests().antMatchers(GET, "/PLO/profile").hasAnyAuthority("PLO");
-        http.authorizeRequests().antMatchers(PUT, "/PLO/updateProfile").hasAnyAuthority("PLO");
+
+
         http.authorizeRequests().antMatchers(PUT, "/PLO/getBalance").hasAnyAuthority("PLO");
         http.authorizeRequests().antMatchers(GET, "/PLO/getRevenue").hasAnyAuthority("PLO");
         http.authorizeRequests().antMatchers(GET, "/PLO/requestWithdrawal").hasAnyAuthority("PLO");
         http.authorizeRequests().antMatchers(GET, "/PLO/getSumByDate").hasAnyAuthority("PLO");
-        http.authorizeRequests().antMatchers(GET, "/PLO/changePassword").hasAnyAuthority("PLO","CUSTOMER");
         http.authorizeRequests().antMatchers(PUT, "/reservation/checkoutReservation").hasAnyAuthority("PLO","CUSTOMER");
         http.authorizeRequests().antMatchers(PUT, "/reservation/checkinReservation").hasAnyAuthority("PLO","CUSTOMER");
         http.authorizeRequests().antMatchers(PUT, "/reservation/checkoutReservationWithLicensePlate").hasAnyAuthority("PLO");
@@ -99,9 +98,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests().antMatchers(GET, "/licensePlate/getLicensePlate").hasAnyAuthority("CUSTOMER");
         http.authorizeRequests().antMatchers(DELETE, "/licensePlate/deleteLicensePlate").hasAnyAuthority("CUSTOMER");
         http.authorizeRequests().antMatchers(POST, "/licensePlate/addLicensePlate").hasAnyAuthority("CUSTOMER");
-        http.authorizeRequests().antMatchers(GET, "/customer/getProfile").hasAnyAuthority("CUSTOMER");
-        http.authorizeRequests().antMatchers(POST, "/customer/updateProfile").hasAnyAuthority("CUSTOMER");
-        http.authorizeRequests().antMatchers(PUT, "/customer/updatePassword").hasAnyAuthority("CUSTOMER");
         http.authorizeRequests().antMatchers(POST, "/customer/createPayment").hasAnyAuthority("CUSTOMER");
         http.authorizeRequests().antMatchers(GET, "/customer/walletScreen").hasAnyAuthority("CUSTOMER");
         http.authorizeRequests().antMatchers(GET, "/rating/getRatingOfCustomer").hasAnyAuthority("CUSTOMER");
@@ -109,8 +105,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests().antMatchers(GET, "/customer/customerBalance").hasAnyAuthority("CUSTOMER");
         http.authorizeRequests().antMatchers(GET, "/reservation/getInforReservationByLicensePlate").hasAnyAuthority("PLO");
         http.authorizeRequests().antMatchers(GET, "/customer/detailPloForCustomer").hasAnyAuthority("CUSTOMER");
-        http.authorizeRequests().antMatchers(GET, "/customer/nearestParkingList").hasAnyAuthority("CUSTOMER");
-        http.authorizeRequests().antMatchers(GET, "/customer/cheapParkingList").hasAnyAuthority("CUSTOMER");
+        http.authorizeRequests().antMatchers(GET, "/customer/findParkingList").hasAnyAuthority("CUSTOMER");
+        http.authorizeRequests().antMatchers(GET, "/user/getProfileUser").hasAnyAuthority("PLO","CUSTOMER");
+        http.authorizeRequests().antMatchers(PUT, "/user/updateProfileUser").hasAnyAuthority("PLO","CUSTOMER");
+        http.authorizeRequests().antMatchers(PUT, "/user/changePassword").hasAnyAuthority("PLO","CUSTOMER");
         http.authorizeRequests().anyRequest().authenticated();
         http.addFilter(customAuthenticationFilter);
         http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);

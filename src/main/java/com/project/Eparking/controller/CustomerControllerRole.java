@@ -35,30 +35,23 @@ public class CustomerControllerRole {
     private final CustomerService customerService;
     private final PaymentService paymentService;
     private final ReservationService reservationService;
-    @GetMapping("/getProfile")
-    public ResponseEntity<ResponseCustomer> getProfile(){
-        try{
-            return ResponseEntity.ok(customerService.getResponseCustomerByCustomerID());
-        }catch (ApiRequestException e){
-            throw e;
-        }
-    }
-    @PostMapping("/updateProfile")
-    public ResponseEntity<String> updateProfile(@RequestBody RequestCustomerUpdateProfile profile){
-        try {
-            return ResponseEntity.ok(customerService.updateCustomerProfile(profile));
-        }catch (ApiRequestException e){
-            throw e;
-        }
-    }
-    @PutMapping("/updatePassword")
-    public ResponseEntity<List<String>> updateNewPassword(@RequestBody RequestChangePasswordUser user){
-        try {
-            return ResponseEntity.ok(customerService.updatePassswordCustomer(user));
-        }catch (ApiRequestException e){
-            throw e;
-        }
-    }
+
+//    @PostMapping("/updateProfile")
+//    public ResponseEntity<String> updateProfile(@RequestBody RequestCustomerUpdateProfile profile){
+//        try {
+//            return ResponseEntity.ok(customerService.updateCustomerProfile(profile));
+//        }catch (ApiRequestException e){
+//            throw e;
+//        }
+//    }
+//    @PutMapping("/updatePassword")
+//    public ResponseEntity<List<String>> updateNewPassword(@RequestBody RequestChangePasswordUser user){
+//        try {
+//            return ResponseEntity.ok(customerService.updatePassswordCustomer(user));
+//        }catch (ApiRequestException e){
+//            throw e;
+//        }
+//    }
     @GetMapping("/returnPayment")
     public ResponseEntity<?> returnPaymentCustomer(HttpServletRequest request){
         try {
@@ -111,20 +104,18 @@ public class CustomerControllerRole {
             return new Response(HttpStatus.INTERNAL_SERVER_ERROR.value(), Message.ERROR_GET_PLO_DETAIL_FOR_CUSTOMER, null);
         }
     }
-    @GetMapping("/nearestParkingList")
-    public ResponseEntity<List<ResponseFindParkingList>> getNearestParkingList(@RequestParam Double latitude,@RequestParam Double longitude,@RequestParam Double radius){
+    @GetMapping("/findParkingList")
+    public ResponseEntity<?> findParkingList(@RequestParam Double latitude,@RequestParam Double longitude,@RequestParam Double radius,@RequestParam int method){
         try {
-            RequestFindParkingList requestFindParkingList = new RequestFindParkingList(latitude,longitude,radius);
-            return ResponseEntity.ok(reservationService.nearestParkingList(requestFindParkingList));
-        }catch (ApiRequestException e){
-            throw e;
-        }
-    }
-    @GetMapping("/cheapParkingList")
-    public ResponseEntity<List<ResponseFindParkingList>> getCheapestParkingList(@RequestParam Double latitude,@RequestParam Double longitude,@RequestParam Double radius){
-        try {
-            RequestFindParkingList requestFindParkingList = new RequestFindParkingList(latitude,longitude,radius);
-            return ResponseEntity.ok(reservationService.cheapestParkingList(requestFindParkingList));
+            if(method == 1){
+                RequestFindParkingList requestFindParkingList = new RequestFindParkingList(latitude,longitude,radius);
+                return ResponseEntity.ok(reservationService.nearestParkingList(requestFindParkingList));
+            }else if(method == 2){
+                RequestFindParkingList requestFindParkingList = new RequestFindParkingList(latitude,longitude,radius);
+                return ResponseEntity.ok(reservationService.cheapestParkingList(requestFindParkingList));
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid method value.");
+            }
         }catch (ApiRequestException e){
             throw e;
         }
