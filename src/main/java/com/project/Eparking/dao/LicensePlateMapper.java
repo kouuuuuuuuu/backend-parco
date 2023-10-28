@@ -3,6 +3,7 @@ package com.project.Eparking.dao;
 import com.project.Eparking.domain.LicensePlate;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.Arrays;
 import java.util.List;
 @Mapper
 public interface LicensePlateMapper {
@@ -14,4 +15,9 @@ public interface LicensePlateMapper {
 
     void createLicensePlate(String licensePlate, String customerID);
 
+    LicensePlate getLicensePlateByLicensePlate(String licensePlate);
+
+    List<LicensePlate> getListLicensePlate();
+
+    void updateLicensesPlateStatusById(int licensePlateID, String customerID);
 }

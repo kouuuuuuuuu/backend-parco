@@ -1,4 +1,4 @@
-package com.project.Eparking.domain;
+package com.project.Eparking.domain.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,9 +7,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class LicensePlate {
-    private int licensePlateID;
-    private String customerID;
+public class BookingReservationDTO {
+    private String ploID;
+    private int methodID;
     private String licensePlate;
-    private boolean isDelete;
 }

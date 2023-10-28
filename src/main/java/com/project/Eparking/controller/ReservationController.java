@@ -2,6 +2,7 @@ package com.project.Eparking.controller;
 
 import com.project.Eparking.constant.Message;
 import com.project.Eparking.domain.ParkingInformation;
+import com.project.Eparking.domain.dto.BookingReservationDTO;
 import com.project.Eparking.domain.dto.ReservationDTO;
 import com.project.Eparking.domain.dto.ReservationDetailDTO;
 import com.project.Eparking.domain.dto.ReservationInforDTO;
@@ -96,6 +97,33 @@ public class ReservationController {
             return new Response(HttpStatus.OK.value(), Message.GET_RESERVATION_BY_LICENSE_PLATE_SUCCESS, reservationInforDTO);
         }catch (Exception e){
             return new Response(HttpStatus.INTERNAL_SERVER_ERROR.value(), Message.ERR_GET_INFOR_RESERVATION_BY_LICENSE_PLATE, null);
+        }
+    }
+
+    @PutMapping("/cancelReservation")
+    public ResponseEntity<?> cancelReservationByReservationID(@RequestParam("reservationID") int reservationID){
+        try {
+            boolean isCancel = reservationService.cancelReservationByID(reservationID);
+            if (!isCancel) {
+                return ResponseEntity.badRequest().body(Message.CANCEL_RESERVATION_FAIL);
+            }
+            return ResponseEntity.ok().body(Message.CANCEL_RESERVATION_SUCCESS);
+        }catch (Exception e){
+            return ResponseEntity.internalServerError().body(Message.ERROR_CANCEL_RESERVATION);
+
+        }
+    }
+
+    @PostMapping("/bookingReservation")
+    public ResponseEntity<?> bookingReservation(@RequestBody BookingReservationDTO bookingReservationDTO){
+        try{
+            String message = reservationService.bookingReservation(bookingReservationDTO);
+            if (!message.equals(Message.BOOKING_RESERVATION_SUCCESS)){
+                return ResponseEntity.badRequest().body(message);
+            }
+            return ResponseEntity.ok().body(message);
+        }catch (Exception e){
+            return ResponseEntity.internalServerError().body(Message.ERROR_BOOKING_RESERVATION);
         }
     }
 }

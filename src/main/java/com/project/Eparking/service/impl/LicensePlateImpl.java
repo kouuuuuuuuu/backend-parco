@@ -2,7 +2,9 @@ package com.project.Eparking.service.impl;
 
 import com.project.Eparking.constant.Message;
 import com.project.Eparking.dao.LicensePlateMapper;
+import com.project.Eparking.dao.ReservationMapper;
 import com.project.Eparking.domain.LicensePlate;
+import com.project.Eparking.domain.Reservation;
 import com.project.Eparking.exception.ApiRequestException;
 import com.project.Eparking.service.interf.LicensePlateService;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class LicensePlateImpl implements LicensePlateService {
     private final LicensePlateMapper licensePlateMapper;
+    private final ReservationMapper reservationMapper;
 
 //    private static final String LICENSE_PLATE_PATTERN = "^[1-9]{1}[0-9]{1}[A-Z]{1}[0-9]{1}-[0-9]{3}\\.[0-9]{2}$";
 
@@ -49,8 +52,21 @@ public class LicensePlateImpl implements LicensePlateService {
         if(!licensePlatesId.contains(licensePlateID)){
             isDeleteSuccess = false;
         }else {
-            int isDelete = licensePlateMapper.deleteLicensePlate(String.valueOf(licensePlateID), id);
-            isDeleteSuccess = isDelete != 0;
+
+            List<Reservation> reservations = reservationMapper.getReservationByLicensesPlateId(licensePlateID);
+            boolean isBooking = false;
+            for (Reservation reservation : reservations){
+                if (reservation.getStatusID() == 1 || reservation.getStatusID() == 2 || reservation.getStatusID() == 3){
+                    isBooking = true;
+                    break;
+                }
+            }
+            if (!isBooking){
+                int isDelete = licensePlateMapper.deleteLicensePlate(String.valueOf(licensePlateID), id);
+                isDeleteSuccess = isDelete != 0;
+            }else {
+                isDeleteSuccess = false;
+            }
         }
 
         return  isDeleteSuccess;

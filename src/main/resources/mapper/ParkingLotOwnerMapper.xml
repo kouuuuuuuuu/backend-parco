@@ -193,4 +193,14 @@
             WHERE MONTH(browseContract) = MONTH(#{inputDate}) AND YEAR(browseContract) = YEAR(#{inputDate});
         ]]>
     </select>
+
+    <update id="updatePloBalanceAndCurrentSlotById" parameterType="map">
+        UPDATE
+            plo
+        SET
+            balance = #{balance},
+            currentSlot = #{currentSlot}
+        WHERE
+            ploID = #{ploID}
+    </update>
 </mapper>

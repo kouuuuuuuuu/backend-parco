@@ -8,15 +8,18 @@
         <result property = "licensePlateID" column = "licensePlateID"/>
         <result property = "customerID" column = "customerID"/>
         <result property = "licensePlate" column = "licensePlate"/>
+        <result property = "isDelete" column = "isDelete"/>
     </resultMap>
 
     <select id="getListLicensePlateByCustomerID" resultMap="resultLicensePlate">
         SELECT
             licensePlateID,
             customerID,
-            licensePlate
+            licensePlate,
+            isDelete
         FROM Licenseplate
-        WHERE customerID = #{customerID};
+        WHERE customerID = #{customerID}
+        AND isDelete = 0;
     </select>
 
 
@@ -31,17 +34,47 @@
             licensePlateID = #{licensePlateID};
     </select>
 
-    <delete id="deleteLicensePlate" parameterType="String">
-        DELETE FROM Licenseplate
+    <update id="deleteLicensePlate" parameterType="String">
+        UPDATE Licenseplate
+        SET isDelete = 1
         WHERE
             licensePlateID = #{licensePlateID}
         AND
             customerID = #{customerID}
-    </delete>
+    </update>
 
     <insert id="createLicensePlate" parameterType="String">
-        INSERT INTO licenseplate (customerID,licensePlate)
-        VALUES (#{customerID}, #{licensePlate});
+        INSERT INTO licenseplate (customerID,licensePlate, isDelete)
+        VALUES (#{customerID}, #{licensePlate}, 0);
     </insert>
+
+    <select id="getLicensePlateByLicensePlate" resultType="com.project.Eparking.domain.LicensePlate">
+        SELECT
+            licensePlateID,
+            customerID,
+            licensePlate
+        FROM
+            licenseplate
+        WHERE
+            licensePlate = #{licensePlate};
+    </select>
+
+    <select id="getListLicensePlate" resultType="com.project.Eparking.domain.LicensePlate">
+        SELECT
+            licensePlateID,
+            customerID,
+            licensePlate
+        FROM
+            licenseplate
+    </select>
+
+    <update id="updateLicensesPlateStatusById" parameterType="map">
+        UPDATE Licenseplate
+        SET isDelete = 0
+        WHERE
+            licensePlateID = #{licensePlateID}
+        AND
+            customerID = #{customerID}
+    </update>
 
 </mapper>

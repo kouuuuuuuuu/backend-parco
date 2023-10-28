@@ -57,4 +57,11 @@ public class Message {
     public static final String GET_PLO_DETAIL_FOR_CUSTOMER_FAIL = "Get Plo Detail For Customer Fail";
     public static final String GET_PLO_DETAIL_FOR_CUSTOMER_SUCCESS = "Get Plo Detail For Customer Success";
     public static final String ERROR_GET_PLO_DETAIL_FOR_CUSTOMER = "Error When Get Plo Detail For Customer";
+    public static final String CANCEL_RESERVATION_FAIL = "Cancel Reservation Fail";
+    public static final String CANCEL_RESERVATION_SUCCESS = "Cancel Reservation Success";
+    public static final String ERROR_CANCEL_RESERVATION = "Error When Cancel Reservation";
+    public static final String ERROR_BOOKING_RESERVATION = "Error When Booking Reservation";
+    public static final String BOOKING_RESERVATION_SUCCESS = "Booking Reservation Success";
+    public static final String PARKING_LOT_IS_FULL = "The Parking Lot Owner Is Full Slot";
+    public static final String NOT_ALLOW_TO_BOOKING = "Not Allow To Booking";
 }
