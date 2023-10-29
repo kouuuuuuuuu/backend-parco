@@ -2,6 +2,7 @@ package com.project.Eparking.dao;
 
 import com.project.Eparking.domain.ReservationMethod;
 import com.project.Eparking.domain.request.RequestUpdateStatusReservation;
+import com.project.Eparking.domain.response.ResponseMethod;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.sql.Time;
@@ -16,4 +17,5 @@ public interface ReservationMethodMapper {
     void updateCheckinReservation(int reservationID, Timestamp checkIn);
     ReservationMethod getReservationMethodById(int methodID);
     ReservationMethod getMethodByTime(Timestamp currentTime);
+    List<ResponseMethod> getMethodByID(String ploID);
 }

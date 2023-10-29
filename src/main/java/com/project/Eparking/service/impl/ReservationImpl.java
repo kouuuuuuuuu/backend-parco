@@ -55,81 +55,86 @@ public class ReservationImpl implements ReservationService {
     private final ParkingMethodMapper parkingMethodMapper;
     private final LicensePlateService licensePlateService;
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss - dd/MM/yyyy");
+
     @Override
     @Transactional
     public String checkOutStatusReservation(RequestUpdateStatusReservation reservation) {
         String response = "";
-        try{
+        try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String id = authentication.getName();
-            ResponseReservation responseReservation = reservationMapper.findReservationByLicensePlate(id,2,reservation.getLicensePlate());
-            if(responseReservation == null){
-                responseReservation = reservationMapper.findReservationByLicensePlate(id,3,reservation.getLicensePlate());
+            ResponseReservation responseReservation = reservationMapper.findReservationByLicensePlate(id, 2, reservation.getLicensePlate());
+            if (responseReservation == null) {
+                responseReservation = reservationMapper.findReservationByLicensePlate(id, 3, reservation.getLicensePlate());
             }
-            if(responseReservation == null){
+            if (responseReservation == null) {
                 throw new ApiRequestException("Dont have any reservation with license plate");
             }
-            if(responseReservation.getStatusID() == 2 || responseReservation.getStatusID() == 3){
-                reservationMethodMapper.updateStatusReservation(responseReservation.getReservationID(),4);
+            if (responseReservation.getStatusID() == 2 || responseReservation.getStatusID() == 3) {
+                reservationMethodMapper.updateStatusReservation(responseReservation.getReservationID(), 4);
                 long epochMilli = Instant.now().toEpochMilli();
                 Timestamp timestamp = new Timestamp(epochMilli);
-                reservationMethodMapper.updateCheckoutReservation(responseReservation.getReservationID(),timestamp);
+                reservationMethodMapper.updateCheckoutReservation(responseReservation.getReservationID(), timestamp);
                 PLO plo = userMapper.getPLOByPLOID(responseReservation.getPloID());
                 int currentSlot = plo.getCurrentSlot() - 1;
-                if(currentSlot < 0){
+                if (currentSlot < 0) {
                     throw new ApiRequestException("Something error with currentSlot plo");
                 }
-                parkingMapper.updateCurrentSlot(currentSlot,plo.getPloID());
+                parkingMapper.updateCurrentSlot(currentSlot, plo.getPloID());
                 response = "Update successfully!";
-            }else {
+            } else {
                 throw new ApiRequestException("Wrong status");
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new ApiRequestException("Failed checkOut user." + e.getMessage());
         }
         return response;
     }
+
     @Transactional
     @Override
     public String checkInStatusReservation(RequestUpdateStatusReservation reservation) {
         String response = "";
-        try{
+        try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String id = authentication.getName();
-            ResponseReservation responseReservation = reservationMapper.findReservationByLicensePlate(id,1,reservation.getLicensePlate());
-            if(responseReservation == null){
+            ResponseReservation responseReservation = reservationMapper.findReservationByLicensePlate(id, 1, reservation.getLicensePlate());
+            if (responseReservation == null) {
                 throw new ApiRequestException("Dont have any reservation with license plate");
             }
-            if(responseReservation.getStatusID() != 1){
+            if (responseReservation.getStatusID() != 1) {
                 throw new ApiRequestException("Wrong status");
             }
             reservationMethodMapper.updateStatusReservation(responseReservation.getReservationID(), 2);
             long epochMilli = Instant.now().toEpochMilli();
             Timestamp timestamp = new Timestamp(epochMilli);
-            reservationMethodMapper.updateCheckinReservation(responseReservation.getReservationID(),timestamp);;
+            reservationMethodMapper.updateCheckinReservation(responseReservation.getReservationID(), timestamp);
+            ;
             response = "Update successfully!";
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new ApiRequestException("Failed checkIn user." + e.getMessage());
         }
         return response;
     }
+
     @Transactional
     @Override
     public String checkInStatusReservationByReservationID(int reservationID) {
-        try{
+        try {
             Reservation reservation = reservationMapper.getReservationByReservationID(reservationID);
-            if(reservation.getStatusID() != 1){
+            if (reservation.getStatusID() != 1) {
                 throw new ApiRequestException("Wrong status");
             }
             reservationMethodMapper.updateStatusReservation(reservationID, 2);
             long epochMilli = Instant.now().toEpochMilli();
             Timestamp timestamp = new Timestamp(epochMilli);
-            reservationMethodMapper.updateCheckinReservation(reservationID,timestamp);
+            reservationMethodMapper.updateCheckinReservation(reservationID, timestamp);
             return "Update successfully!";
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new ApiRequestException("Failed checkIn user." + e.getMessage());
         }
     }
+
     @Transactional
     @Override
     public String checkOutStatusReservationByReservationID(int reservationID) {
@@ -153,29 +158,29 @@ public class ReservationImpl implements ReservationService {
             } else {
                 throw new ApiRequestException("Wrong status");
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new ApiRequestException("Failed checkOut user." + e.getMessage());
         }
     }
 
     @Override
     public List<ResponseTop5Parking> getTop5Parking(RequestMonthANDYear requestMonthANDYear) {
-        try{
+        try {
             Date inputDate = new SimpleDateFormat("yyyy-MM").parse(requestMonthANDYear.getMonthAndYear());
             java.sql.Date sqlDate = new java.sql.Date(inputDate.getTime());
             return reservationMapper.getTop5ParkingHaveMostReservation(sqlDate);
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new ApiRequestException("Failed to get top 5 parking have most reservation" + e.getMessage());
         }
     }
 
     @Override
     public List<ResponseTop5Revenue> getTop5Revenue(RequestMonthANDYear requestMonthANDYear) {
-        try{
+        try {
             Date inputDate = new SimpleDateFormat("yyyy-MM").parse(requestMonthANDYear.getMonthAndYear());
             java.sql.Date sqlDate = new java.sql.Date(inputDate.getTime());
             return reservationMapper.getTop5ParkingHaveHighestRevenue(sqlDate);
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new ApiRequestException("Failed to get top 5 parking have most reservation" + e.getMessage());
         }
     }
@@ -184,27 +189,27 @@ public class ReservationImpl implements ReservationService {
     public ReservationInforDTO getInforReservationByLicensesPlate(String licensePlate) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String id = authentication.getName();
-        List<Integer> status = List.of(4,5);
+        List<Integer> status = List.of(4, 5);
         Reservation reservation;
         reservation = reservationMapper.findReservationByLicensePlateAndPloId(licensePlate, id, status);
-        if (Objects.isNull(reservation)){
+        if (Objects.isNull(reservation)) {
             List<String> licensePlates = licensePlateMapper.getListLicensePlate()
                     .stream().map(LicensePlate::getLicensePlate).collect(Collectors.toList());
-            String cleanLicensePlate = licensePlate.replaceAll("[-.]","");
+            String cleanLicensePlate = licensePlate.replaceAll("[-.]", "");
             for (String licenString : licensePlates) {
-                if (cleanLicensePlate.contains(licenString.replaceAll("[-.]",""))){
+                if (cleanLicensePlate.contains(licenString.replaceAll("[-.]", ""))) {
                     reservation = reservationMapper.findReservationByLicensePlateAndPloId(licenString, id, status);
                     break;
                 }
             }
-            if (Objects.isNull(reservation)){
+            if (Objects.isNull(reservation)) {
                 return null;
             }
         }
 
-        if (reservation.getStatusID() == 2){
+        if (reservation.getStatusID() == 2) {
             Timestamp currentTime = new Timestamp(System.currentTimeMillis());
-            if (currentTime.after(reservation.getEndTime())){
+            if (currentTime.after(reservation.getEndTime())) {
                 reservationMethodMapper.updateStatusReservation(reservation.getReservationID(), 3);
                 reservation = reservationMapper.findReservationByLicensePlateAndPloId(licensePlate, id, status);
             }
@@ -221,13 +226,13 @@ public class ReservationImpl implements ReservationService {
         reservationInforDTO.setStatus(reservationStatus.getStatusID());
         reservationInforDTO.setStatusName(reservationStatus.getStatusName());
         reservationInforDTO.setLicensePlate(licensePlates.getLicensePlate());
-        reservationInforDTO.setCheckIn(Objects.nonNull(reservation.getCheckIn())?
+        reservationInforDTO.setCheckIn(Objects.nonNull(reservation.getCheckIn()) ?
                 dateFormat.format(reservation.getCheckIn()) : "");
-        reservationInforDTO.setCheckOut(Objects.nonNull(reservation.getCheckOut())?
+        reservationInforDTO.setCheckOut(Objects.nonNull(reservation.getCheckOut()) ?
                 dateFormat.format(reservation.getCheckOut()) : "");
-        reservationInforDTO.setStartTime(Objects.nonNull(reservation.getStartTime())?
+        reservationInforDTO.setStartTime(Objects.nonNull(reservation.getStartTime()) ?
                 dateFormat.format(reservation.getStartTime()) : "");
-        reservationInforDTO.setEndTime(Objects.nonNull(reservation.getEndTime())?
+        reservationInforDTO.setEndTime(Objects.nonNull(reservation.getEndTime()) ?
                 dateFormat.format(reservation.getEndTime()) : "");
 
         return reservationInforDTO;
@@ -248,10 +253,10 @@ public class ReservationImpl implements ReservationService {
         List<Integer> status = List.of(4, 5);
 
         List<Reservation> responseReservations = reservationMapper.getReservationByStatus(status, id);
-        if (responseReservations.isEmpty()){
+        if (responseReservations.isEmpty()) {
             return reservationDTOS;
         }
-        for (Reservation reservation : responseReservations){
+        for (Reservation reservation : responseReservations) {
             ReservationStatus reservationStatus = reservationStatusMapper.getReservationStatusByID(reservation.getStatusID());
             ReservationDTO reservationDTO = new ReservationDTO();
             PLO plo = parkingLotOwnerMapper.getPloById(reservation.getPloID());
@@ -260,9 +265,9 @@ public class ReservationImpl implements ReservationService {
             reservationDTO.setAddress(plo.getAddress());
             reservationDTO.setParkingName(plo.getParkingName());
             reservationDTO.setMethodName(reservationMethod.getMethodName());
-            reservationDTO.setCheckIn(Objects.nonNull(reservation.getCheckIn())?
-                   dateFormat.format(reservation.getCheckIn()) : "");
-            reservationDTO.setCheckOut(Objects.nonNull(reservation.getCheckOut())?
+            reservationDTO.setCheckIn(Objects.nonNull(reservation.getCheckIn()) ?
+                    dateFormat.format(reservation.getCheckIn()) : "");
+            reservationDTO.setCheckOut(Objects.nonNull(reservation.getCheckOut()) ?
                     dateFormat.format(reservation.getCheckOut()) : "");
             reservationDTO.setStatusID(reservationStatus.getStatusID());
             reservationDTO.setStatusName(reservationStatus.getStatusName());
@@ -276,7 +281,7 @@ public class ReservationImpl implements ReservationService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String id = authentication.getName();
         Reservation reservation = reservationMapper.getReservationDetailById(reservationID, id);
-        if (Objects.isNull(reservation)){
+        if (Objects.isNull(reservation)) {
             return null;
         }
         ReservationDetailDTO reservationDetailDTO = new ReservationDetailDTO();
@@ -290,17 +295,18 @@ public class ReservationImpl implements ReservationService {
         reservationDetailDTO.setMethodName(reservationMethod.getMethodName());
         reservationDetailDTO.setLicensePlate(licensePlate.getLicensePlate());
         reservationDetailDTO.setStatusName(reservationStatus.getStatusName());
-        reservationDetailDTO.setStartTime(Objects.nonNull(reservation.getStartTime())?
+        reservationDetailDTO.setStartTime(Objects.nonNull(reservation.getStartTime()) ?
                 dateFormat.format(reservation.getStartTime()) : "");
-        reservationDetailDTO.setEndTime(Objects.nonNull(reservation.getEndTime())?
+        reservationDetailDTO.setEndTime(Objects.nonNull(reservation.getEndTime()) ?
                 dateFormat.format(reservation.getEndTime()) : "");
-        reservationDetailDTO.setCheckIn(Objects.nonNull(reservation.getCheckIn())?
+        reservationDetailDTO.setCheckIn(Objects.nonNull(reservation.getCheckIn()) ?
                 dateFormat.format(reservation.getCheckIn()) : "");
-        reservationDetailDTO.setCheckOut(Objects.nonNull(reservation.getCheckOut())?
+        reservationDetailDTO.setCheckOut(Objects.nonNull(reservation.getCheckOut()) ?
                 dateFormat.format(reservation.getCheckOut()) : "");
 
         return reservationDetailDTO;
     }
+
     public static double haversine(double lat1, double lon1, double lat2, double lon2) {
         try {
             lat1 = Math.toRadians(lat1);
@@ -317,7 +323,7 @@ public class ReservationImpl implements ReservationService {
             double distance = R * c;
 
             return distance;
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new ApiRequestException("Something error with haversine." + e.getMessage());
         }
     }
@@ -334,16 +340,20 @@ public class ReservationImpl implements ReservationService {
             if (coordinates == null) {
                 throw new ApiRequestException("There is dont have any parking");
             }
-            for (ResponseCoordinates responseCoordinates:
+            for (ResponseCoordinates responseCoordinates :
                     coordinates) {
-                double distance = haversine(findParkingList.getLatitude(),findParkingList.getLongitude(),responseCoordinates.getLatitude(),responseCoordinates.getLongtitude());
-                if(distance <= findParkingList.getRadius()){
+                double distance = haversine(findParkingList.getLatitude(), findParkingList.getLongitude(), responseCoordinates.getLatitude(), responseCoordinates.getLongtitude());
+                if (distance <= findParkingList.getRadius()) {
                     PLO plo = userMapper.getPLOByPLOID(responseCoordinates.getPloID());
-                    Double price = parkingMethodMapper.getParkingMethodByID(plo.getPloID(),reservationMethod.getMethodID());
-                    if(price == null){
-                        responseFindParkingListsNull.add(new ResponseFindParkingList(plo.getParkingName(), plo.getCurrentSlot(), plo.getAddress(),distance,price,currentTimestamp,reservationMethod.getMethodName(),plo.getSlot()));
-                    }else {
-                        responseFindParkingLists.add(new ResponseFindParkingList(plo.getParkingName(), plo.getCurrentSlot(), plo.getAddress(),distance,price,currentTimestamp,reservationMethod.getMethodName(),plo.getSlot()));
+                    if (plo.getParkingStatusID() == 4) {
+                        Double price = parkingMethodMapper.getParkingMethodByID(plo.getPloID(), reservationMethod.getMethodID());
+                        int slot = plo.getSlot() - plo.getCurrentSlot();
+                        List<ResponseMethod> responseMethods = reservationMethodMapper.getMethodByID(plo.getPloID());
+                        if (price == null) {
+                            responseFindParkingListsNull.add(new ResponseFindParkingList(plo.getPloID(), plo.getParkingName(), plo.getAddress(), distance, price, currentTimestamp, reservationMethod.getMethodName(), slot, responseMethods));
+                        } else {
+                            responseFindParkingLists.add(new ResponseFindParkingList(plo.getPloID(), plo.getParkingName(), plo.getAddress(), distance, price, currentTimestamp, reservationMethod.getMethodName(), slot, responseMethods));
+                        }
                     }
                 }
             }
@@ -373,16 +383,20 @@ public class ReservationImpl implements ReservationService {
             if (coordinates == null) {
                 throw new ApiRequestException("There is dont have any parking");
             }
-            for (ResponseCoordinates responseCoordinates:
+            for (ResponseCoordinates responseCoordinates :
                     coordinates) {
-                double distance = haversine(findParkingList.getLatitude(),findParkingList.getLongitude(),responseCoordinates.getLatitude(),responseCoordinates.getLongtitude());
-                if(distance <= findParkingList.getRadius()){
+                double distance = haversine(findParkingList.getLatitude(), findParkingList.getLongitude(), responseCoordinates.getLatitude(), responseCoordinates.getLongtitude());
+                if (distance <= findParkingList.getRadius()) {
                     PLO plo = userMapper.getPLOByPLOID(responseCoordinates.getPloID());
-                    Double price = parkingMethodMapper.getParkingMethodByID(plo.getPloID(),reservationMethod.getMethodID());
-                    if(price == null){
-                        responseFindParkingListsNull.add(new ResponseFindParkingList(plo.getParkingName(), plo.getCurrentSlot(), plo.getAddress(),distance,price,currentTimestamp,reservationMethod.getMethodName(),plo.getSlot()));
-                    }else {
-                        responseFindParkingLists.add(new ResponseFindParkingList(plo.getParkingName(), plo.getCurrentSlot(), plo.getAddress(),distance,price,currentTimestamp,reservationMethod.getMethodName(),plo.getSlot()));
+                    if (plo.getParkingStatusID() == 4) {
+                        Double price = parkingMethodMapper.getParkingMethodByID(plo.getPloID(), reservationMethod.getMethodID());
+                        int slot = plo.getSlot() - plo.getCurrentSlot();
+                        List<ResponseMethod> responseMethods = reservationMethodMapper.getMethodByID(plo.getPloID());
+                        if (price == null) {
+                            responseFindParkingListsNull.add(new ResponseFindParkingList(plo.getPloID(), plo.getParkingName(), plo.getAddress(), distance, price, currentTimestamp, reservationMethod.getMethodName(), slot, responseMethods));
+                        } else {
+                            responseFindParkingLists.add(new ResponseFindParkingList(plo.getPloID(), plo.getParkingName(), plo.getAddress(), distance, price, currentTimestamp, reservationMethod.getMethodName(), slot, responseMethods));
+                        }
                     }
                 }
             }
@@ -404,12 +418,12 @@ public class ReservationImpl implements ReservationService {
     public boolean cancelReservationByID(int reservationID) {
         boolean isCancel = true;
         Reservation reservation = reservationMapper.getReservationByReservationID(reservationID);
-        if (Objects.isNull(reservation)){
+        if (Objects.isNull(reservation)) {
             isCancel = false;
-        }else {
-            if (reservation.getStatusID() == 1){
+        } else {
+            if (reservation.getStatusID() == 1) {
                 reservationMethodMapper.updateStatusReservation(reservation.getReservationID(), 5);
-            }else {
+            } else {
                 isCancel = false;
             }
 
@@ -430,22 +444,22 @@ public class ReservationImpl implements ReservationService {
                 getLicensePlateByLicensePlate(bookingReservationDTO.getLicensePlate());
 
         // ** If licensesPlate not found -> create new licensePlate **
-        if (Objects.isNull(licensePlates)){
+        if (Objects.isNull(licensePlates)) {
             String addLicensePlate = licensePlateService.addLicensePlate(bookingReservationDTO.getLicensePlate());
-            if (!addLicensePlate.equals(Message.ADD_LICENSE_PLATE_SUCCESS)){
+            if (!addLicensePlate.equals(Message.ADD_LICENSE_PLATE_SUCCESS)) {
                 message = addLicensePlate;
                 return message;
             }
             licensePlates = licensePlateMapper.getLicensePlateByLicensePlate(bookingReservationDTO.getLicensePlate());
-        }else {
+        } else {
             //** If this licensePlate have deleted -> update isDelete = 0
-            if (!licensePlates.isDelete()){
+            if (!licensePlates.isDelete()) {
                 licensePlateMapper.updateLicensesPlateStatusById(licensePlates.getLicensePlateID(), id);
             }
             // ** If this license plate have reservation and status reservation ! 4 or !5 -> not allow booking
             List<Reservation> reservations = reservationMapper.getReservationByLicensesPlateId(licensePlates.getLicensePlateID());
-            for (Reservation reservation : reservations){
-                if (reservation.getStatusID() == 1 || reservation.getStatusID() == 2 || reservation.getStatusID() == 3 ){
+            for (Reservation reservation : reservations) {
+                if (reservation.getStatusID() == 1 || reservation.getStatusID() == 2 || reservation.getStatusID() == 3) {
                     message = Message.NOT_ALLOW_TO_BOOKING;
                     return message;
                 }
@@ -455,18 +469,18 @@ public class ReservationImpl implements ReservationService {
                 getParkingMethodByID(plo.getPloID(), bookingReservationDTO.getMethodID());
 
         //** if current slot == slot -> return
-        if (plo.getCurrentSlot() == plo.getSlot()){
+        if (plo.getCurrentSlot() == plo.getSlot()) {
             message = Message.PARKING_LOT_IS_FULL;
-            return  message;
+            return message;
         }
 
         ReservationMethod reservationMethod = reservationMethodMapper.getReservationMethodById(bookingReservationDTO.getMethodID());
 
         //** validate startTime & endTime
         Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
-        Timestamp startTime =   Timestamp.valueOf(currentTimestamp.toString().split(" ")[0] +
+        Timestamp startTime = Timestamp.valueOf(currentTimestamp.toString().split(" ")[0] +
                 " " + reservationMethod.getStartTime());
-        Timestamp endTime =   Timestamp.valueOf(currentTimestamp.toString().split(" ")[0] +
+        Timestamp endTime = Timestamp.valueOf(currentTimestamp.toString().split(" ")[0] +
                 " " + reservationMethod.getEndTime());
 
         Reservation reservation = new Reservation();

@@ -4,6 +4,11 @@
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.project.Eparking.dao.ReservationMethodMapper">
 
+    <resultMap id = "listMethod" type = "com.project.Eparking.domain.response.ResponseMethod">
+        <result property = "methodID" column = "methodID"/>
+        <result property = "methodName" column = "methodName"/>
+        <result property = "price" column = "price"/>
+    </resultMap>
     <select id="getAllReservationMethod" resultType="com.project.Eparking.domain.ReservationMethod">
         SELECT
             methodID,
@@ -46,4 +51,13 @@
         FROM ReservationMethod
         WHERE #{currentTime} BETWEEN startTime AND endTime;
     </select>
+
+    <select id="getMethodByID" resultMap="listMethod">
+        SELECT
+            RM.methodID, RM.methodName,PM.price
+        FROM ParkingMethod PM
+        JOIN ReservationMethod RM ON PM.methodID = RM.methodID
+        WHERE ploID = #{ploID}
+    </select>
+
 </mapper>
