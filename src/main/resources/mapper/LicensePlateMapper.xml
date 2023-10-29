@@ -77,4 +77,14 @@
             customerID = #{customerID}
     </update>
 
+    <select id="getAllLicensePlateByCustomerId" resultType="com.project.Eparking.domain.LicensePlate">
+        SELECT
+            licensePlateID,
+            customerID,
+            licensePlate,
+            isDelete
+        FROM Licenseplate
+        WHERE customerID = #{customerID}
+    </select>
+
 </mapper>

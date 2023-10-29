@@ -3,8 +3,10 @@ package com.project.Eparking.service.impl;
 import com.project.Eparking.constant.Message;
 import com.project.Eparking.dao.CustomerMapper;
 import com.project.Eparking.dao.RatingMapper;
+import com.project.Eparking.dao.ReservationMapper;
 import com.project.Eparking.domain.Customer;
 import com.project.Eparking.domain.Rating;
+import com.project.Eparking.domain.Reservation;
 import com.project.Eparking.domain.dto.CreateRatingDTO;
 import com.project.Eparking.domain.dto.CustomerRatingDTO;
 import com.project.Eparking.domain.dto.ListPloDTO;
@@ -32,6 +34,8 @@ public class RatingImpl implements RatingService {
     private final RatingMapper ratingMapper;
 
     private final CustomerMapper customerMapper;
+
+    private final ReservationMapper reservationMapper;
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss dd/MM/yyyy");
     @Override
     public List<Rating> getRatingListByPLOID() {
@@ -97,6 +101,9 @@ public class RatingImpl implements RatingService {
         String id = authentication.getName();
         Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
 
+        Reservation reservation = reservationMapper.getReservationByReservationID(createRatingDTO.getReservationID());
+        reservationMapper.updateReservationIsRatedById(reservation.getReservationID(), 1);
+
         Rating rating = new Rating();
         rating.setCustomerID(id);
         rating.setPloID(createRatingDTO.getPloID());
@@ -106,6 +113,13 @@ public class RatingImpl implements RatingService {
         rating.setFeedbackDate(currentTimestamp);
         ratingMapper.sendRating(rating);
         return Message.CREATE_RATING_SUCCESS;
+    }
+
+    @Override
+    public String cancelRating(int reservationID) {
+        Reservation reservation = reservationMapper.getReservationByReservationID(reservationID);
+        reservationMapper.updateReservationIsRatedById(reservation.getReservationID(), 2);
+        return Message.CANCEL_RATING_SUCCESS;
     }
 
     private Integer countRecords(String ploId){

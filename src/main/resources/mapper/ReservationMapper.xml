@@ -130,7 +130,8 @@
             price,
             checkOut,
             checkIn,
-            methodID
+            methodID,
+            isRating
         FROM
             reservation
         WHERE
@@ -155,7 +156,8 @@
             price,
             checkOut,
             checkIn,
-            methodID
+            methodID,
+            isRating
         FROM
             reservation
         WHERE
@@ -175,14 +177,15 @@
             price,
             checkOut,
             checkIn,
-            methodID
+            methodID,
+            isRating
         FROM Reservation
         WHERE reservationID = #{reservationID}
     </select>
 
 
     <select id="findReservationByLicensePlateAndPloId" resultType="com.project.Eparking.domain.Reservation">
-        SELECT R.reservationID,R.customerID,R.ploID,R.statusID,R.licensePlateID,R.startTime,R.endTime,R.price,R.checkOut,R.checkIn, R.methodID
+        SELECT R.reservationID,R.customerID,R.ploID,R.statusID,R.licensePlateID,R.startTime,R.endTime,R.price,R.checkOut,R.checkIn, R.methodID, R.isRating
         FROM Reservation AS R
         JOIN LicensePlate AS LP ON R.licensePlateID = LP.licensePlateID
         JOIN ReservationMethod RM ON R.methodID = RM.methodID
@@ -213,7 +216,8 @@
             price,
             checkOut,
             checkIn,
-            methodID
+            methodID,
+            isRating
         FROM
             Reservation
         WHERE
@@ -250,5 +254,11 @@
         JOIN LicensePlate LP ON R.licensePlateID = LP.licensePlateID
         WHERE R.customerID = #{customerID} AND isRating = #{rating}
     </select>
+
+    <update id="updateReservationIsRatedById" parameterType="map">
+        UPDATE reservation
+        SET isRating = #{isRating}
+        WHERE reservationID = #{reservationID}
+    </update>
 
 </mapper>

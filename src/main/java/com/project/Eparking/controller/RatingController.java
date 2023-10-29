@@ -48,13 +48,24 @@ public class RatingController {
     }
 
     @PostMapping("/sendRating")
-    public Response sendRating(@RequestBody CreateRatingDTO createRatingDTO){
+    public ResponseEntity<?> sendRating(@RequestBody CreateRatingDTO createRatingDTO){
         try {
             String message = ratingService.createRating(createRatingDTO);
-            return new Response(HttpStatus.OK.value(), message, null);
+            return ResponseEntity.ok().body(message);
         }catch (Exception e){
-            return new Response(HttpStatus.INTERNAL_SERVER_ERROR.value(), Message.ERROR_CREATE_RATING, null);
+            return ResponseEntity.internalServerError().body( Message.ERROR_CREATE_RATING);
         }
     }
+
+    @PutMapping("/cancelRating")
+    public ResponseEntity<?> cancelRating(@RequestParam int reservationID){
+        try {
+            String message = ratingService.cancelRating(reservationID);
+            return ResponseEntity.ok().body(message);
+        }catch (Exception e){
+            return ResponseEntity.internalServerError().body( Message.ERROR_CANCEL_RATING);
+        }
+    }
+
 
 }

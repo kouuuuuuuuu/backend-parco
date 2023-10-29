@@ -27,11 +27,17 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+
 import java.math.BigDecimal;
+
+import java.sql.Time;
+
 import java.sql.Timestamp;
 
 import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import java.text.ParseException;
@@ -444,26 +450,12 @@ public class ReservationImpl implements ReservationService {
         LicensePlate licensePlates = licensePlateMapper.
                 getLicensePlateByLicensePlate(bookingReservationDTO.getLicensePlate());
 
-        // ** If licensesPlate not found -> create new licensePlate **
-        if (Objects.isNull(licensePlates)) {
-            String addLicensePlate = licensePlateService.addLicensePlate(bookingReservationDTO.getLicensePlate());
-            if (!addLicensePlate.equals(Message.ADD_LICENSE_PLATE_SUCCESS)) {
-                message = addLicensePlate;
+        // ** If this license plate have reservation and status reservation ! 4 or !5 -> not allow booking
+        List<Reservation> reservations = reservationMapper.getReservationByLicensesPlateId(licensePlates.getLicensePlateID());
+        for (Reservation reservation : reservations){
+            if (reservation.getStatusID() == 1 || reservation.getStatusID() == 2 || reservation.getStatusID() == 3 ){
+                message = Message.NOT_ALLOW_TO_BOOKING;
                 return message;
-            }
-            licensePlates = licensePlateMapper.getLicensePlateByLicensePlate(bookingReservationDTO.getLicensePlate());
-        } else {
-            //** If this licensePlate have deleted -> update isDelete = 0
-            if (!licensePlates.isDelete()) {
-                licensePlateMapper.updateLicensesPlateStatusById(licensePlates.getLicensePlateID(), id);
-            }
-            // ** If this license plate have reservation and status reservation ! 4 or !5 -> not allow booking
-            List<Reservation> reservations = reservationMapper.getReservationByLicensesPlateId(licensePlates.getLicensePlateID());
-            for (Reservation reservation : reservations) {
-                if (reservation.getStatusID() == 1 || reservation.getStatusID() == 2 || reservation.getStatusID() == 3) {
-                    message = Message.NOT_ALLOW_TO_BOOKING;
-                    return message;
-                }
             }
         }
         double methodPrice = parkingMethodMapper.
@@ -477,12 +469,32 @@ public class ReservationImpl implements ReservationService {
 
         ReservationMethod reservationMethod = reservationMethodMapper.getReservationMethodById(bookingReservationDTO.getMethodID());
 
+        if (customer.getWalletBalance() < methodPrice){
+            message = Message.NOT_ENOUGH_BALANCE_WALLET;
+            return message;
+        }
         //** validate startTime & endTime
         Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
-        Timestamp startTime = Timestamp.valueOf(currentTimestamp.toString().split(" ")[0] +
-                " " + reservationMethod.getStartTime());
-        Timestamp endTime = Timestamp.valueOf(currentTimestamp.toString().split(" ")[0] +
-                " " + reservationMethod.getEndTime());
+        Time calculateTime;
+        Timestamp endTime;
+        if (bookingReservationDTO.getMethodID() == 3){
+            Calendar calendar = Calendar.getInstance();
+            calendar.add(Calendar.DAY_OF_YEAR, 1);
+
+            Timestamp futureTimestamp = new Timestamp(calendar.getTimeInMillis());
+            String futureTime = futureTimestamp.toString().split(" ")[1].substring(0,8);
+            calculateTime = Objects.nonNull(plo.getPloID()) ?
+                    calculateTime(futureTime, plo.getWaitingTime().toString())
+                    : reservationMethod.getEndTime();
+            endTime =   Timestamp.valueOf(futureTimestamp.toString().split(" ")[0] +
+                    " " + calculateTime);
+        }else {
+            calculateTime = Objects.nonNull(plo.getPloID()) ?
+                    calculateTime(reservationMethod.getEndTime().toString(),plo.getWaitingTime().toString())
+                    : reservationMethod.getEndTime();
+            endTime =   Timestamp.valueOf(currentTimestamp.toString().split(" ")[0] +
+                    " " + calculateTime);
+        }
 
         Reservation reservation = new Reservation();
         reservation.setStatusID(1);
@@ -490,7 +502,7 @@ public class ReservationImpl implements ReservationService {
         reservation.setCustomerID(customer.getCustomerID());
         reservation.setPrice(methodPrice);
         reservation.setLicensePlateID(licensePlates.getLicensePlateID());
-        reservation.setStartTime(startTime);
+        reservation.setStartTime(currentTimestamp);
         reservation.setEndTime(endTime);
         reservation.setMethodID(reservationMethod.getMethodID());
         reservationMapper.createReservation(reservation);
@@ -537,6 +549,22 @@ public class ReservationImpl implements ReservationService {
             return screenReservation;
         }catch (Exception e){
             throw new ApiRequestException("Failed to get scrren customer." + e.getMessage());
+        }
+    private Time calculateTime(String time1Str, String time2Str){
+        try {
+            // Parse the input time strings into LocalTime objects
+            LocalTime time1 = LocalTime.parse(time1Str, DateTimeFormatter.ofPattern("HH:mm:ss"));
+            LocalTime time2 = LocalTime.parse(time2Str, DateTimeFormatter.ofPattern("HH:mm:ss"));
+
+            // Calculate the sum using plusHours, plusMinutes, etc.
+            LocalTime sumTime = time1.plusHours(time2.getHour())
+                    .plusMinutes(time2.getMinute())
+                    .plusSeconds(time2.getSecond());
+
+            return Time.valueOf(sumTime.format(DateTimeFormatter.ofPattern("HH:mm:ss")));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null; // Handle errors if input times are not valid
         }
     }
 }

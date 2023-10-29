@@ -64,4 +64,7 @@ public class Message {
     public static final String BOOKING_RESERVATION_SUCCESS = "Booking Reservation Success";
     public static final String PARKING_LOT_IS_FULL = "The Parking Lot Owner Is Full Slot";
     public static final String NOT_ALLOW_TO_BOOKING = "Not Allow To Booking";
+    public static final String NOT_ENOUGH_BALANCE_WALLET = "Your Balance Wallet Not Enough For Booking";
+    public static final String CANCEL_RATING_SUCCESS = "Cancel Rating Success";
+    public static final Object ERROR_CANCEL_RATING = "Error When Cancel Rating";
 }
