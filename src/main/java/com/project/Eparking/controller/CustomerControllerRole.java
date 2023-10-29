@@ -9,15 +9,13 @@ import com.project.Eparking.domain.request.RequestChangePasswordUser;
 import com.project.Eparking.domain.request.RequestCustomerTransaction;
 import com.project.Eparking.domain.request.RequestCustomerUpdateProfile;
 import com.project.Eparking.domain.request.RequestFindParkingList;
-import com.project.Eparking.domain.response.Response;
-import com.project.Eparking.domain.response.ResponseCustomer;
-import com.project.Eparking.domain.response.ResponseFindParkingList;
-import com.project.Eparking.domain.response.ResponseWalletScreen;
+import com.project.Eparking.domain.response.*;
 import com.project.Eparking.exception.ApiRequestException;
 import com.project.Eparking.service.interf.CustomerService;
 import com.project.Eparking.service.interf.PaymentService;
 import com.project.Eparking.service.interf.ReservationService;
 import lombok.RequiredArgsConstructor;
+import net.bytebuddy.asm.Advice;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -116,6 +114,14 @@ public class CustomerControllerRole {
             } else {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid method value.");
             }
+        }catch (ApiRequestException e){
+            throw e;
+        }
+    }
+    @GetMapping("/getScreen")
+    public ResponseEntity<ResponseScreenReservation> getScreenReservation(){
+        try {
+            return ResponseEntity.ok(reservationService.getScreenCustomer());
         }catch (ApiRequestException e){
             throw e;
         }

@@ -8,6 +8,7 @@ import com.project.Eparking.domain.request.RequestMonthANDYear;
 
 import com.project.Eparking.domain.request.RequestUpdateStatusReservation;
 import com.project.Eparking.domain.response.ResponseFindParkingList;
+import com.project.Eparking.domain.response.ResponseScreenReservation;
 import com.project.Eparking.domain.response.ResponseTop5Parking;
 import com.project.Eparking.domain.response.ResponseTop5Revenue;
 
@@ -29,8 +30,7 @@ public interface ReservationService {
     ReservationInforDTO getInforReservationByLicensesPlate(String licensePlate);
     List<ResponseFindParkingList> nearestParkingList(RequestFindParkingList findParkingList);
     List<ResponseFindParkingList> cheapestParkingList(RequestFindParkingList findParkingList);
-
     boolean cancelReservationByID(int reservationID);
-
     String bookingReservation(BookingReservationDTO bookingReservationDTO);
+    ResponseScreenReservation getScreenCustomer();
 }

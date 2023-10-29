@@ -243,5 +243,12 @@
             #{methodID}
         );
     </insert>
+    <select id="getReservationByIsRating" resultType="com.project.Eparking.domain.response.ResponseReservationSC">
+        SELECT R.reservationID,R.price,RM.methodName,LP.licensePlate,R.statusID,R.ploID
+        FROM Reservation R
+        JOIN ReservationMethod RM ON R.methodID = RM.methodID
+        JOIN LicensePlate LP ON R.licensePlateID = LP.licensePlateID
+        WHERE R.customerID = #{customerID} AND isRating = #{rating}
+    </select>
 
 </mapper>

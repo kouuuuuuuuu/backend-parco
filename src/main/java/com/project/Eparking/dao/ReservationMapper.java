@@ -32,4 +32,5 @@ public interface ReservationMapper {
     List<Reservation> getReservationByLicensesPlateId(int licensePlateID);
 
     void createReservation(Reservation reservation);
+    ResponseReservationSC getReservationByIsRating(String customerID, int rating);
 }
