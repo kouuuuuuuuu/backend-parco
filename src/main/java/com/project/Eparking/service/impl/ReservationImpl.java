@@ -27,7 +27,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+
+import java.math.BigDecimal;
+
 import java.sql.Time;
+
 import java.sql.Timestamp;
 
 import java.text.SimpleDateFormat;
@@ -515,6 +519,37 @@ public class ReservationImpl implements ReservationService {
         return message;
     }
 
+    @Override
+    public ResponseScreenReservation getScreenCustomer() {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String id = authentication.getName();
+            ResponseReservationSC reservationSC = reservationMapper.getReservationByIsRating(id,0);
+            ResponseScreenReservation screenReservation = new ResponseScreenReservation();
+            if(reservationSC == null){
+                screenReservation.setStatus(1);
+                screenReservation.setData(reservationSC);
+            }else if(reservationSC.getStatusID() == 1 || reservationSC.getStatusID() == 2 || reservationSC.getStatusID() == 3 || reservationSC.getStatusID() == 4){
+                if(reservationSC.getStatusID() == 1 ){
+                    screenReservation.setStatus(2);
+                }else if(reservationSC.getStatusID() == 2){
+                    screenReservation.setStatus(3);
+                }else if(reservationSC.getStatusID() == 3){
+                    screenReservation.setStatus(4);
+                }else if(reservationSC.getStatusID() == 4){
+                    screenReservation.setStatus(5);
+                }
+                PLO plo = userMapper.getPLOByPLOID(reservationSC.getPloID());
+                reservationSC.setParkingName(plo.getParkingName());
+                reservationSC.setAddress(plo.getAddress());
+                reservationSC.setLongitude(plo.getLongtitude().doubleValue());
+                reservationSC.setLatitude(plo.getLatitude().doubleValue());
+                screenReservation.setData(reservationSC);
+            }
+            return screenReservation;
+        }catch (Exception e){
+            throw new ApiRequestException("Failed to get scrren customer." + e.getMessage());
+        }
     private Time calculateTime(String time1Str, String time2Str){
         try {
             // Parse the input time strings into LocalTime objects

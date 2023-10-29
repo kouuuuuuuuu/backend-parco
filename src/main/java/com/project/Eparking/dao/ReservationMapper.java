@@ -33,5 +33,7 @@ public interface ReservationMapper {
 
     void createReservation(Reservation reservation);
 
+    ResponseReservationSC getReservationByIsRating(String customerID, int rating);
+
     void updateReservationIsRatedById(int reservationID, int isRating);
 }
