@@ -20,4 +20,5 @@ public class Reservation {
     private Timestamp checkOut;
     private Timestamp checkIn;
     private int methodID;
+    private int isRating;
 }

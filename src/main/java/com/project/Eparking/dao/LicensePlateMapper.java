@@ -20,4 +20,6 @@ public interface LicensePlateMapper {
     List<LicensePlate> getListLicensePlate();
 
     void updateLicensesPlateStatusById(int licensePlateID, String customerID);
+
+    List<LicensePlate> getAllLicensePlateByCustomerId(String id);
 }

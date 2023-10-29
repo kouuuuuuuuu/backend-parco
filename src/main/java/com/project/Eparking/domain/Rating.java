@@ -15,6 +15,6 @@ public class Rating {
     private String customerID;
     private String fullName;
     private String ploID;
-    private String reservationID;
+    private int reservationID;
     private Timestamp feedbackDate;
 }
