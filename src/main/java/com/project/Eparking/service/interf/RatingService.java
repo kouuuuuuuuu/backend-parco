@@ -19,4 +19,6 @@ public interface RatingService {
     List<CustomerRatingDTO> getRatingOfCustomer(String ploID);
 
     String createRating(CreateRatingDTO createRatingDTO);
+
+    String cancelRating(int reservationID);
 }
