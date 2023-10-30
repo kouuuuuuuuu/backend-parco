@@ -126,4 +126,12 @@ public class CustomerControllerRole {
             throw e;
         }
     }
+    @GetMapping("/getListMethodByTime")
+    public ResponseEntity<List<ResponseMethodByTime>> getMethodByTime(@RequestParam String ploID){
+        try {
+            return  ResponseEntity.ok(reservationService.getListMethodByTime(ploID));
+        }catch (ApiRequestException e){
+            throw e;
+        }
+    }
 }

@@ -49,7 +49,7 @@
     <select id="getMethodByTime" resultType="com.project.Eparking.domain.ReservationMethod">
         SELECT methodID, methodName,startTime,endTime
         FROM ReservationMethod
-        WHERE #{currentTime} BETWEEN startTime AND endTime;
+        WHERE TIMESTAMP #{currentTime} BETWEEN startTime AND endTime;
     </select>
 
     <select id="getMethodByID" resultMap="listMethod">
