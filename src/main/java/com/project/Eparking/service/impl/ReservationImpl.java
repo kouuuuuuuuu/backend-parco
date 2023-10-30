@@ -570,7 +570,6 @@ public class ReservationImpl implements ReservationService {
     @Override
     public List<ResponseMethodByTime> getListMethodByTime(String ploID) {
         try {
-
             Date currentDate = new Date();
             Timestamp currentTimestamp = new Timestamp(currentDate.getTime());
             ReservationMethod responseMethod = reservationMethodMapper.getMethodByTime(currentTimestamp);
@@ -582,9 +581,6 @@ public class ReservationImpl implements ReservationService {
                 responseMethod.setEndTime(new Time(0, 0, 0));
             }
             List<ParkingMethod> parkingMethods = parkingMethodMapper.getParkingMethodById(ploID);
-            if(parkingMethods == null){
-                parkingMethods = new ArrayList<>();
-            }
             List<ResponseMethodByTime> responseMethodByTime = new ArrayList<>();
             List<ReservationMethod> reservationMethodFinal = new ArrayList<>();
             String isSpecial = "";
@@ -630,10 +626,9 @@ public class ReservationImpl implements ReservationService {
             ));
             Set<Integer> uniqueMethodIDs = new HashSet<>();
             reservationMethodFinal.removeIf(phanTu -> !uniqueMethodIDs.add(phanTu.getMethodID()));
-            for (ParkingMethod parkingMethod : parkingMethods) {
-                final int methodID = parkingMethod.getMethodID(); // Tạo biến cuối cùng
-                reservationMethodFinal.removeIf(reservationMethod -> reservationMethod.getMethodID() == methodID);
-            }
+            reservationMethodFinal.removeIf(reservationMethod ->
+                    parkingMethods.stream().noneMatch(parkingMethod -> parkingMethod.getMethodID() == reservationMethod.getMethodID())
+            );
             for (ReservationMethod method:
                     reservationMethodFinal) {
                 boolean special = false;
