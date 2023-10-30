@@ -41,8 +41,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -60,7 +58,6 @@ public class ReservationImpl implements ReservationService {
     private final ReservationStatusMapper reservationStatusMapper;
     private final CustomerMapper customerMapper;
     private final ParkingMethodMapper parkingMethodMapper;
-    private final LicensePlateService licensePlateService;
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss - dd/MM/yyyy");
 
     @Override
@@ -430,6 +427,7 @@ public class ReservationImpl implements ReservationService {
         } else {
             if (reservation.getStatusID() == 1) {
                 reservationMethodMapper.updateStatusReservation(reservation.getReservationID(), 5);
+                reservationMapper.updateReservationIsRatedById(reservation.getReservationID(), 2);
             } else {
                 isCancel = false;
             }
@@ -448,7 +446,7 @@ public class ReservationImpl implements ReservationService {
         PLO plo = parkingLotOwnerMapper.getPloById(bookingReservationDTO.getPloID());
 
         LicensePlate licensePlates = licensePlateMapper.
-                getLicensePlateByLicensePlate(bookingReservationDTO.getLicensePlate());
+                getLicensePlateByLicensePlate(bookingReservationDTO.getLicensePlate(), id);
 
         // ** If this license plate have reservation and status reservation ! 4 or !5 -> not allow booking
         List<Reservation> reservations = reservationMapper.getReservationByLicensesPlateId(licensePlates.getLicensePlateID());
@@ -649,5 +647,80 @@ public class ReservationImpl implements ReservationService {
         }catch (Exception e){
             throw new ApiRequestException("Failed to get list method by ploID." + e.getMessage());
         }
+    }
+
+    @Override
+    public BookingDetailDTO bookingDetail(String ploID) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String id = authentication.getName();
+        PLO ploEntity = parkingLotOwnerMapper.getPloById(ploID);
+
+        if (Objects.isNull(ploEntity)){
+            return null;
+        }
+        //4. Get Fee by parking method
+        List<ParkingMethod> parkingMethod = parkingMethodMapper.getParkingMethodById(ploID);
+        ParkingMethod morningMethod = new ParkingMethod();
+        ParkingMethod eveningMethod = new ParkingMethod();
+        ParkingMethod overnightMethod = new ParkingMethod();
+
+        List<ReservationMethod> reservationMethods = reservationMethodMapper.getAllReservationMethod();
+        for (ReservationMethod reservationMethod : reservationMethods){
+            if (reservationMethod.getMethodID() == 1){
+                morningMethod =
+                        parkingMethod.stream().
+                                filter(t -> t.getMethodID() == reservationMethod.getMethodID())
+                                .findFirst().orElse(null);
+            }
+
+            if (reservationMethod.getMethodID() == 2){
+                eveningMethod =
+                        parkingMethod.stream().
+                                filter(t -> t.getMethodID() == reservationMethod.getMethodID())
+                                .findFirst().orElse(null);
+            }
+
+            if (reservationMethod.getMethodID() == 3){
+                overnightMethod =
+                        parkingMethod.stream().
+                                filter(t -> t.getMethodID() == reservationMethod.getMethodID())
+                                .findFirst().orElse(null);
+            }
+        }
+        String currentTime = new Timestamp(System.currentTimeMillis()).toString().split(" ")[1];
+        List<ReservationBookingMethodDTO> reservationBookingMethodDTOS = new ArrayList<>();
+        for (ReservationMethod method : reservationMethods){
+            if (method.getMethodID() == 1 &&
+            Time.valueOf(currentTime.substring(0, 8)).getTime() > method.getEndTime().getTime()){
+                continue;
+            }else {
+                ReservationBookingMethodDTO reservationBookingMethodDTO = new ReservationBookingMethodDTO();
+                reservationBookingMethodDTO.setMethodID(method.getMethodID());
+                reservationBookingMethodDTO.setMethodName(method.getMethodName());
+                reservationBookingMethodDTOS.add(reservationBookingMethodDTO);
+            }
+        }
+
+        List<LicensePlate> licensePlates = licensePlateMapper.getListLicensePlateByCustomerID(id);
+        List<LicensePlateDTO> licensePlateDTOS = new ArrayList<>();
+        for (LicensePlate licensePlate : licensePlates){
+            LicensePlateDTO licensePlateDTO = new LicensePlateDTO();
+            licensePlateDTO.setLicencePlateID(licensePlate.getLicensePlateID());
+            licensePlateDTO.setLicencePlate(licensePlate.getLicensePlate());
+            licensePlateDTOS.add(licensePlateDTO);
+        }
+        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+        BookingDetailDTO bookingDetailDTO = new BookingDetailDTO();
+        bookingDetailDTO.setPloID(ploEntity.getPloID());
+        bookingDetailDTO.setAddress(ploEntity.getAddress());
+        bookingDetailDTO.setParkingName(ploEntity.getParkingName());
+        bookingDetailDTO.setMorningFee(morningMethod != null ? morningMethod.getPrice() : 0);
+        bookingDetailDTO.setEveningFee(eveningMethod != null ? eveningMethod.getPrice() : 0);
+        bookingDetailDTO.setOvernightFee(overnightMethod != null ? overnightMethod.getPrice() : 0);
+        bookingDetailDTO.setWaitingTime(Objects.nonNull(ploEntity.getWaitingTime()) ?
+                timeFormat.format(ploEntity.getWaitingTime()) : "");
+        bookingDetailDTO.setReservationMethod(reservationBookingMethodDTOS);
+        bookingDetailDTO.setCustomerLicensePlate(licensePlateDTOS);
+        return bookingDetailDTO;
     }
 }

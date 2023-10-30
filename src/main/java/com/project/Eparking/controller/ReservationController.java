@@ -2,10 +2,7 @@ package com.project.Eparking.controller;
 
 import com.project.Eparking.constant.Message;
 import com.project.Eparking.domain.ParkingInformation;
-import com.project.Eparking.domain.dto.BookingReservationDTO;
-import com.project.Eparking.domain.dto.ReservationDTO;
-import com.project.Eparking.domain.dto.ReservationDetailDTO;
-import com.project.Eparking.domain.dto.ReservationInforDTO;
+import com.project.Eparking.domain.dto.*;
 import com.project.Eparking.domain.request.RequestUpdateReservation;
 import com.project.Eparking.domain.request.RequestUpdateStatusReservation;
 import com.project.Eparking.domain.response.Response;
@@ -124,6 +121,19 @@ public class ReservationController {
             return ResponseEntity.ok().body(message);
         }catch (Exception e){
             return ResponseEntity.internalServerError().body(Message.ERROR_BOOKING_RESERVATION);
+        }
+    }
+
+    @GetMapping("/bookingDetail")
+    public ResponseEntity<?> bookingDetail(@RequestParam String ploID){
+        try{
+            BookingDetailDTO bookingDetailDTO = reservationService.bookingDetail(ploID);
+            if (Objects.isNull(bookingDetailDTO)) {
+                return  ResponseEntity.badRequest().body(Message.NOT_FOUND_PLO_TO_GET_BOOKING_DETAIL);
+            }
+            return ResponseEntity.ok().body(bookingDetailDTO);
+        }catch (Exception e){
+            return ResponseEntity.internalServerError().body(Message.ERROR_GET_BOOKING_DETAIL);
         }
     }
 }

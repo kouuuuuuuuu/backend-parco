@@ -89,10 +89,10 @@ public class LicensePlateImpl implements LicensePlateService {
         for (int i = 0; i < cleanLicensePlates.size(); i++){
             if (cleanLicensePlates.get(i).contains(cleanLicensePlate)){
                 LicensePlate licensePlatesEntity = licensePlateMapper.
-                        getLicensePlateByLicensePlate(licensePlates.get(i));
+                        getLicensePlateByLicensePlate(licensePlates.get(i), id);
 
                 //** If this licensePlate have deleted -> update isDelete = 0
-                if (!licensePlatesEntity.isDelete()){
+                if (licensePlatesEntity.isDelete()){
                     licensePlateMapper.updateLicensesPlateStatusById(licensePlatesEntity.getLicensePlateID(), id);
                     message =  Message.ADD_LICENSE_PLATE_SUCCESS;
                     break;

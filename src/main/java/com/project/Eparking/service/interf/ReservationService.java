@@ -31,4 +31,6 @@ public interface ReservationService {
     String bookingReservation(BookingReservationDTO bookingReservationDTO);
     ResponseScreenReservation getScreenCustomer();
     List<ResponseMethodByTime> getListMethodByTime(String ploID);
+
+    BookingDetailDTO bookingDetail(String ploID);
 }
