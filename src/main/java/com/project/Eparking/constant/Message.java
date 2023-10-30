@@ -66,5 +66,7 @@ public class Message {
     public static final String NOT_ALLOW_TO_BOOKING = "Not Allow To Booking";
     public static final String NOT_ENOUGH_BALANCE_WALLET = "Your Balance Wallet Not Enough For Booking";
     public static final String CANCEL_RATING_SUCCESS = "Cancel Rating Success";
-    public static final Object ERROR_CANCEL_RATING = "Error When Cancel Rating";
+    public static final String ERROR_CANCEL_RATING = "Error When Cancel Rating";
+    public static final String NOT_FOUND_PLO_TO_GET_BOOKING_DETAIL = "Not Found PLO To Get Booking Detail";
+    public static final Object ERROR_GET_BOOKING_DETAIL = "Error Get Booking Detail";
 }

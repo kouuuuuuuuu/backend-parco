@@ -52,11 +52,13 @@
         SELECT
             licensePlateID,
             customerID,
-            licensePlate
+            licensePlate,
+            isDelete
         FROM
             licenseplate
         WHERE
-            licensePlate = #{licensePlate};
+            licensePlate = #{licensePlate}
+        AND customerID = #{customerID};
     </select>
 
     <select id="getListLicensePlate" resultType="com.project.Eparking.domain.LicensePlate">
