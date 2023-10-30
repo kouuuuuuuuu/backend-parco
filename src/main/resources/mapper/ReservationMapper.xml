@@ -38,6 +38,7 @@
         AND R.statusID = #{status}
         AND LP.licensePlate = #{licensePlate};
     </select>
+
     <select id="sumPriceReservationCurrentDateByPLO" resultType="Double">
         SELECT SUM(price) AS total_price
         FROM Reservation
