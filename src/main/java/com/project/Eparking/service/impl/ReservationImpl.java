@@ -337,10 +337,21 @@ public class ReservationImpl implements ReservationService {
         try {
             Date currentDate = new Date();
             Timestamp currentTimestamp = new Timestamp(currentDate.getTime());
-            ReservationMethod reservationMethod = reservationMethodMapper.getMethodByTime(currentTimestamp);
+            List<ReservationMethod> reservationMethodList = reservationMethodMapper.getMethodByTime(currentTimestamp);
+            ReservationMethod reservationMethod = new ReservationMethod();
+            if(reservationMethodList.size() >1){
+                for (ReservationMethod method:
+                        reservationMethodList) {
+                    if(method.getMethodID() != 3){
+                        reservationMethod = new ReservationMethod(method.getMethodID(), method.getMethodName(), method.getStartTime(),method.getEndTime());
+                    }
+                }
+            }else{
+                reservationMethod = reservationMethodList.get(0);
+            }
+
             List<ResponseFindParkingList> responseFindParkingLists = new ArrayList<>();
             List<ResponseCoordinates> coordinates = reservationMapper.getAllCoordinatesPLO();
-            List<ResponseFindParkingList> responseFindParkingListsNull = new ArrayList<>();
             if (coordinates == null) {
                 throw new ApiRequestException("There is dont have any parking");
             }
@@ -353,9 +364,7 @@ public class ReservationImpl implements ReservationService {
                         Double price = parkingMethodMapper.getParkingMethodByID(plo.getPloID(), reservationMethod.getMethodID());
                         int slot = plo.getSlot() - plo.getCurrentSlot();
                         List<ResponseMethod> responseMethods = reservationMethodMapper.getMethodByID(plo.getPloID());
-                        if (price == null) {
-                            responseFindParkingListsNull.add(new ResponseFindParkingList(plo.getPloID(), plo.getParkingName(), plo.getAddress(), distance, price, currentTimestamp, reservationMethod.getMethodName(), slot, responseMethods));
-                        } else {
+                        if (price != null) {
                             responseFindParkingLists.add(new ResponseFindParkingList(plo.getPloID(), plo.getParkingName(), plo.getAddress(), distance, price, currentTimestamp, reservationMethod.getMethodName(), slot, responseMethods));
                         }
                     }
@@ -364,12 +373,7 @@ public class ReservationImpl implements ReservationService {
             List<ResponseFindParkingList> sortedList = responseFindParkingLists.stream()
                     .sorted(Comparator.comparingDouble(ResponseFindParkingList::getDistance))
                     .collect(Collectors.toList());
-            List<ResponseFindParkingList> sortedListNull = responseFindParkingListsNull.stream()
-                    .sorted(Comparator.comparingDouble(ResponseFindParkingList::getDistance))
-                    .collect(Collectors.toList());
-            List<ResponseFindParkingList> sortedListComplete = new ArrayList<>(sortedList);
-            sortedListComplete.addAll(sortedListNull);
-            return sortedListComplete;
+            return sortedList;
         } catch (Exception e) {
             throw new ApiRequestException("Failed to get nearest parking list." + e.getMessage());
         }
@@ -380,10 +384,20 @@ public class ReservationImpl implements ReservationService {
         try {
             Date currentDate = new Date();
             Timestamp currentTimestamp = new Timestamp(currentDate.getTime());
-            ReservationMethod reservationMethod = reservationMethodMapper.getMethodByTime(currentTimestamp);
+            List<ReservationMethod> reservationMethodList = reservationMethodMapper.getMethodByTime(currentTimestamp);
+            ReservationMethod reservationMethod = new ReservationMethod();
+            if(reservationMethodList.size() >1){
+                for (ReservationMethod method:
+                        reservationMethodList) {
+                    if(method.getMethodID() != 3){
+                        reservationMethod = new ReservationMethod(method.getMethodID(), method.getMethodName(), method.getStartTime(),method.getEndTime());
+                    }
+                }
+            }else {
+                reservationMethod = reservationMethodList.get(0);
+            }
             List<ResponseFindParkingList> responseFindParkingLists = new ArrayList<>();
             List<ResponseCoordinates> coordinates = reservationMapper.getAllCoordinatesPLO();
-            List<ResponseFindParkingList> responseFindParkingListsNull = new ArrayList<>();
             if (coordinates == null) {
                 throw new ApiRequestException("There is dont have any parking");
             }
@@ -396,9 +410,7 @@ public class ReservationImpl implements ReservationService {
                         Double price = parkingMethodMapper.getParkingMethodByID(plo.getPloID(), reservationMethod.getMethodID());
                         int slot = plo.getSlot() - plo.getCurrentSlot();
                         List<ResponseMethod> responseMethods = reservationMethodMapper.getMethodByID(plo.getPloID());
-                        if (price == null) {
-                            responseFindParkingListsNull.add(new ResponseFindParkingList(plo.getPloID(), plo.getParkingName(), plo.getAddress(), distance, price, currentTimestamp, reservationMethod.getMethodName(), slot, responseMethods));
-                        } else {
+                        if (price != null) {
                             responseFindParkingLists.add(new ResponseFindParkingList(plo.getPloID(), plo.getParkingName(), plo.getAddress(), distance, price, currentTimestamp, reservationMethod.getMethodName(), slot, responseMethods));
                         }
                     }
@@ -407,12 +419,7 @@ public class ReservationImpl implements ReservationService {
             List<ResponseFindParkingList> sortedList = responseFindParkingLists.stream()
                     .sorted(Comparator.comparingDouble(ResponseFindParkingList::getPrice))
                     .collect(Collectors.toList());
-            List<ResponseFindParkingList> sortedListNull = responseFindParkingListsNull.stream()
-                    .sorted(Comparator.comparingDouble(ResponseFindParkingList::getDistance))
-                    .collect(Collectors.toList());
-            List<ResponseFindParkingList> sortedListComplete = new ArrayList<>(sortedList);
-            sortedListComplete.addAll(sortedListNull);
-            return sortedListComplete;
+            return sortedList;
         } catch (Exception e) {
             throw new ApiRequestException("Failed to get cheapest parking list." + e.getMessage());
         }
@@ -572,13 +579,21 @@ public class ReservationImpl implements ReservationService {
         try {
             Date currentDate = new Date();
             Timestamp currentTimestamp = new Timestamp(currentDate.getTime());
-            ReservationMethod responseMethod = reservationMethodMapper.getMethodByTime(currentTimestamp);
-            if(responseMethod == null){
-                responseMethod = new ReservationMethod();
-                responseMethod.setMethodID(3);
-                responseMethod.setMethodName("Qua đêm");
-                responseMethod.setStartTime( new Time(0, 0, 0));
-                responseMethod.setEndTime(new Time(0, 0, 0));
+//            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//            Date parsedDate = dateFormat.parse("2023-10-30 16:35:00");
+//            Timestamp currentTimestamp = new Timestamp(parsedDate.getTime());
+            ///
+            ReservationMethod responseMethod = new ReservationMethod();
+            List<ReservationMethod> reservationMethodList = reservationMethodMapper.getMethodByTime(currentTimestamp);
+            if(reservationMethodList.size()>1){
+                for (ReservationMethod method :
+                        reservationMethodList) {
+                    if (method.getMethodID() != 3) {
+                        responseMethod = new ReservationMethod(method.getMethodID(), method.getMethodName(), method.getStartTime(),method.getEndTime());
+                    }
+                }
+            }else {
+                responseMethod = reservationMethodList.get(0);
             }
             List<ParkingMethod> parkingMethods = parkingMethodMapper.getParkingMethodById(ploID);
             List<ResponseMethodByTime> responseMethodByTime = new ArrayList<>();
@@ -587,62 +602,77 @@ public class ReservationImpl implements ReservationService {
             //+30m
             Date newDate30m = new Date(currentTimestamp.getTime());
             newDate30m.setTime(newDate30m.getTime() + (30 * 60 * 1000));
+
             Timestamp Timestamp30m = new Timestamp(newDate30m.getTime());
-            ReservationMethod responseMethod30m = reservationMethodMapper.getMethodByTime(Timestamp30m);
-            if(responseMethod30m == null){
-                responseMethod30m = new ReservationMethod();
-                responseMethod30m.setMethodID(3);
-                responseMethod30m.setMethodName("Qua đêm");
-                responseMethod30m.setStartTime( new Time(0, 0, 0));
-                responseMethod30m.setEndTime(new Time(0, 0, 0));
+
+//
+            ReservationMethod responseMethod30m = new ReservationMethod();
+            List<ReservationMethod> reservationMethodList30m = reservationMethodMapper.getMethodByTime(Timestamp30m);
+            if(reservationMethodList30m.size()>1){
+                for (ReservationMethod method :
+                        reservationMethodList30m) {
+                    if (method.getMethodID() != 3) {
+                        responseMethod30m = new ReservationMethod(method.getMethodID(), method.getMethodName(), method.getStartTime(),method.getEndTime());
+                    }
+                }
+            }else {
+                responseMethod30m = reservationMethodList30m.get(0);
             }
 
             //+5m
             Date newDate5m = new Date(currentTimestamp.getTime());
             newDate5m.setTime(newDate5m.getTime() + (5 * 60 * 1000));
             Timestamp Timestamp5m = new Timestamp(newDate5m.getTime());
-            ReservationMethod responseMethod5m = reservationMethodMapper.getMethodByTime(Timestamp5m);
-            if(responseMethod5m == null){
-                responseMethod5m = new ReservationMethod();
-                responseMethod5m.setMethodID(3);
-                responseMethod5m.setMethodName("Qua đêm");
-                responseMethod5m.setStartTime( new Time(0, 0, 0));
-                responseMethod5m.setEndTime(new Time(0, 0, 0));
-            }
-            if(responseMethod.getMethodID() == responseMethod30m.getMethodID()){
-                reservationMethodFinal.add(new ReservationMethod(responseMethod.getMethodID(),responseMethod.getMethodName(),responseMethod.getStartTime(),responseMethod.getEndTime()));
-            }else if(responseMethod.getMethodID() != responseMethod30m.getMethodID()){
-                isSpecial = responseMethod.getMethodName();
-                reservationMethodFinal.add(new ReservationMethod(responseMethod.getMethodID(),responseMethod.getMethodName(),responseMethod.getStartTime(),responseMethod.getEndTime()));
-                reservationMethodFinal.add(new ReservationMethod(responseMethod30m.getMethodID(),responseMethod30m.getMethodName(),responseMethod30m.getStartTime(),responseMethod30m.getEndTime()));
-                int methodID = responseMethod.getMethodID();
-                if (methodID != responseMethod5m.getMethodID()) {
-                    reservationMethodFinal.removeIf(phanTu -> phanTu.getMethodID() == methodID);
+
+            //
+            ReservationMethod responseMethod5m = new ReservationMethod();
+            List<ReservationMethod> reservationMethodList5m = reservationMethodMapper.getMethodByTime(Timestamp5m);
+            if(reservationMethodList5m.size() > 1){
+                for (ReservationMethod method :
+                        reservationMethodList5m) {
+                    if (method.getMethodID() != 3) {
+                        responseMethod5m = new ReservationMethod(method.getMethodID(), method.getMethodName(), method.getStartTime(),method.getEndTime());
+                    }
                 }
+            }else {
+                responseMethod5m = reservationMethodList5m.get(0);
             }
-            reservationMethodFinal.add(new ReservationMethod(3, "Qua đêm",
-                    new Time(0, 0, 0), // Thời gian bắt đầu (0 giờ, 0 phút, 0 giây)
-                    new Time(0, 0, 0)  // Thời gian kết thúc (0 giờ, 0 phút, 0 giây)
-            ));
-            Set<Integer> uniqueMethodIDs = new HashSet<>();
-            reservationMethodFinal.removeIf(phanTu -> !uniqueMethodIDs.add(phanTu.getMethodID()));
-            reservationMethodFinal.removeIf(reservationMethod ->
-                    parkingMethods.stream().noneMatch(parkingMethod -> parkingMethod.getMethodID() == reservationMethod.getMethodID())
-            );
-            for (ReservationMethod method:
-                    reservationMethodFinal) {
-                boolean special = false;
-                if(method.getMethodName() == isSpecial){
-                    special = true;
+
+                if (responseMethod.getMethodID() == responseMethod30m.getMethodID()) {
+                    reservationMethodFinal.add(new ReservationMethod(responseMethod.getMethodID(), responseMethod.getMethodName(), responseMethod.getStartTime(), responseMethod.getEndTime()));
+                } else {
+                    isSpecial = responseMethod.getMethodName();
+                    reservationMethodFinal.add(new ReservationMethod(responseMethod.getMethodID(), responseMethod.getMethodName(), responseMethod.getStartTime(), responseMethod.getEndTime()));
+                    reservationMethodFinal.add(new ReservationMethod(responseMethod30m.getMethodID(), responseMethod30m.getMethodName(), responseMethod30m.getStartTime(), responseMethod30m.getEndTime()));
+                    int methodID = responseMethod.getMethodID();
+                    if (methodID != responseMethod5m.getMethodID()) {
+                        reservationMethodFinal.removeIf(phanTu -> phanTu.getMethodID() == methodID);
+                    }
                 }
-                Double price = parkingMethodMapper.getParkingMethodByID(ploID,method.getMethodID());
-                responseMethodByTime.add(new ResponseMethodByTime(method.getMethodID(), method.getMethodName(), price,special));
-            }
+                reservationMethodFinal.add(new ReservationMethod(3, "Qua đêm",
+                        new Time(0, 0, 0), // Thời gian bắt đầu (0 giờ, 0 phút, 0 giây)
+                        new Time(23, 59, 59)  // Thời gian kết thúc (0 giờ, 0 phút, 0 giây)
+                ));
+                Set<Integer> uniqueMethodIDs = new HashSet<>();
+                reservationMethodFinal.removeIf(phanTu -> !uniqueMethodIDs.add(phanTu.getMethodID()));
+                reservationMethodFinal.removeIf(reservationMethod ->
+                        parkingMethods.stream().noneMatch(parkingMethod -> parkingMethod.getMethodID() == reservationMethod.getMethodID())
+                );
+                for (ReservationMethod method :
+                        reservationMethodFinal) {
+                    boolean special = false;
+                    if (method.getMethodName().equals(isSpecial) && !method.getMethodName().equals("Qua đêm")) {
+                        special = true;
+                    }
+                    Double price = parkingMethodMapper.getParkingMethodByID(ploID, method.getMethodID());
+                    responseMethodByTime.add(new ResponseMethodByTime(method.getMethodID(), method.getMethodName(), price, special));
+                }
             return responseMethodByTime;
-        }catch (Exception e){
+            }catch(Exception e){
             throw new ApiRequestException("Failed to get list method by ploID." + e.getMessage());
         }
-    }
+
+        }
 
     @Override
     public BookingDetailDTO bookingDetail(String ploID) {

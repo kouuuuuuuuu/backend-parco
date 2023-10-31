@@ -4,6 +4,13 @@
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.project.Eparking.dao.ReservationMethodMapper">
 
+    <resultMap id="listMethodByTime" type="com.project.Eparking.domain.ReservationMethod">
+        <result property = "methodID" column = "methodID"/>
+        <result property = "methodName" column = "methodName"/>
+        <result property = "startTime" column = "startTime"/>
+        <result property = "endTime" column = "endTime"/>
+    </resultMap>
+
     <resultMap id = "listMethod" type = "com.project.Eparking.domain.response.ResponseMethod">
         <result property = "methodID" column = "methodID"/>
         <result property = "methodName" column = "methodName"/>
@@ -46,10 +53,10 @@
             methodID = #{methodID};
     </select>
 
-    <select id="getMethodByTime" resultType="com.project.Eparking.domain.ReservationMethod">
-        SELECT methodID, methodName,startTime,endTime
+    <select id="getMethodByTime" resultMap="listMethodByTime">
+        SELECT methodID, methodName, startTime, endTime
         FROM ReservationMethod
-        WHERE TIMESTAMP #{currentTime} BETWEEN startTime AND endTime;
+        WHERE TIME(#{currentTime}) BETWEEN startTime AND endTime;
     </select>
 
     <select id="getMethodByID" resultMap="listMethod">

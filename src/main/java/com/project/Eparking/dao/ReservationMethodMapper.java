@@ -16,6 +16,6 @@ public interface ReservationMethodMapper {
     void updateCheckoutReservation(int reservationID, Timestamp checkOut);
     void updateCheckinReservation(int reservationID, Timestamp checkIn);
     ReservationMethod getReservationMethodById(int methodID);
-    ReservationMethod getMethodByTime(Timestamp currentTime);
+    List<ReservationMethod> getMethodByTime(Timestamp currentTime);
     List<ResponseMethod> getMethodByID(String ploID);
 }
