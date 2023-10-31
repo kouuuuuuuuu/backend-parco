@@ -22,4 +22,6 @@ public class RequestParking {
     private int parkingStatusID;
     private int currentSlot;
     private Timestamp registerContract;
+    private Double latitude;
+    private Double longtitude;
 }

@@ -18,4 +18,6 @@ public class RequestRegisterParking {
     private String address;
     private String description;
     private String UUID;
+    private Double latitude;
+    private Double longitude;
 }

@@ -58,6 +58,8 @@ public class ParkingImpl implements ParkingService {
             requestParking.setSlot(registerParking.getSlot());
             requestParking.setAddress(registerParking.getAddress());
             requestParking.setDescription(registerParking.getDescription());
+            requestParking.setLatitude(registerParking.getLatitude());
+            requestParking.setLongtitude(registerParking.getLongitude());
             requestParking.setParkingStatusID(2);
             requestParking.setCurrentSlot(0);
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());

@@ -24,7 +24,9 @@
             parkingStatusID = #{parkingStatusID},
             currentSlot = #{currentSlot},
             parkingStatusID = #{parkingStatusID},
-            registerContract = #{registerContract}
+            registerContract = #{registerContract},
+            latitude = #{latitude},
+            longtitude = #{longtitude}
         WHERE ploID = #{ploID}
     </update>
 
