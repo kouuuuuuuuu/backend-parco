@@ -365,7 +365,7 @@ public class ReservationImpl implements ReservationService {
                         int slot = plo.getSlot() - plo.getCurrentSlot();
                         List<ResponseMethod> responseMethods = reservationMethodMapper.getMethodByID(plo.getPloID());
                         if (price != null) {
-                            responseFindParkingLists.add(new ResponseFindParkingList(plo.getPloID(), plo.getParkingName(), plo.getAddress(), distance, price, currentTimestamp, reservationMethod.getMethodName(), slot, responseMethods));
+                            responseFindParkingLists.add(new ResponseFindParkingList(plo.getPloID(), plo.getParkingName(), plo.getAddress(), distance, price, currentTimestamp, reservationMethod.getMethodName(), slot, plo.getLongtitude().doubleValue(),plo.getLatitude().doubleValue(),responseMethods));
                         }
                     }
                 }
@@ -411,7 +411,7 @@ public class ReservationImpl implements ReservationService {
                         int slot = plo.getSlot() - plo.getCurrentSlot();
                         List<ResponseMethod> responseMethods = reservationMethodMapper.getMethodByID(plo.getPloID());
                         if (price != null) {
-                            responseFindParkingLists.add(new ResponseFindParkingList(plo.getPloID(), plo.getParkingName(), plo.getAddress(), distance, price, currentTimestamp, reservationMethod.getMethodName(), slot, responseMethods));
+                            responseFindParkingLists.add(new ResponseFindParkingList(plo.getPloID(), plo.getParkingName(), plo.getAddress(), distance, price, currentTimestamp, reservationMethod.getMethodName(), slot,plo.getLongtitude().doubleValue(),plo.getLatitude().doubleValue(), responseMethods));
                         }
                     }
                 }

@@ -19,5 +19,7 @@ public class ResponseFindParkingList {
     private Timestamp currentTime;
     private String methodName;
     private int slot;
+    private Double longitude;
+    private Double latitude;
     private List<ResponseMethod> listMethod;
 }
