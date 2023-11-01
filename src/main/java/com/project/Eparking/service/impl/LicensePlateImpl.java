@@ -76,7 +76,7 @@ public class LicensePlateImpl implements LicensePlateService {
     public String addLicensePlate(String licensePlate) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String id = authentication.getName();
-        List<String> licensePlates = licensePlateMapper.getAllLicensePlateByCustomerId(id)
+        List<String> licensePlates = licensePlateMapper.getListLicensePlate()
                 .stream().map(LicensePlate::getLicensePlate).collect(Collectors.toList());
         List<String> cleanLicensePlates = licensePlates.stream().map(t -> t.replaceAll("[-.]","")).collect(Collectors.toList());
         String cleanLicensePlate = licensePlate.replaceAll("[-.]","");
@@ -89,12 +89,12 @@ public class LicensePlateImpl implements LicensePlateService {
         for (int i = 0; i < cleanLicensePlates.size(); i++){
             if (cleanLicensePlates.get(i).contains(cleanLicensePlate)){
                 LicensePlate licensePlatesEntity = licensePlateMapper.
-                        getLicensePlateByLicensePlate(licensePlates.get(i), id);
+                        getLicensePlateByLicensePlateString(licensePlates.get(i));
 
                 //** If this licensePlate have deleted -> update isDelete = 0
-                if (licensePlatesEntity.isDelete()){
-                    licensePlateMapper.updateLicensesPlateStatusById(licensePlatesEntity.getLicensePlateID(), id);
-                    message =  Message.ADD_LICENSE_PLATE_SUCCESS;
+                if (licensePlatesEntity.isDelete() && !id.contains(licensePlatesEntity.getCustomerID())){
+                    licensePlateMapper.createLicensePlate(licensePlate, id);
+                    message = Message.ADD_LICENSE_PLATE_SUCCESS;
                     break;
                 }else {
                     message = Message.DUPLICATE_LICENSE_PLATE;

@@ -9,6 +9,7 @@ import com.project.Eparking.domain.response.*;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.List;
 
 @Mapper
@@ -36,4 +37,6 @@ public interface ReservationMapper {
     ResponseReservationSC getReservationByIsRating(String customerID, int rating);
 
     void updateReservationIsRatedById(int reservationID, int isRating);
+
+    void updateCheckInCheckOutIsRatedAndStatusById(int reservationID, Timestamp checkIn, Timestamp checkOut, int status, int isRating);
 }

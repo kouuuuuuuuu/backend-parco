@@ -18,4 +18,5 @@ public class PloDetailForCustomerDTO {
     private int star;
     private int currentSlot;
     private List<ImageDTO> images;
+    private String waitingTime;
 }
