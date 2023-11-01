@@ -263,4 +263,15 @@
         WHERE reservationID = #{reservationID}
     </update>
 
+
+    <update id="updateCheckInCheckOutIsRatedAndStatusById" parameterType="map">
+        UPDATE reservation
+        SET
+            checkIn = #{checkIn},
+            checkOut = #{checkOut},
+            statusID = #{status},
+            isRating = #{isRating}
+        WHERE reservationID = #{reservationID}
+    </update>
+
 </mapper>

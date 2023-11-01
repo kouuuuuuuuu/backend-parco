@@ -433,8 +433,12 @@ public class ReservationImpl implements ReservationService {
             isCancel = false;
         } else {
             if (reservation.getStatusID() == 1) {
-                reservationMethodMapper.updateStatusReservation(reservation.getReservationID(), 5);
-                reservationMapper.updateReservationIsRatedById(reservation.getReservationID(), 2);
+                Timestamp checkIn = new Timestamp(System.currentTimeMillis());
+                Timestamp checkOut = new Timestamp(System.currentTimeMillis());
+                reservationMapper.updateCheckInCheckOutIsRatedAndStatusById(reservation.getReservationID(), checkIn, checkOut, 5, 2);
+                PLO plo = parkingLotOwnerMapper.getPloById(reservation.getPloID());
+                int newCurrentSlot = plo.getCurrentSlot() - 1;
+                parkingLotOwnerMapper.updatePloBalanceAndCurrentSlotById(plo.getPloID(), plo.getBalance(), newCurrentSlot);
             } else {
                 isCancel = false;
             }
@@ -480,27 +484,45 @@ public class ReservationImpl implements ReservationService {
         }
         //** validate startTime & endTime
         Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
-        Time calculateTime;
         Timestamp endTime;
-        if (bookingReservationDTO.getMethodID() == 3){
+        Time calculateTime;
+        if (reservationMethod.getMethodID() == 3){
             Calendar calendar = Calendar.getInstance();
             calendar.add(Calendar.DAY_OF_YEAR, 1);
-
             Timestamp futureTimestamp = new Timestamp(calendar.getTimeInMillis());
             String futureTime = futureTimestamp.toString().split(" ")[1].substring(0,8);
-            calculateTime = Objects.nonNull(plo.getPloID()) ?
-                    calculateTime(futureTime, plo.getWaitingTime().toString())
-                    : reservationMethod.getEndTime();
-            endTime =   Timestamp.valueOf(futureTimestamp.toString().split(" ")[0] +
-                    " " + calculateTime);
+            calculateTime = calculateTime(futureTime, plo.getWaitingTime().toString());
+            endTime = Timestamp.valueOf(futureTimestamp.toString().split(" ")[0] + " " + calculateTime);
         }else {
-            calculateTime = Objects.nonNull(plo.getPloID()) ?
-                    calculateTime(reservationMethod.getEndTime().toString(),plo.getWaitingTime().toString())
-                    : reservationMethod.getEndTime();
-            endTime =   Timestamp.valueOf(currentTimestamp.toString().split(" ")[0] +
-                    " " + calculateTime);
-        }
+            calculateTime = calculateTime(reservationMethod.getEndTime().toString(), plo.getWaitingTime().toString());
+            Calendar calendar = Calendar.getInstance();
+            Date currentDate = calendar.getTime();
 
+            // Tạo java.sql.Timestamp từ ngày hiện tại
+            Timestamp timestamp = new Timestamp(currentDate.getTime());
+
+            // Lấy thời gian từ java.sql.Time và java.sql.Timestamp
+            long timeMillis = calculateTime.getTime();
+            long timestampMillis = timestamp.getTime();
+
+            // Thực hiện phép cộng thời gian
+            long resultMillis = timestampMillis + timeMillis;
+
+            // Kiểm tra xem thời gian sau cộng có vượt qua "00:00:00" hay không
+            if (resultMillis < timestampMillis) {
+                // Nếu có, thêm một ngày vào kết quả
+                calendar.setTime(currentDate);
+                calendar.add(Calendar.DAY_OF_MONTH, 1);
+                currentDate = calendar.getTime();
+            }
+
+            // Tạo định dạng ngày tháng tùy chỉnh
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+            // Tạo kết quả là chuỗi theo định dạng tùy chỉnh
+            String resultString = dateFormat.format(currentDate);
+            endTime = Timestamp.valueOf(resultString.split(" ")[0] + " " + calculateTime);
+        }
         Reservation reservation = new Reservation();
         reservation.setStatusID(1);
         reservation.setPloID(plo.getPloID());
@@ -683,7 +705,7 @@ public class ReservationImpl implements ReservationService {
         if (Objects.isNull(ploEntity)){
             return null;
         }
-        //4. Get Fee by parking method
+        // Get Fee by parking method
         List<ParkingMethod> parkingMethod = parkingMethodMapper.getParkingMethodById(ploID);
         ParkingMethod morningMethod = new ParkingMethod();
         ParkingMethod eveningMethod = new ParkingMethod();

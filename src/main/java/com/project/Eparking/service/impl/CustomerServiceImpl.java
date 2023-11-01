@@ -278,7 +278,7 @@ public class CustomerServiceImpl implements CustomerService {
                 imageDTOS.add(imageDTO);
             }
         }
-
+        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
         PloDetailForCustomerDTO parkingLotOwnerDTO = new PloDetailForCustomerDTO();
         parkingLotOwnerDTO.setParkingName(ploEntity.getParkingName());
         parkingLotOwnerDTO.setAddress(ploEntity.getAddress());
@@ -287,8 +287,10 @@ public class CustomerServiceImpl implements CustomerService {
         parkingLotOwnerDTO.setEveningFee(eveningMethod != null ? eveningMethod.getPrice() : 0);
         parkingLotOwnerDTO.setOvernightFee(overnightMethod != null ? overnightMethod.getPrice() : 0);
         parkingLotOwnerDTO.setStar(ploEntity.getStar());
-        parkingLotOwnerDTO.setCurrentSlot(ploEntity.getCurrentSlot());
+        parkingLotOwnerDTO.setCurrentSlot(ploEntity.getSlot() - ploEntity.getCurrentSlot());
         parkingLotOwnerDTO.setImages(imageDTOS);
+        parkingLotOwnerDTO.setWaitingTime(Objects.nonNull(ploEntity.getWaitingTime()) ?
+                timeFormat.format(ploEntity.getWaitingTime()) : "");
         return parkingLotOwnerDTO;
     }
 }
