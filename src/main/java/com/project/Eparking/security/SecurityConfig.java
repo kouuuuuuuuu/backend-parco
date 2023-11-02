@@ -1,5 +1,6 @@
 package com.project.Eparking.security;
 
+import io.netty.handler.codec.http.cors.CorsConfig;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,6 +13,11 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.List;
 
 import static org.springframework.http.HttpMethod.*;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
@@ -21,6 +27,17 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final UserDetailsService userDetailsService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    @Bean
+    CorsConfigurationSource corsConfigurationSource(){
+        CorsConfiguration configurationSource = new CorsConfiguration();
+        configurationSource.setAllowedOrigins(List.of("*"));
+        configurationSource.setAllowedMethods(List.of("*"));
+        configurationSource.setAllowedHeaders(List.of("*"));
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**",configurationSource);
+        return source;
+    }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -42,6 +59,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/parking/getReturnPayment",
                         "/customer/returnPayment",
                         "/user/sendNoti",
+                        "/privateChat",
                         "/swagger-ui.html", "/webjars/**", "/v2/api-docs", "/swagger-resources/**").permitAll();
 
 
@@ -123,5 +141,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public AuthenticationManager authenticationManagerBean() throws Exception{
         return super.authenticationManagerBean();
     }
+
 
 }
