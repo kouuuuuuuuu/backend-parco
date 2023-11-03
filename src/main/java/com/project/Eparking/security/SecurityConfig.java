@@ -59,9 +59,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/parking/getReturnPayment",
                         "/customer/returnPayment",
                         "/user/sendNoti",
-                        "/privateChat",
+                        "/privateReservation",
                         "/swagger-ui.html", "/webjars/**", "/v2/api-docs", "/swagger-resources/**").permitAll();
-
 
         http.authorizeRequests().antMatchers(PUT, "/PLO/getBalance").hasAnyAuthority("PLO");
         http.authorizeRequests().antMatchers(GET, "/PLO/getRevenue").hasAnyAuthority("PLO");

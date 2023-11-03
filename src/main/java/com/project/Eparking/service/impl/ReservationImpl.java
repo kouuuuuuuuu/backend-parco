@@ -22,10 +22,12 @@ import com.project.Eparking.service.interf.LicensePlateService;
 import com.project.Eparking.service.interf.ReservationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationContext;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.socket.WebSocketHandler;
 
 
 import java.math.BigDecimal;
@@ -58,6 +60,7 @@ public class ReservationImpl implements ReservationService {
     private final ReservationStatusMapper reservationStatusMapper;
     private final CustomerMapper customerMapper;
     private final ParkingMethodMapper parkingMethodMapper;
+
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss - dd/MM/yyyy");
 
     @Override
@@ -86,6 +89,7 @@ public class ReservationImpl implements ReservationService {
                 }
                 parkingMapper.updateCurrentSlot(currentSlot, plo.getPloID());
                 response = "Update successfully!";
+
             } else {
                 throw new ApiRequestException("Wrong status");
             }
@@ -113,7 +117,6 @@ public class ReservationImpl implements ReservationService {
             long epochMilli = Instant.now().toEpochMilli();
             Timestamp timestamp = new Timestamp(epochMilli);
             reservationMethodMapper.updateCheckinReservation(responseReservation.getReservationID(), timestamp);
-            ;
             response = "Update successfully!";
         } catch (Exception e) {
             throw new ApiRequestException("Failed checkIn user." + e.getMessage());

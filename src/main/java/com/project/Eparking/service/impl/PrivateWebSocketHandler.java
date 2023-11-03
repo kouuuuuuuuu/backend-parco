@@ -2,6 +2,13 @@ package com.project.Eparking.service.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.project.Eparking.domain.MessageType;
+import com.project.Eparking.domain.RoleType;
+import com.project.Eparking.domain.SocketMessage;
+import com.project.Eparking.exception.ApiRequestException;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 import org.springframework.web.socket.*;
 
 import java.util.ArrayList;
@@ -12,7 +19,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class PrivateWebSocketHandler implements WebSocketHandler {
     private List<WebSocketSession> sessions = new CopyOnWriteArrayList<>();
-    private Map<String, List<WebSocketSession>> chatRooms = new HashMap<>();
+    private Map<Integer, List<WebSocketSession>> chatRooms = new HashMap<>();
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
@@ -25,39 +32,29 @@ public class PrivateWebSocketHandler implements WebSocketHandler {
         var clientValue = message.getPayload();
         System.out.println("The send message is success: " + clientValue);
 
-        String roomCode = extractRoomCode((String) clientValue);
-        String content = extractRoomMessage((String) clientValue);
+        SocketMessage socketMessage = convertToChatMessage((String) clientValue);
 
-        List<WebSocketSession> chatParticipants = chatRooms.computeIfAbsent(roomCode, k -> new ArrayList<>());
+        assert socketMessage != null;
+        List<WebSocketSession> participants = chatRooms.computeIfAbsent(socketMessage.getReservationID(), k -> new ArrayList<>());
 
-        if (!chatParticipants.contains(session)) {
-            chatParticipants.add(session);
+        if (!participants.contains(session)) {
+            participants.add(session);
         }
-
-        System.out.println(content);
-
-        for (WebSocketSession participant : chatParticipants) {
-            participant.sendMessage(new TextMessage(content));
-        }
-    }
-
-    private String extractRoomCode(String message) {
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            JsonNode jsonNode = objectMapper.readTree(message);
-            return jsonNode.get("chatId").asText();
-        } catch (Exception e) {
-            return null;
+        if(participants!=null){
+            for (WebSocketSession participant : participants) {
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    String jsonMessage = objectMapper.writeValueAsString(socketMessage);
+                    participant.sendMessage(new TextMessage(jsonMessage));
+            }
         }
     }
 
-    private String extractRoomMessage(String message) {
+    private SocketMessage convertToChatMessage(String message) {
+        ObjectMapper objectMapper = new ObjectMapper();
         try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            JsonNode jsonNode = objectMapper.readTree(message);
-            return jsonNode.get("message").asText();
+            return objectMapper.readValue(message, SocketMessage.class);
         } catch (Exception e) {
-            return null;
+            throw new ApiRequestException("Failed to convert json to chat message" + e.getMessage());
         }
     }
 
@@ -71,7 +68,6 @@ public class PrivateWebSocketHandler implements WebSocketHandler {
         System.out.println("The close is success");
         sessions.remove(session);
 
-        // Loại bỏ phiên khỏi tất cả các cuộc trò chuyện
         for (List<WebSocketSession> chatParticipants : chatRooms.values()) {
             chatParticipants.remove(session);
         }
