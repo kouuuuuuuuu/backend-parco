@@ -10,4 +10,9 @@ public class DelayTimeSocket extends SockJsServiceRegistration {
     public SockJsServiceRegistration setDisconnectDelay(long disconnectDelay) {
         return super.setDisconnectDelay(disconnectDelay);
     }
+
+    @Override
+    public SockJsServiceRegistration setHeartbeatTime(long heartbeatTime) {
+        return super.setHeartbeatTime(heartbeatTime);
+    }
 }

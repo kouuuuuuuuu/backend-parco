@@ -14,5 +14,6 @@ public class SocketConfig implements WebSocketConfigurer {
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
             registry.addHandler(new PrivateWebSocketHandler(), "/privateReservation");
         delayTimeSocket.setDisconnectDelay(0);
+        delayTimeSocket.setHeartbeatTime(0);
     }
 }
