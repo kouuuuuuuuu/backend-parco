@@ -264,11 +264,25 @@ public class ReservationImpl implements ReservationService {
         if (responseReservations.isEmpty()) {
             return reservationDTOS;
         }
-        // Sắp xếp danh sách responseReservations theo ngày checkIn hoặc checkOut
+         //Sắp xếp danh sách responseReservations theo ngày checkIn hoặc checkOut
         responseReservations.sort((r1, r2) -> {
-            Date r1Date = r1.getCheckIn() != null ? r1.getCheckIn() : r1.getCheckOut();
-            Date r2Date = r2.getCheckIn() != null ? r2.getCheckIn() : r2.getCheckOut();
-            return r2Date.compareTo(r1Date);
+            Date r1Date = null;
+            Date r2Date = null;
+            if (r1.getCheckIn() != null) {
+                r1Date = r1.getCheckIn();
+            }else if (r1.getCheckOut() != null) {
+                r1Date = r1.getCheckOut();
+            }
+            if (r2.getCheckIn() != null){
+                r2Date = r2.getCheckIn();
+            }else if (r2.getCheckOut() != null){
+                r2Date = r2.getCheckOut();
+            }
+            if (r1Date != null && r2Date != null){
+                return r2Date.compareTo(r1Date);
+            }else {
+                return 0;
+            }
         });
 
         for (Reservation reservation : responseReservations) {
