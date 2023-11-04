@@ -59,12 +59,12 @@ public class CustomerServiceImpl implements CustomerService {
         }
         //2. Mapping customer data to customer DTO;
         for (Customer c : listCustomerEntity){
-            FirebaseToken firebaseToken = firebaseTokenMapper.getFirebaseTokenByCustomerID(c.getCustomerID());
+            List <FirebaseToken> firebaseToken = firebaseTokenMapper.getFirebaseTokenByCustomerID(c.getCustomerID());
             CustomerDTO customerDTO = new CustomerDTO();
             customerDTO.setCustomerId(c.getCustomerID());
             customerDTO.setPhoneNumber(c.getPhoneNumber());
             customerDTO.setFullName(c.getFullName());
-            customerDTO.setStatus((Objects.nonNull(firebaseToken) && !firebaseToken.getDeviceToken().isEmpty()) ?
+            customerDTO.setStatus((Objects.nonNull(firebaseToken) && !firebaseToken.isEmpty()) ?
                     "Online" : "Offline");
             String registrationDate = dateFormat.format(c.getRegistrationDate());
             customerDTO.setRegistrationDate(registrationDate);
@@ -94,12 +94,12 @@ public class CustomerServiceImpl implements CustomerService {
 
         //2. Mapping to DTO data
         for (Customer c : listCustomers){
-            FirebaseToken firebaseToken = firebaseTokenMapper.getFirebaseTokenByCustomerID(c.getCustomerID());
+            List<FirebaseToken> firebaseToken = firebaseTokenMapper.getFirebaseTokenByCustomerID(c.getCustomerID());
             CustomerDTO customerDTO = new CustomerDTO();
             customerDTO.setCustomerId(c.getCustomerID());
             customerDTO.setPhoneNumber(c.getPhoneNumber());
             customerDTO.setFullName(c.getFullName());
-            customerDTO.setStatus((Objects.nonNull(firebaseToken) && !firebaseToken.getDeviceToken().isEmpty()) ?
+            customerDTO.setStatus((Objects.nonNull(firebaseToken) && !firebaseToken.isEmpty()) ?
                     "Online" : "Offline");
             String registrationDate = dateFormat.format(c.getRegistrationDate());
             customerDTO.setRegistrationDate(registrationDate);
