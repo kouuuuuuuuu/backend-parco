@@ -280,6 +280,11 @@ public class ReservationImpl implements ReservationService {
             }
             if (r1Date != null && r2Date != null){
                 return r2Date.compareTo(r1Date);
+            }
+            else if (r1Date != null) {
+                return -1; // r1Date is considered smaller
+            } else if (r2Date != null) {
+                return 1; // r2Date is considered smaller
             }else {
                 return 0;
             }
