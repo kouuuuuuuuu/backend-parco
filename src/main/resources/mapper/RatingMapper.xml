@@ -26,6 +26,7 @@
         feedbackDate
         FROM Rating,Customer
         WHERE ploID = #{ploID} AND Rating.customerID = Customer.customerID
+        ORDER BY feedbackDate DESC
     </select>
 
 
@@ -42,6 +43,8 @@
             rating
         WHERE
             ploID = #{ploId}
+        ORDER BY
+            feedbackDate DESC
         LIMIT
             #{pageSize}
         OFFSET

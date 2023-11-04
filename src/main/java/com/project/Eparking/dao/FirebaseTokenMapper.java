@@ -9,4 +9,6 @@ public interface FirebaseTokenMapper {
     void addDeviceToken(RequestFirebaseTokenMapper tokenMapper);
     FirebaseToken getFirebaseTokenByDeviceToken(String deviceToken);
     void deleteTokenByTokenDevice(String deviceToken);
+
+    FirebaseToken getFirebaseTokenByCustomerID(String customerID);
 }

@@ -44,8 +44,12 @@
         <if test="keywords != null and keywords != ''">
             AND (
             fullName REGEXP #{keywords} OR
-            parkingName REGEXP #{keywords})
+            parkingName REGEXP #{keywords} OR
+            phoneNumber REGEXP #{keywords} OR
+            address REGEXP #{keywords} )
         </if>
+        ORDER BY
+            registerContract DESC
         LIMIT
             #{pageSize}
         OFFSET

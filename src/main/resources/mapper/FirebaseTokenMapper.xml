@@ -23,4 +23,14 @@
         DELETE FROM FirebaseToken
         WHERE deviceToken = #{deviceToken}
     </delete>
+
+    <select id="getFirebaseTokenByCustomerID" resultType="com.project.Eparking.domain.FirebaseToken">
+        SELECT
+            token,
+            recipientType,
+            recipientID,
+            deviceToken
+        FROM FirebaseToken
+        WHERE recipientID = #{customerID}
+    </select>
 </mapper>

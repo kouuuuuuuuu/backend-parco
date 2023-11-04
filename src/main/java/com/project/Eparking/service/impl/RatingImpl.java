@@ -60,8 +60,7 @@ public class RatingImpl implements RatingService {
         // 1. Get list rating entity pagination
         int pageNumOffset = (pageNum -1) == 0 ? 0 : (pageNum-1) * pageSize;
         List<Rating> ratingList = ratingMapper.getWithPaginationByPloId(pageNumOffset,pageSize,ploId);
-
-        // 2. Mapping to dto
+        // 2.1 Mapping to dto
         List<RatingDTO> ratingDTOS = new ArrayList<>();
         for (Rating rating: ratingList){
             RatingDTO ratingDTO = new RatingDTO();
@@ -70,7 +69,8 @@ public class RatingImpl implements RatingService {
             ratingDTO.setFullName(customer.getFullName());
             ratingDTO.setContent(rating.getContent());
             ratingDTO.setStar(rating.getStar());
-            ratingDTO.setFeedbackDate(rating.getFeedbackDate());
+            ratingDTO.setFeedbackDate(Objects.nonNull(rating.getFeedbackDate())?
+                    dateFormat.format(rating.getFeedbackDate()) : "");
             ratingDTOS.add(ratingDTO);
         }
         int totalRecords = this.countRecords(ploId);
@@ -86,7 +86,8 @@ public class RatingImpl implements RatingService {
         if (ratingList.isEmpty()){
             return customerRatingDTOList;
         }
-
+        //1.1 Sort ratingList by feedbackDate in descending order (from newest to oldest)
+        ratingList.sort((r1, r2) -> r2.getFeedbackDate().compareTo(r1.getFeedbackDate()));
         //2. Mapping data
         for (Rating rating : ratingList){
             //2.1 Get customer information from rating customer ID
