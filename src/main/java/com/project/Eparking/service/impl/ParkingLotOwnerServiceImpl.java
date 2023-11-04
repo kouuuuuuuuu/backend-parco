@@ -6,11 +6,13 @@ import com.project.Eparking.domain.dto.*;
 import com.project.Eparking.domain.Image;
 import com.project.Eparking.domain.ParkingMethod;
 import com.project.Eparking.domain.ReservationMethod;
+import com.project.Eparking.domain.request.PushNotificationRequest;
 import com.project.Eparking.domain.request.RequestMonthANDYear;
 import com.project.Eparking.domain.response.Page;
 import com.project.Eparking.domain.response.Response4week;
 import com.project.Eparking.domain.response.WeekData;
 import com.project.Eparking.exception.ApiRequestException;
+import com.project.Eparking.service.PushNotificationService;
 import com.project.Eparking.service.interf.ParkingLotOwnerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +39,9 @@ public class ParkingLotOwnerServiceImpl implements ParkingLotOwnerService {
     private final ReservationMethodMapper reservationMethodMapper;
 
     private final ParkingStatusMapper parkingStatusMapper;
+    private final PushNotificationService pushNotificationService;
+    private final FirebaseTokenMapper tokenMapper;
+
 
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
@@ -220,7 +225,20 @@ public class ParkingLotOwnerServiceImpl implements ParkingLotOwnerService {
 //        plo.setLongtitude(updatePloStatusDTO.getLongtitude());
 //        plo.setLatitude(updatePloStatusDTO.getLatitude());
         parkingLotOwnerMapper.updateParkingStatusByPloId(plo);
-
+        PushNotificationRequest request = new PushNotificationRequest();
+        request.setImage("");
+        request.setMessage("Đơn đăng ký bãi đỗ xe của bạn đã được phê duyệt");
+        request.setTitle("Thông báo trạng thái đơn đăng ký");
+        request.setTopic("Thông báo trạng thái đơn đăng ký");
+        List<FirebaseToken> firebaseTokens = tokenMapper.getTokenByID(plo.getPloID());
+        if(firebaseTokens==null){
+            throw new ApiRequestException("Failed to get firebaseTokens");
+        }
+        for (FirebaseToken token:
+             firebaseTokens) {
+            request.setToken(token.getDeviceToken());
+            pushNotificationService.sendPushNotificationToToken(request);
+        }
         return isSuccess;
     }
 

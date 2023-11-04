@@ -4,6 +4,13 @@
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.project.Eparking.dao.FirebaseTokenMapper">
 
+    <resultMap id = "listToken" type = "com.project.Eparking.domain.FirebaseToken">
+        <result property = "token" column = "token"/>
+        <result property = "recipientType" column = "recipientType"/>
+        <result property = "recipientID" column = "recipientID"/>
+        <result property = "deviceToken" column = "deviceToken"/>
+    </resultMap>
+
     <insert id="addDeviceToken" parameterType="com.project.Eparking.domain.request.RequestFirebaseTokenMapper" >
         Insert into FirebaseToken (recipientType, recipientID,deviceToken)
         values (#{recipientType},#{recipientID},#{deviceToken})
@@ -32,5 +39,14 @@
             deviceToken
         FROM FirebaseToken
         WHERE recipientID = #{customerID}
+    </select>
+    <select id="getTokenByID" resultMap="listToken">
+        SELECT
+            token,
+            recipientType,
+            recipientID,
+            deviceToken
+        FROM FirebaseToken
+        WHERE recipientID = #{userID}
     </select>
 </mapper>

@@ -195,6 +195,10 @@
         SELECT notiID,recipient_type,recipient_id,sender_type,sender_id,content,created_at
         FROM Notifications
         WHERE recipient_id = #{recipientID}
+        ORDER BY created_at DESC;
     </select>
-
+    <insert id="insertNotification" parameterType="com.project.Eparking.domain.Notifications">
+        insert into Notifications(recipient_type,recipient_id,sender_type,sender_id,content,created_at)
+        value(#{recipient_type},#{recipient_id},#{sender_type},#{sender_id},#{content},#{created_at})
+    </insert>
 </mapper>

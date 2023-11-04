@@ -1,18 +1,20 @@
 package com.project.Eparking.service.impl;
 
-import com.project.Eparking.dao.ParkingLotOwnerMapper;
-import com.project.Eparking.dao.TransactionMapper;
-import com.project.Eparking.dao.TransactionMethodMapper;
-import com.project.Eparking.domain.PLO;
-import com.project.Eparking.domain.PLOTransaction;
-import com.project.Eparking.domain.TransactionMethod;
+import com.project.Eparking.dao.*;
+import com.project.Eparking.domain.*;
 import com.project.Eparking.domain.dto.PloWithdrawalDTO;
 import com.project.Eparking.domain.dto.WithdrawalTransactionMethodDTO;
+import com.project.Eparking.domain.request.PushNotificationRequest;
 import com.project.Eparking.domain.response.Page;
+import com.project.Eparking.exception.ApiRequestException;
+import com.project.Eparking.service.PushNotificationService;
 import com.project.Eparking.service.interf.PloTransactionService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +29,9 @@ public class PloTransactionServiceImpl implements PloTransactionService {
     private final ParkingLotOwnerMapper parkingLotOwnerMapper;
 
     private final TransactionMapper transactionMapper;
-
+    private final PushNotificationService pushNotificationService;
+    private final FirebaseTokenMapper tokenMapper;
+    private final UserMapper userMapper;
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
     @Override
@@ -39,16 +43,51 @@ public class PloTransactionServiceImpl implements PloTransactionService {
         if (Objects.isNull(ploTransaction)){
             return false;
         }
-
+        PLO plo = parkingLotOwnerMapper.getPloById(ploTransaction.getPloID());
         if (status == 3){
             //* If status = 3 -> Update plo balance
-            PLO plo = parkingLotOwnerMapper.getPloById(ploTransaction.getPloID());
+
             double newBalance = plo.getBalance() - ploTransaction.getDepositAmount();
             parkingLotOwnerMapper.updatePloBalanceById(plo.getPloID(), newBalance);
         }
-
         transactionMapper.updatePloTransactionStatusByHistoryId(transactionId, status);
 
+        //send noti
+        PushNotificationRequest request = new PushNotificationRequest();
+        request.setImage("");
+        if(status == 3){
+            request.setMessage("Đơn rút tiền của bạn đã được duyệt");
+        }
+        if(status == 4){
+            request.setMessage("Đơn rút tiền của bạn đã bị từ chối");
+        }
+        request.setTitle("Thông báo trạng thái của đơn rút tiền");
+        request.setTopic("Thông báo trạng thái của đơn rút tiền");
+        List<FirebaseToken> firebaseTokens = tokenMapper.getTokenByID(plo.getPloID());
+        if(firebaseTokens==null){
+            throw new ApiRequestException("Failed to get firebaseTokens");
+        }
+        for (FirebaseToken token:
+                firebaseTokens) {
+            request.setToken(token.getDeviceToken());
+            pushNotificationService.sendPushNotificationToToken(request);
+        }
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String id = authentication.getName();
+        Notifications notifications = new Notifications();
+        notifications.setRecipient_type("PLO");
+        notifications.setRecipient_id(plo.getPloID());
+        notifications.setSender_type("ADMIN");
+        notifications.setSender_id(id);
+        Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+        notifications.setCreated_at(currentTime);
+        if(status == 3){
+            notifications.setContent("Đơn rút tiền của bạn đã được duyệt");
+        }
+        if(status == 4){
+            notifications.setContent("Đơn rút tiền của bạn đã bị từ chối");
+        }
+        userMapper.insertNotification(notifications);
         return isSuccess;
     }
 

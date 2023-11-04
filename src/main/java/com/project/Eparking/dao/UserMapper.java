@@ -31,4 +31,5 @@ public interface UserMapper {
     ParkingInformation getParkingInformationByPLOID(String ploID);
     double getBalancePlO(String ploID);
     List<Notifications> getListNotificationByID(String recipientID);
+    void insertNotification(Notifications notifications);
 }

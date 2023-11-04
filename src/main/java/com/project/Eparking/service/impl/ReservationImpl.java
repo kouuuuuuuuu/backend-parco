@@ -12,12 +12,14 @@ import com.project.Eparking.dao.ReservationMethodMapper;
 import com.project.Eparking.dao.UserMapper;
 import com.project.Eparking.domain.PLO;
 import com.project.Eparking.domain.ReservationMethod;
+import com.project.Eparking.domain.request.PushNotificationRequest;
 import com.project.Eparking.domain.request.RequestFindParkingList;
 import com.project.Eparking.domain.request.RequestMonthANDYear;
 
 import com.project.Eparking.domain.request.RequestUpdateStatusReservation;
 import com.project.Eparking.domain.response.*;
 import com.project.Eparking.exception.ApiRequestException;
+import com.project.Eparking.service.PushNotificationService;
 import com.project.Eparking.service.interf.LicensePlateService;
 import com.project.Eparking.service.interf.ReservationService;
 import lombok.RequiredArgsConstructor;
@@ -60,6 +62,8 @@ public class ReservationImpl implements ReservationService {
     private final ReservationStatusMapper reservationStatusMapper;
     private final CustomerMapper customerMapper;
     private final ParkingMethodMapper parkingMethodMapper;
+    private final PushNotificationService pushNotificationService;
+    private final FirebaseTokenMapper tokenMapper;
 
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss - dd/MM/yyyy");
 
@@ -450,6 +454,21 @@ public class ReservationImpl implements ReservationService {
                 PLO plo = parkingLotOwnerMapper.getPloById(reservation.getPloID());
                 int newCurrentSlot = plo.getCurrentSlot() - 1;
                 parkingLotOwnerMapper.updatePloBalanceAndCurrentSlotById(plo.getPloID(), plo.getBalance(), newCurrentSlot);
+                //send noti
+                PushNotificationRequest request = new PushNotificationRequest();
+                request.setImage("");
+                request.setMessage("Khách hàng: "+reservation.getCustomerID()+" đã hủy đặt chỗ");
+                request.setTitle("Thông báo trạng thái bãi xe");
+                request.setTopic("Thông báo trạng thái bãi xe");
+                List<FirebaseToken> firebaseTokens = tokenMapper.getTokenByID(plo.getPloID());
+                if(firebaseTokens==null){
+                    throw new ApiRequestException("Failed to get firebaseTokens");
+                }
+                for (FirebaseToken token:
+                        firebaseTokens) {
+                    request.setToken(token.getDeviceToken());
+                    pushNotificationService.sendPushNotificationToToken(request);
+                }
             } else {
                 isCancel = false;
             }
@@ -554,6 +573,30 @@ public class ReservationImpl implements ReservationService {
         parkingLotOwnerMapper.updatePloBalanceAndCurrentSlotById(plo.getPloID(), newPloBalance, newCurrentSlot);
 
         message = Message.BOOKING_RESERVATION_SUCCESS;
+
+        //sentnoti
+        PushNotificationRequest request = new PushNotificationRequest();
+        request.setImage("");
+        request.setMessage("Khách hàng: "+id+" đã đặt chỗ");
+        request.setTitle("Thông báo trạng thái bãi xe");
+        request.setTopic("Thông báo trạng thái bãi xe");
+        List<FirebaseToken> firebaseTokens = tokenMapper.getTokenByID(plo.getPloID());
+        if(firebaseTokens==null){
+            throw new ApiRequestException("Failed to get firebaseTokens");
+        }
+        for (FirebaseToken token:
+                firebaseTokens) {
+            request.setToken(token.getDeviceToken());
+            pushNotificationService.sendPushNotificationToToken(request);
+        }
+        Notifications notifications = new Notifications();
+        notifications.setSender_type("CUSTOMER");
+        notifications.setSender_id(id);
+        notifications.setRecipient_type("PLO");
+        notifications.setRecipient_id(bookingReservationDTO.getPloID());
+        notifications.setCreated_at(currentTimestamp);
+        notifications.setContent("Khách hàng: "+id+" đã đặt chỗ");
+        userMapper.insertNotification(notifications);
         return message;
     }
 
