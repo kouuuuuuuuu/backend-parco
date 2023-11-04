@@ -43,6 +43,7 @@ public class CustomerServiceImpl implements CustomerService {
     private final ParkingLotOwnerMapper parkingLotOwnerMapper;
     private final ParkingMethodMapper parkingMethodMapper;
     private final ReservationMethodMapper reservationMethodMapper;
+    private final FirebaseTokenMapper firebaseTokenMapper;
 
 
     private SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
@@ -58,11 +59,13 @@ public class CustomerServiceImpl implements CustomerService {
         }
         //2. Mapping customer data to customer DTO;
         for (Customer c : listCustomerEntity){
+            FirebaseToken firebaseToken = firebaseTokenMapper.getFirebaseTokenByCustomerID(c.getCustomerID());
             CustomerDTO customerDTO = new CustomerDTO();
             customerDTO.setCustomerId(c.getCustomerID());
             customerDTO.setPhoneNumber(c.getPhoneNumber());
             customerDTO.setFullName(c.getFullName());
-            customerDTO.setStatus(c.getStatus() == 0 ? "Online" : "Offline");
+            customerDTO.setStatus((Objects.nonNull(firebaseToken) && !firebaseToken.getDeviceToken().isEmpty()) ?
+                    "Online" : "Offline");
             String registrationDate = dateFormat.format(c.getRegistrationDate());
             customerDTO.setRegistrationDate(registrationDate);
 
@@ -91,11 +94,13 @@ public class CustomerServiceImpl implements CustomerService {
 
         //2. Mapping to DTO data
         for (Customer c : listCustomers){
+            FirebaseToken firebaseToken = firebaseTokenMapper.getFirebaseTokenByCustomerID(c.getCustomerID());
             CustomerDTO customerDTO = new CustomerDTO();
             customerDTO.setCustomerId(c.getCustomerID());
             customerDTO.setPhoneNumber(c.getPhoneNumber());
             customerDTO.setFullName(c.getFullName());
-            customerDTO.setStatus(c.getStatus() == 0 ? "Online" : "Offline");
+            customerDTO.setStatus((Objects.nonNull(firebaseToken) && !firebaseToken.getDeviceToken().isEmpty()) ?
+                    "Online" : "Offline");
             String registrationDate = dateFormat.format(c.getRegistrationDate());
             customerDTO.setRegistrationDate(registrationDate);
 

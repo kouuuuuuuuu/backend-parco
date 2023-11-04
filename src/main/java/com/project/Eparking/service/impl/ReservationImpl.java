@@ -233,6 +233,7 @@ public class ReservationImpl implements ReservationService {
         reservationInforDTO.setStatus(reservationStatus.getStatusID());
         reservationInforDTO.setStatusName(reservationStatus.getStatusName());
         reservationInforDTO.setLicensePlate(licensePlates.getLicensePlate());
+        reservationInforDTO.setReservationID(reservation.getReservationID());
         reservationInforDTO.setCheckIn(Objects.nonNull(reservation.getCheckIn()) ?
                 dateFormat.format(reservation.getCheckIn()) : "");
         reservationInforDTO.setCheckOut(Objects.nonNull(reservation.getCheckOut()) ?
@@ -263,6 +264,13 @@ public class ReservationImpl implements ReservationService {
         if (responseReservations.isEmpty()) {
             return reservationDTOS;
         }
+        // Sắp xếp danh sách responseReservations theo ngày checkIn hoặc checkOut
+        responseReservations.sort((r1, r2) -> {
+            Date r1Date = r1.getCheckIn() != null ? r1.getCheckIn() : r1.getCheckOut();
+            Date r2Date = r2.getCheckIn() != null ? r2.getCheckIn() : r2.getCheckOut();
+            return r2Date.compareTo(r1Date);
+        });
+
         for (Reservation reservation : responseReservations) {
             ReservationStatus reservationStatus = reservationStatusMapper.getReservationStatusByID(reservation.getStatusID());
             ReservationDTO reservationDTO = new ReservationDTO();
@@ -578,7 +586,7 @@ public class ReservationImpl implements ReservationService {
             }
             return screenReservation;
         } catch (Exception e) {
-            throw new ApiRequestException("Failed to get scrren customer." + e.getMessage());
+            throw new ApiRequestException("Failed to get screen customer." + e.getMessage());
         }
     }
     private Time calculateTime(String time1Str, String time2Str){
