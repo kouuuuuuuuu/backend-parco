@@ -12,6 +12,7 @@ import com.project.Eparking.domain.dto.CustomerRatingDTO;
 import com.project.Eparking.domain.dto.ListPloDTO;
 import com.project.Eparking.domain.dto.RatingDTO;
 import com.project.Eparking.domain.response.Page;
+import com.project.Eparking.domain.response.RatingResponse;
 import com.project.Eparking.exception.ApiRequestException;
 import com.project.Eparking.service.interf.RatingService;
 import lombok.RequiredArgsConstructor;
@@ -38,11 +39,18 @@ public class RatingImpl implements RatingService {
     private final ReservationMapper reservationMapper;
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss dd/MM/yyyy");
     @Override
-    public List<Rating> getRatingListByPLOID() {
+    public List<RatingResponse> getRatingListByPLOID() {
         try{
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String id = authentication.getName();
-            return ratingMapper.getRatingListByPLOID(id);
+            List<Rating> rating = ratingMapper.getRatingListByPLOID(id);
+            List<RatingResponse> ratingResponses =new ArrayList<>();
+            for (Rating ratingList:
+                    rating) {
+                String date = Objects.nonNull(ratingList.getFeedbackDate())? dateFormat.format(ratingList.getFeedbackDate()) : "";
+                ratingResponses.add(new RatingResponse(ratingList.getRatingID(),ratingList.getStar(),ratingList.getContent(),ratingList.getCustomerID(),ratingList.getFullName(),ratingList.getPloID(),ratingList.getReservationID(),date));
+            }
+            return ratingResponses;
         }catch (Exception e){
             throw new ApiRequestException("Failed to get rating list by ploID" + e.getMessage());
         }

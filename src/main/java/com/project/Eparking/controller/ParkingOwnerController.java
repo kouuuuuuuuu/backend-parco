@@ -3,6 +3,7 @@ package com.project.Eparking.controller;
 import com.project.Eparking.domain.ParkingInformation;
 import com.project.Eparking.domain.Rating;
 import com.project.Eparking.domain.request.*;
+import com.project.Eparking.domain.response.RatingResponse;
 import com.project.Eparking.domain.response.ResponsePLOProfile;
 import com.project.Eparking.domain.response.ResponseRevenuePLO;
 import com.project.Eparking.exception.ApiRequestException;
@@ -25,7 +26,7 @@ public class ParkingOwnerController {
     private final UserService userService;
     private final ParkingService parkingService;
     @GetMapping("/getRatingList")
-    public ResponseEntity<List<Rating>> getListRating(){
+    public ResponseEntity<List<RatingResponse>> getListRating(){
         try{
             return ResponseEntity.ok(ratingService.getRatingListByPLOID());
         }catch (Exception e){

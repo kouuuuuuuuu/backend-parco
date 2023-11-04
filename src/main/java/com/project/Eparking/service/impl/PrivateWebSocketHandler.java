@@ -1,25 +1,27 @@
 package com.project.Eparking.service.impl;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.project.Eparking.domain.MessageType;
-import com.project.Eparking.domain.RoleType;
+import com.project.Eparking.dao.ImageMapper;
+import com.project.Eparking.domain.Image;
 import com.project.Eparking.domain.SocketMessage;
 import com.project.Eparking.exception.ApiRequestException;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.IOException;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
+@Component
 
 public class PrivateWebSocketHandler implements WebSocketHandler {
     private List<WebSocketSession> sessions = new CopyOnWriteArrayList<>();
     private Map<Integer, List<WebSocketSession>> chatRooms = new HashMap<>();
+
+
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
@@ -27,27 +29,25 @@ public class PrivateWebSocketHandler implements WebSocketHandler {
         sessions.add(session);
     }
 
-    @Override
-    public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
-        var clientValue = message.getPayload();
-        System.out.println("The send message is success: " + clientValue);
+        @Override
+        public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
+            var clientValue = message.getPayload();
+            System.out.println("The send message is success: " + clientValue);
+            SocketMessage socketMessage = convertToChatMessage((String) clientValue);
 
-        SocketMessage socketMessage = convertToChatMessage((String) clientValue);
-
-        assert socketMessage != null;
-        List<WebSocketSession> participants = chatRooms.computeIfAbsent(socketMessage.getReservationID(), k -> new ArrayList<>());
-
-        if (!participants.contains(session)) {
-            participants.add(session);
-        }
-        if(participants!=null){
-            for (WebSocketSession participant : participants) {
-                    ObjectMapper objectMapper = new ObjectMapper();
-                    String jsonMessage = objectMapper.writeValueAsString(socketMessage);
-                    participant.sendMessage(new TextMessage(jsonMessage));
+            assert socketMessage != null;
+            List<WebSocketSession> participants = chatRooms.computeIfAbsent(socketMessage.getReservationID(), k -> new ArrayList<>());
+            if (!participants.contains(session)) {
+                participants.add(session);
+            }
+            if(participants!=null){
+                for (WebSocketSession participant : participants) {
+                        ObjectMapper objectMapper = new ObjectMapper();
+                        String jsonMessage = objectMapper.writeValueAsString(socketMessage);
+                        participant.sendMessage(new TextMessage(jsonMessage));
+                }
             }
         }
-    }
 
     private SocketMessage convertToChatMessage(String message) {
         ObjectMapper objectMapper = new ObjectMapper();
@@ -67,7 +67,6 @@ public class PrivateWebSocketHandler implements WebSocketHandler {
     public void afterConnectionClosed(WebSocketSession session, CloseStatus closeStatus) throws Exception {
         System.out.println("The close is success");
         sessions.remove(session);
-
         for (List<WebSocketSession> chatParticipants : chatRooms.values()) {
             chatParticipants.remove(session);
         }
@@ -77,5 +76,4 @@ public class PrivateWebSocketHandler implements WebSocketHandler {
     public boolean supportsPartialMessages() {
         return false;
     }
-
 }
