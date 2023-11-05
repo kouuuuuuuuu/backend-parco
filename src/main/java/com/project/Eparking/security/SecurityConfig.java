@@ -60,6 +60,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/customer/returnPayment",
                         "/user/sendNoti",
                         "/privateReservation",
+                        "/privatePLO",
                         "/swagger-ui.html", "/webjars/**", "/v2/api-docs", "/swagger-resources/**").permitAll();
 
         http.authorizeRequests().antMatchers(PUT, "/PLO/getBalance").hasAnyAuthority("PLO");
