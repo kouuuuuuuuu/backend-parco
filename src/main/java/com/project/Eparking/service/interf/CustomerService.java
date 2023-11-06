@@ -25,4 +25,7 @@ public interface CustomerService {
 //    CustomerWalletDTO getCustomerBalance();
     CustomerWalletDTO getCustomerBalance();
     PloDetailForCustomerDTO getPloDetailForCustomer(String ploID);
+    void notificationBefore15mCancelBooking(int reservationID);
+    void notificationCancelBooking(int reservationID);
+    void updateReservationStatusToCancelBooking(int reservationID);
 }

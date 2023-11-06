@@ -11,6 +11,7 @@ import com.project.Eparking.domain.request.RequestCustomerTransaction;
 import com.project.Eparking.domain.request.RequestCustomerUpdateProfile;
 import com.project.Eparking.domain.response.*;
 import com.project.Eparking.exception.ApiRequestException;
+import com.project.Eparking.service.PushNotificationService;
 import com.project.Eparking.service.interf.CustomerService;
 import com.project.Eparking.service.interf.PaymentService;
 import lombok.RequiredArgsConstructor;
@@ -44,7 +45,8 @@ public class CustomerServiceImpl implements CustomerService {
     private final ParkingMethodMapper parkingMethodMapper;
     private final ReservationMethodMapper reservationMethodMapper;
     private final FirebaseTokenMapper firebaseTokenMapper;
-
+    private final PushNotificationService pushNotificationService;
+    private final ReservationMapper reservationMapper;
 
     private SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
     @Override
@@ -297,5 +299,64 @@ public class CustomerServiceImpl implements CustomerService {
         parkingLotOwnerDTO.setWaitingTime(Objects.nonNull(ploEntity.getWaitingTime()) ?
                 timeFormat.format(ploEntity.getWaitingTime()) : "");
         return parkingLotOwnerDTO;
+    }
+
+    @Override
+    public void notificationBefore15mCancelBooking(int reservationID) {
+        try {
+
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String id = authentication.getName();
+            List<FirebaseToken> firebaseTokens = firebaseTokenMapper.getFirebaseTokenByCustomerID(id);
+            Reservation reservation = reservationMapper.getReservationByReservationID(reservationID);
+            PushNotificationRequest request = new PushNotificationRequest();
+            request.setTitle("Thông báo trạng thái của lần đặt xe");
+            request.setTopic("Thông báo trạng thái của lần đặt xe");
+            request.setMessage("Còn 15 phút trước khi lần đặt này bị hủy");
+            List<Image> images = imageMapper.getImageListByPLOID(reservation.getPloID());
+            Image image = images.get(0);
+            request.setImage(image.getImageLink());
+            for (FirebaseToken token :
+                    firebaseTokens) {
+                request.setToken(token.getDeviceToken());
+                pushNotificationService.sendPushNotificationToToken(request);
+            }
+        }catch (Exception e){
+            throw new ApiRequestException("Failed to send notification to customer before 15m cancel booking" +e.getMessage());
+        }
+    }
+
+    @Override
+    public void notificationCancelBooking(int reservationID) {
+        try {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String id = authentication.getName();
+        List<FirebaseToken> firebaseTokens = firebaseTokenMapper.getFirebaseTokenByCustomerID(id);
+        Reservation reservation = reservationMapper.getReservationByReservationID(reservationID);
+        PushNotificationRequest request = new PushNotificationRequest();
+        request.setTitle("Thông báo trạng thái của lần đặt xe");
+        request.setTopic("Thông báo trạng thái của lần đặt xe");
+        PLO plo = userMapper.getPLOByPLOID(reservation.getPloID());
+        request.setMessage("Lần đặt xe của nhà xe: " + plo.getParkingName()+ " đã bị hủy");
+        List<Image> images = imageMapper.getImageListByPLOID(reservation.getPloID());
+        Image image = images.get(0);
+        request.setImage(image.getImageLink());
+        for (FirebaseToken token:
+                firebaseTokens) {
+            request.setToken(token.getDeviceToken());
+            pushNotificationService.sendPushNotificationToToken(request);
+        }
+        }catch (Exception e){
+            throw new ApiRequestException("Failed to send notification to customer cancel booking" +e.getMessage());
+        }
+    }
+
+    @Override
+    public void updateReservationStatusToCancelBooking(int reservationID) {
+        try {
+            reservationMapper.updateReservationStatus(5,reservationID);
+        }catch (Exception e){
+            throw new ApiRequestException("Failed to update reservation to cancel booking" +e.getMessage());
+        }
     }
 }
