@@ -601,6 +601,10 @@ public class ReservationImpl implements ReservationService {
                 reservationSC.setAddress(plo.getAddress());
                 reservationSC.setLongitude(plo.getLongtitude().doubleValue());
                 reservationSC.setLatitude(plo.getLatitude().doubleValue());
+                reservationSC.setStartTime(reservationSC.getStartTime());
+                reservationSC.setEndTime(reservationSC.getEndTime());
+                reservationSC.setWaitingTime(plo.getWaitingTime());
+                reservationSC.setCancelBookingTime(plo.getCancelBookingTime());
                 screenReservation.setData(reservationSC);
             }
             return screenReservation;

@@ -134,29 +134,28 @@ public class CustomerControllerRole {
             throw e;
         }
     }
-    @PostMapping("/notiCancelBookingBefore15m")
-    public ResponseEntity<String> notiCancelBookingBefore15m(@RequestParam int reservationID){
-        try {
-            customerService.notificationBefore15mCancelBooking(reservationID);
-            return ResponseEntity.ok("send notification successfully!");
-        }catch (ApiRequestException e){
-            throw e;
-        }
-    }
-    @PostMapping("/notiCancelBooking")
-    public ResponseEntity<String> notiCancelBooking(@RequestParam int reservationID){
-        try {
-            customerService.notificationCancelBooking(reservationID);
-            return ResponseEntity.ok("send notification successfully!");
-        }catch (ApiRequestException e){
-            throw e;
-        }
-    }
+//    @PostMapping("/notiCancelBookingBefore15m")
+//    public ResponseEntity<String> notiCancelBookingBefore15m(@RequestParam int reservationID){
+//        try {
+//            customerService.notificationBefore15mCancelBooking(reservationID);
+//            return ResponseEntity.ok("send notification successfully!");
+//        }catch (ApiRequestException e){
+//            throw e;
+//        }
+//    }
+//    @PostMapping("/notiCancelBooking")
+//    public ResponseEntity<String> notiCancelBooking(@RequestParam int reservationID){
+//        try {
+//            customerService.notificationCancelBooking(reservationID);
+//            return ResponseEntity.ok("send notification successfully!");
+//        }catch (ApiRequestException e){
+//            throw e;
+//        }
+//    }
     @PutMapping("/updateReservationToCancel")
-    ResponseEntity<String> updateReservationCancelBooking(@RequestParam int reservationID){
+    ResponseEntity<Boolean> updateReservationCancelBooking(@RequestParam int reservationID){
         try {
-            customerService.updateReservationStatusToCancelBooking(reservationID);
-            return ResponseEntity.ok("update reservation to cancel booking successfully");
+            return ResponseEntity.ok(customerService.updateReservationStatusToCancelBooking(reservationID));
         }catch (ApiRequestException e){
             throw e;
         }

@@ -4,6 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.sql.Time;
+import java.sql.Timestamp;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -19,4 +22,8 @@ public class ResponseReservationSC {
     private Double price;
     private String methodName;
     private String licensePlate;
+    private Timestamp startTime;
+    private Timestamp endTime;
+    private Time waitingTime;
+    private Time cancelBookingTime;
 }

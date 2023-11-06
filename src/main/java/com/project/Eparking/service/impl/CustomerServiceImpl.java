@@ -23,6 +23,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -304,7 +305,6 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public void notificationBefore15mCancelBooking(int reservationID) {
         try {
-
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String id = authentication.getName();
             List<FirebaseToken> firebaseTokens = firebaseTokenMapper.getFirebaseTokenByCustomerID(id);
@@ -352,11 +352,32 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public void updateReservationStatusToCancelBooking(int reservationID) {
+    public Boolean updateReservationStatusToCancelBooking(int reservationID) {
         try {
-            reservationMapper.updateReservationStatus(5,reservationID);
+            Reservation reservation = reservationMapper.getReservationByReservationID(reservationID);
+            if(reservation.getStatusID() == 1){
+                Timestamp startTime = reservation.getStartTime();
+                PLO plo = userMapper.getPLOByPLOID(reservation.getPloID());
+                Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
+                //cộng time
+                Timestamp cancelBookingTimestamp = new Timestamp(plo.getCancelBookingTime().getTime());
+                Timestamp cancelBooking = new Timestamp(startTime.getTime() + cancelBookingTimestamp.getTime());
+                Timestamp before15m = new Timestamp(cancelBooking.getTime() - (15 * 60 * 1000));
+                //
+                if(currentTimestamp.equals(before15m) && currentTimestamp.before(cancelBooking)|| currentTimestamp.after(before15m) && currentTimestamp.before(cancelBooking)){
+                    notificationBefore15mCancelBooking(reservationID);
+                    return false;
+                }
+                if(currentTimestamp.equals(cancelBooking)|| currentTimestamp.after(cancelBooking)){
+                    notificationCancelBooking(reservationID);
+                    reservationMapper.updateReservationStatus(5,reservationID);
+                    return true;
+                }
+            }
+            return true;
         }catch (Exception e){
             throw new ApiRequestException("Failed to update reservation to cancel booking" +e.getMessage());
         }
     }
+
 }
