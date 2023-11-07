@@ -226,7 +226,7 @@ public class ParkingLotOwnerServiceImpl implements ParkingLotOwnerService {
 //        plo.setLatitude(updatePloStatusDTO.getLatitude());
         parkingLotOwnerMapper.updateParkingStatusByPloId(plo);
         PushNotificationRequest request = new PushNotificationRequest();
-        request.setImage("");
+        request.setImage("https://fiftyfifty.b-cdn.net/eparking/Logo.png?fbclid=IwAR0Cp0mqjcD5-DCi9DvSSomsni8_gA-tg14f2GskVlpIYReh-tagSlOrb-4");
         request.setMessage("Đơn đăng ký bãi đỗ xe của bạn đã được phê duyệt");
         request.setTitle("Thông báo trạng thái đơn đăng ký");
         request.setTopic("Thông báo trạng thái đơn đăng ký");

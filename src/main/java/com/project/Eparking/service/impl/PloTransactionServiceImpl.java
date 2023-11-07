@@ -54,7 +54,7 @@ public class PloTransactionServiceImpl implements PloTransactionService {
 
         //send noti
         PushNotificationRequest request = new PushNotificationRequest();
-        request.setImage("");
+        request.setImage("https://fiftyfifty.b-cdn.net/eparking/Logo.png?fbclid=IwAR0Cp0mqjcD5-DCi9DvSSomsni8_gA-tg14f2GskVlpIYReh-tagSlOrb-4");
         if(status == 3){
             request.setMessage("Đơn rút tiền của bạn đã được duyệt");
         }
@@ -72,22 +72,25 @@ public class PloTransactionServiceImpl implements PloTransactionService {
             request.setToken(token.getDeviceToken());
             pushNotificationService.sendPushNotificationToToken(request);
         }
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String id = authentication.getName();
-        Notifications notifications = new Notifications();
-        notifications.setRecipient_type("PLO");
-        notifications.setRecipient_id(plo.getPloID());
-        notifications.setSender_type("ADMIN");
-        notifications.setSender_id(id);
-        Timestamp currentTime = new Timestamp(System.currentTimeMillis());
-        notifications.setCreated_at(currentTime);
-        if(status == 3){
-            notifications.setContent("Đơn rút tiền của bạn đã được duyệt");
-        }
-        if(status == 4){
-            notifications.setContent("Đơn rút tiền của bạn đã bị từ chối");
-        }
-        userMapper.insertNotification(notifications);
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        String id = authentication.getName();
+//
+//        //
+//        Notifications notifications = new Notifications();
+//        notifications.setRecipient_type("PLO");
+//        notifications.setRecipient_id(plo.getPloID());
+//        notifications.setSender_type("ADMIN");
+//        notifications.setSender_id(id);
+//        Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+//        notifications.setCreated_at(currentTime);
+//        if(status == 3){
+//            notifications.setContent("Đơn rút tiền của bạn đã được duyệt");
+//        }
+//        if(status == 4){
+//            notifications.setContent("Đơn rút tiền của bạn đã bị từ chối");
+//        }
+//        userMapper.insertNotification(notifications);
+        //
         return isSuccess;
     }
 

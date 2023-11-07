@@ -352,13 +352,13 @@ public class UserImpl implements UserService, UserDetailsService {
             for (Notifications notis:
                  notifications) {
                 if(notis.getSender_type().equalsIgnoreCase("ADMIN")){
-                    listNotiRes.add(new ResponseNotifications(notis.getNotiID(), notis.getRecipient_type(),notis.getRecipient_id(),notis.getSender_type(),"ADMIN", notis.getContent(), notis.getCreated_at()));
+                    listNotiRes.add(new ResponseNotifications(notis.getNotiID(), notis.getRecipient_type(),notis.getRecipient_id(),notis.getSender_type(),"ADMIN", notis.getContent(), notis.getCreated_at(),notis.getImageLink()));
                 }else if(notis.getSender_type().equalsIgnoreCase("CUSTOMER")){
                     Customer customer = userMapper.getCustomerByCustomerID(notis.getSender_id());
-                    listNotiRes.add(new ResponseNotifications(notis.getNotiID(), notis.getRecipient_type(),notis.getRecipient_id(),notis.getSender_type(),customer.getFullName(), notis.getContent(), notis.getCreated_at()));
+                    listNotiRes.add(new ResponseNotifications(notis.getNotiID(), notis.getRecipient_type(),notis.getRecipient_id(),notis.getSender_type(),customer.getFullName(), notis.getContent(), notis.getCreated_at(),notis.getImageLink()));
                 } else if (notis.getSender_type().equalsIgnoreCase("PLO")) {
                     PLO plo = userMapper.getPLOByPLOID(notis.getSender_id());
-                    listNotiRes.add(new ResponseNotifications(notis.getNotiID(), notis.getRecipient_type(),notis.getRecipient_id(),notis.getSender_type(),plo.getFullName(), notis.getContent(), notis.getCreated_at()));
+                    listNotiRes.add(new ResponseNotifications(notis.getNotiID(), notis.getRecipient_type(),notis.getRecipient_id(),notis.getSender_type(),plo.getFullName(), notis.getContent(), notis.getCreated_at(), notis.getImageLink()));
                 }
 
             }

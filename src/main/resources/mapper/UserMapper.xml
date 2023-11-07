@@ -12,6 +12,7 @@
         <result property = "sender_id" column = "sender_id"/>
         <result property = "content" column = "content"/>
         <result property = "created_at" column = "created_at"/>
+        <result property = "imageLink" column = "imageLink"/>
     </resultMap>
 
     <select id="getAdminByAdminID" resultType="com.project.Eparking.domain.Admin">
@@ -192,13 +193,13 @@
     </select>
 
     <select id="getListNotificationByID" resultMap="listNotifications">
-        SELECT notiID,recipient_type,recipient_id,sender_type,sender_id,content,created_at
+        SELECT notiID,recipient_type,recipient_id,sender_type,sender_id,content,created_at,imageLink
         FROM Notifications
         WHERE recipient_id = #{recipientID}
         ORDER BY created_at DESC;
     </select>
     <insert id="insertNotification" parameterType="com.project.Eparking.domain.Notifications">
-        insert into Notifications(recipient_type,recipient_id,sender_type,sender_id,content,created_at)
-        value(#{recipient_type},#{recipient_id},#{sender_type},#{sender_id},#{content},#{created_at})
+        INSERT INTO Notifications(recipient_type,recipient_id,sender_type,sender_id,content,created_at,imageLink)
+        VALUES(#{recipient_type},#{recipient_id},#{sender_type},#{sender_id},#{content},#{created_at},#{imageLink})
     </insert>
 </mapper>
