@@ -32,7 +32,7 @@
     <select id="findReservationByLicensePlate" resultType="com.project.Eparking.domain.response.ResponseReservation">
         SELECT R.reservationID,R.customerID,R.ploID,R.statusID,LP.licensePlate,R.startTime,R.endTime,R.price,R.checkOut,RM.methodName,R.checkIn
         FROM Reservation AS R
-        JOIN LicensePlate AS LP ON R.licensePlateID = LP.licensePlateID
+        JOIN LicensePlate AS LP ON R.motorbikeID = LP.motorbikeID
         JOIN ReservationMethod RM ON R.methodID = RM.methodID
         WHERE R.ploID = #{ploID}
         AND R.statusID = #{status}
@@ -125,7 +125,7 @@
             customerID,
             ploID,
             statusID,
-            licensePlateID,
+            motorbikeID,
             startTime,
             endTime,
             price,
@@ -151,7 +151,7 @@
             customerID,
             ploID,
             statusID,
-            licensePlateID,
+            motorbikeID,
             startTime,
             endTime,
             price,
@@ -172,7 +172,7 @@
             customerID,
             ploID,
             statusID,
-            licensePlateID,
+            motorbikeID,
             startTime,
             endTime,
             price,
@@ -186,9 +186,9 @@
 
 
     <select id="findReservationByLicensePlateAndPloId" resultType="com.project.Eparking.domain.Reservation">
-        SELECT R.reservationID,R.customerID,R.ploID,R.statusID,R.licensePlateID,R.startTime,R.endTime,R.price,R.checkOut,R.checkIn, R.methodID, R.isRating
+        SELECT R.reservationID,R.customerID,R.ploID,R.statusID,R.motorbikeID,R.startTime,R.endTime,R.price,R.checkOut,R.checkIn, R.methodID, R.isRating
         FROM Reservation AS R
-        JOIN LicensePlate AS LP ON R.licensePlateID = LP.licensePlateID
+        JOIN LicensePlate AS LP ON R.motorbikeID = LP.motorbikeID
         JOIN ReservationMethod RM ON R.methodID = RM.methodID
         WHERE R.ploID = #{ploId}
         AND R.statusID
@@ -211,7 +211,7 @@
             customerID,
             ploID,
             statusID,
-            licensePlateID,
+            motorbikeID,
             startTime,
             endTime,
             price,
@@ -222,7 +222,7 @@
         FROM
             Reservation
         WHERE
-            licensePlateID = #{licensePlateID}
+            motorbikeID = #{licensePlateID}
     </select>
 
     <insert id="createReservation" parameterType="com.project.Eparking.domain.Reservation">
@@ -230,7 +230,7 @@
         (   customerID,
             ploID,
             statusID,
-            licensePlateID,
+            motorbikeID,
             startTime,
             endTime,
             price,
@@ -241,7 +241,7 @@
             #{customerID},
             #{ploID},
             #{statusID},
-            #{licensePlateID},
+            #{motorbikeID},
             #{startTime},
             #{endTime},
             #{price},
@@ -252,7 +252,7 @@
         SELECT R.reservationID,R.price,RM.methodName,LP.licensePlate,R.statusID,R.ploID,RS.statusName,R.startTime,R.endTime,R.checkIn,R.checkOut
         FROM Reservation R
         JOIN ReservationMethod RM ON R.methodID = RM.methodID
-        JOIN LicensePlate LP ON R.licensePlateID = LP.licensePlateID
+        JOIN LicensePlate LP ON R.motorbikeID = LP.motorbikeID
         JOIN ReservationStatus RS ON R.statusID = RS.statusID
         WHERE R.customerID = #{customerID} AND isRating = #{rating}
     </select>
@@ -280,4 +280,10 @@
             isRating = #{isRating}
         WHERE reservationID = #{reservationID}
     </update>
+    <select id="getTotalReservationByCustomerId" resultType="Integer">
+        SELECT COUNT(*)
+        FROM reservation
+        Where customerID = #{customerID}
+        AND statusID != #{status}
+    </select>
 </mapper>

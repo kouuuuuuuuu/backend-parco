@@ -17,6 +17,6 @@ public class BookingDetailDTO {
     private double eveningFee;
     private double overnightFee;
     private List<ReservationBookingMethodDTO> reservationMethod;
-    private List<LicensePlateDTO> customerLicensePlate;
+    private List<MotorbikeDTO> customerLicensePlate;
     private String waitingTime;
 }
