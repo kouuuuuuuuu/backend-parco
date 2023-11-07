@@ -582,10 +582,11 @@ public class ReservationImpl implements ReservationService {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String id = authentication.getName();
             ResponseReservationSC reservationSC = reservationMapper.getReservationByIsRating(id, 0);
+            ResponseScreenCustomer responseScreenCustomer = new ResponseScreenCustomer();
             ResponseScreenReservation screenReservation = new ResponseScreenReservation();
             if (reservationSC == null || reservationSC.getStatusID() == 5) {
                 screenReservation.setStatus(1);
-                screenReservation.setData(reservationSC);
+                screenReservation.setData(responseScreenCustomer);
             } else if (reservationSC.getStatusID() == 1 || reservationSC.getStatusID() == 2 || reservationSC.getStatusID() == 3 || reservationSC.getStatusID() == 4) {
                 if (reservationSC.getStatusID() == 1) {
                     screenReservation.setStatus(2);
@@ -597,15 +598,24 @@ public class ReservationImpl implements ReservationService {
                     screenReservation.setStatus(5);
                 }
                 PLO plo = userMapper.getPLOByPLOID(reservationSC.getPloID());
-                reservationSC.setParkingName(plo.getParkingName());
-                reservationSC.setAddress(plo.getAddress());
-                reservationSC.setLongitude(plo.getLongtitude().doubleValue());
-                reservationSC.setLatitude(plo.getLatitude().doubleValue());
-                reservationSC.setStartTime(reservationSC.getStartTime());
-                reservationSC.setEndTime(reservationSC.getEndTime());
-                reservationSC.setWaitingTime(plo.getWaitingTime());
-                reservationSC.setCancelBookingTime(plo.getCancelBookingTime());
-                screenReservation.setData(reservationSC);
+                responseScreenCustomer.setParkingName(plo.getParkingName());
+                responseScreenCustomer.setAddress(plo.getAddress());
+                responseScreenCustomer.setLongitude(plo.getLongtitude().doubleValue());
+                responseScreenCustomer.setLatitude(plo.getLatitude().doubleValue());
+                responseScreenCustomer.setStartTime(Objects.nonNull(reservationSC.getStartTime()) ?
+                        dateFormat.format(reservationSC.getStartTime()) : "");
+                responseScreenCustomer.setEndTime(Objects.nonNull(reservationSC.getEndTime()) ?
+                        dateFormat.format(reservationSC.getEndTime()) : "");
+                responseScreenCustomer.setWaitingTime(plo.getWaitingTime());
+                responseScreenCustomer.setCancelBookingTime(plo.getCancelBookingTime());
+                responseScreenCustomer.setPloID(plo.getPloID());
+                responseScreenCustomer.setStatusName(reservationSC.getStatusName());
+                responseScreenCustomer.setStatusID(reservationSC.getStatusID());
+                responseScreenCustomer.setPrice(reservationSC.getPrice());
+                responseScreenCustomer.setMethodName(reservationSC.getMethodName());
+                responseScreenCustomer.setLicensePlate(reservationSC.getLicensePlate());
+                responseScreenCustomer.setReservationID(reservationSC.getReservationID());
+                screenReservation.setData(responseScreenCustomer);
             }
             return screenReservation;
         } catch (Exception e) {

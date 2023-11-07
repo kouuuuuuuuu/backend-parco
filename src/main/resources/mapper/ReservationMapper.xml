@@ -249,7 +249,7 @@
         );
     </insert>
     <select id="getReservationByIsRating" resultType="com.project.Eparking.domain.response.ResponseReservationSC">
-        SELECT R.reservationID,R.price,RM.methodName,LP.licensePlate,R.statusID,R.ploID,RS.statusName
+        SELECT R.reservationID,R.price,RM.methodName,LP.licensePlate,R.statusID,R.ploID,RS.statusName,R.startTime,R.endTime,R.checkIn,R.checkOut
         FROM Reservation R
         JOIN ReservationMethod RM ON R.methodID = RM.methodID
         JOIN LicensePlate LP ON R.licensePlateID = LP.licensePlateID
@@ -276,7 +276,8 @@
 
     <update id="updateReservationStatus" parameterType="com.project.Eparking.domain.Reservation">
         UPDATE reservation
-        SET statusID = #{statusID}
+        SET statusID = #{statusID},
+            isRating = #{isRating}
         WHERE reservationID = #{reservationID}
     </update>
 </mapper>

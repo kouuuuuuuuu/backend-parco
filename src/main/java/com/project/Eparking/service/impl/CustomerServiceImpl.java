@@ -23,12 +23,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -359,20 +358,29 @@ public class CustomerServiceImpl implements CustomerService {
                 Timestamp startTime = reservation.getStartTime();
                 PLO plo = userMapper.getPLOByPLOID(reservation.getPloID());
                 Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
+
+//                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//                Date parsedDate = dateFormat.parse("2023-11-06 23:59:00");
+//                Timestamp currentTimestamp = new Timestamp(parsedDate.getTime());
+
                 //cộng time
-                Timestamp cancelBookingTimestamp = new Timestamp(plo.getCancelBookingTime().getTime());
-                Timestamp cancelBooking = new Timestamp(startTime.getTime() + cancelBookingTimestamp.getTime());
-                Timestamp before15m = new Timestamp(cancelBooking.getTime() - (15 * 60 * 1000));
+                long cancelBookingLong = plo.getCancelBookingTime().toLocalTime().toNanoOfDay();
+                long startTimeMillis = startTime.getTime();
+                long cancelBookingMillis = startTimeMillis + TimeUnit.NANOSECONDS.toMillis(cancelBookingLong);
+
+                Timestamp cancelBooking = new Timestamp(cancelBookingMillis);
                 //
-                if(currentTimestamp.equals(before15m) && currentTimestamp.before(cancelBooking)|| currentTimestamp.after(before15m) && currentTimestamp.before(cancelBooking)){
+                Timestamp before15m = new Timestamp(cancelBooking.getTime() - (15 * 60 * 1000));
+                if(currentTimestamp.equals(before15m) && currentTimestamp.before(cancelBooking) || currentTimestamp.after(before15m) && currentTimestamp.before(cancelBooking)){
                     notificationBefore15mCancelBooking(reservationID);
                     return false;
                 }
-                if(currentTimestamp.equals(cancelBooking)|| currentTimestamp.after(cancelBooking)){
+                if(currentTimestamp.equals(cancelBooking) || currentTimestamp.after(cancelBooking)){
                     notificationCancelBooking(reservationID);
-                    reservationMapper.updateReservationStatus(5,reservationID);
+                    reservationMapper.updateReservationStatus(5,reservationID,1);
                     return true;
                 }
+                return false;
             }
             return true;
         }catch (Exception e){

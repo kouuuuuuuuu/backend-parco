@@ -9,5 +9,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ResponseScreenReservation {
     private int status;
-    private ResponseReservationSC data;
+    private ResponseScreenCustomer data;
 }
