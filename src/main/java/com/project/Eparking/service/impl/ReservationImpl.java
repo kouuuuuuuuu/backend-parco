@@ -12,12 +12,14 @@ import com.project.Eparking.dao.ReservationMethodMapper;
 import com.project.Eparking.dao.UserMapper;
 import com.project.Eparking.domain.PLO;
 import com.project.Eparking.domain.ReservationMethod;
+import com.project.Eparking.domain.request.PushNotificationRequest;
 import com.project.Eparking.domain.request.RequestFindParkingList;
 import com.project.Eparking.domain.request.RequestMonthANDYear;
 
 import com.project.Eparking.domain.request.RequestUpdateStatusReservation;
 import com.project.Eparking.domain.response.*;
 import com.project.Eparking.exception.ApiRequestException;
+import com.project.Eparking.service.PushNotificationService;
 import com.project.Eparking.service.interf.LicensePlateService;
 import com.project.Eparking.service.interf.ReservationService;
 import lombok.RequiredArgsConstructor;
@@ -60,6 +62,9 @@ public class ReservationImpl implements ReservationService {
     private final ReservationStatusMapper reservationStatusMapper;
     private final CustomerMapper customerMapper;
     private final ParkingMethodMapper parkingMethodMapper;
+    private final PushNotificationService pushNotificationService;
+    private final FirebaseTokenMapper tokenMapper;
+    private final ImageMapper imageMapper;
 
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss - dd/MM/yyyy");
 
@@ -88,8 +93,25 @@ public class ReservationImpl implements ReservationService {
                     throw new ApiRequestException("Something error with currentSlot plo");
                 }
                 parkingMapper.updateCurrentSlot(currentSlot, plo.getPloID());
-                response = "Update successfully!";
 
+                //sendNotiCustomer
+                PushNotificationRequest requestCustomer = new PushNotificationRequest();
+                List<Image> images = imageMapper.getImageByPloId(plo.getPloID());
+                requestCustomer.setImage("https://fiftyfifty.b-cdn.net/eparking/Logo.png?fbclid=IwAR2J-hDEBo9BMtAlzpZFNxltZHP1o2Wh63OfUJwqg1vUJZFO-VHc97q1OLY");
+                requestCustomer.setMessage("Bạn đã check out ở bãi xe: "+plo.getParkingName());
+                requestCustomer.setTitle("Thông báo tình trạng đặt xe");
+                requestCustomer.setTopic("Thông báo tình trạng đặt xe");
+                List<FirebaseToken> firebaseTokensCustomer = tokenMapper.getTokenByID(responseReservation.getCustomerID());
+                if(firebaseTokensCustomer==null){
+                    throw new ApiRequestException("Failed to get firebaseTokens");
+                }
+                for (FirebaseToken token:
+                        firebaseTokensCustomer) {
+                    requestCustomer.setToken(token.getDeviceToken());
+                    pushNotificationService.sendPushNotificationToToken(requestCustomer);
+                }
+
+                response = "Update successfully!";
             } else {
                 throw new ApiRequestException("Wrong status");
             }
@@ -117,6 +139,24 @@ public class ReservationImpl implements ReservationService {
             long epochMilli = Instant.now().toEpochMilli();
             Timestamp timestamp = new Timestamp(epochMilli);
             reservationMethodMapper.updateCheckinReservation(responseReservation.getReservationID(), timestamp);
+            PLO plo = userMapper.getPLOByPLOID(responseReservation.getPloID());
+            //sendNoti
+            PushNotificationRequest requestCustomer = new PushNotificationRequest();
+            List<Image> images = imageMapper.getImageByPloId(plo.getPloID());
+            requestCustomer.setImage("https://fiftyfifty.b-cdn.net/eparking/Logo.png?fbclid=IwAR2J-hDEBo9BMtAlzpZFNxltZHP1o2Wh63OfUJwqg1vUJZFO-VHc97q1OLY");
+            requestCustomer.setMessage("Bạn đã check in ở bãi xe: "+plo.getParkingName());
+            requestCustomer.setTitle("Thông báo tình trạng đặt xe");
+            requestCustomer.setTopic("Thông báo tình trạng đặt xe");
+            List<FirebaseToken> firebaseTokensCustomer = tokenMapper.getTokenByID(responseReservation.getCustomerID());
+            if(firebaseTokensCustomer==null){
+                throw new ApiRequestException("Failed to get firebaseTokens");
+            }
+            for (FirebaseToken token:
+                    firebaseTokensCustomer) {
+                requestCustomer.setToken(token.getDeviceToken());
+                pushNotificationService.sendPushNotificationToToken(requestCustomer);
+            }
+            //
             response = "Update successfully!";
         } catch (Exception e) {
             throw new ApiRequestException("Failed checkIn user." + e.getMessage());
@@ -136,6 +176,24 @@ public class ReservationImpl implements ReservationService {
             long epochMilli = Instant.now().toEpochMilli();
             Timestamp timestamp = new Timestamp(epochMilli);
             reservationMethodMapper.updateCheckinReservation(reservationID, timestamp);
+            PLO plo = userMapper.getPLOByPLOID(reservation.getPloID());
+            //sendNoti
+            PushNotificationRequest requestCustomer = new PushNotificationRequest();
+            List<Image> images = imageMapper.getImageByPloId(plo.getPloID());
+            requestCustomer.setImage("https://fiftyfifty.b-cdn.net/eparking/Logo.png?fbclid=IwAR2J-hDEBo9BMtAlzpZFNxltZHP1o2Wh63OfUJwqg1vUJZFO-VHc97q1OLY");
+            requestCustomer.setMessage("Bạn đã check in ở bãi xe: "+plo.getParkingName());
+            requestCustomer.setTitle("Thông báo tình trạng đặt xe");
+            requestCustomer.setTopic("Thông báo tình trạng đặt xe");
+            List<FirebaseToken> firebaseTokensCustomer = tokenMapper.getTokenByID(reservation.getCustomerID());
+            if(firebaseTokensCustomer==null){
+                throw new ApiRequestException("Failed to get firebaseTokens");
+            }
+            for (FirebaseToken token:
+                    firebaseTokensCustomer) {
+                requestCustomer.setToken(token.getDeviceToken());
+                pushNotificationService.sendPushNotificationToToken(requestCustomer);
+            }
+            //
             return "Update successfully!";
         } catch (Exception e) {
             throw new ApiRequestException("Failed checkIn user." + e.getMessage());
@@ -161,6 +219,22 @@ public class ReservationImpl implements ReservationService {
                     throw new ApiRequestException("Something error with currentSlot plo");
                 }
                 parkingMapper.updateCurrentSlot(currentSlot, plo.getPloID());
+                //sendNoti
+                PushNotificationRequest requestCustomer = new PushNotificationRequest();
+                List<Image> images = imageMapper.getImageByPloId(plo.getPloID());
+                requestCustomer.setImage("https://fiftyfifty.b-cdn.net/eparking/Logo.png?fbclid=IwAR2J-hDEBo9BMtAlzpZFNxltZHP1o2Wh63OfUJwqg1vUJZFO-VHc97q1OLY");
+                requestCustomer.setMessage("Bạn đã check out ở bãi xe: "+plo.getParkingName());
+                requestCustomer.setTitle("Thông báo tình trạng đặt xe");
+                requestCustomer.setTopic("Thông báo tình trạng đặt xe");
+                List<FirebaseToken> firebaseTokensCustomer = tokenMapper.getTokenByID(reservation.getCustomerID());
+                if(firebaseTokensCustomer==null){
+                    throw new ApiRequestException("Failed to get firebaseTokens");
+                }
+                for (FirebaseToken token:
+                        firebaseTokensCustomer) {
+                    requestCustomer.setToken(token.getDeviceToken());
+                    pushNotificationService.sendPushNotificationToToken(requestCustomer);
+                }
                 return "Update successfully!";
             } else {
                 throw new ApiRequestException("Wrong status");
@@ -469,6 +543,22 @@ public class ReservationImpl implements ReservationService {
                 PLO plo = parkingLotOwnerMapper.getPloById(reservation.getPloID());
                 int newCurrentSlot = plo.getCurrentSlot() - 1;
                 parkingLotOwnerMapper.updatePloBalanceAndCurrentSlotById(plo.getPloID(), plo.getBalance(), newCurrentSlot);
+                //send noti
+                PushNotificationRequest request = new PushNotificationRequest();
+                request.setImage("https://fiftyfifty.b-cdn.net/eparking/Logo.png?fbclid=IwAR0Cp0mqjcD5-DCi9DvSSomsni8_gA-tg14f2GskVlpIYReh-tagSlOrb-4");
+                Customer customer = customerMapper.getCustomerById(reservation.getCustomerID());
+                request.setMessage("Khách hàng: "+customer.getFullName()+" đã hủy đặt chỗ");
+                request.setTitle("Thông báo trạng thái bãi xe");
+                request.setTopic("Thông báo trạng thái bãi xe");
+                List<FirebaseToken> firebaseTokens = tokenMapper.getTokenByID(plo.getPloID());
+                if(firebaseTokens==null){
+                    throw new ApiRequestException("Failed to get firebaseTokens");
+                }
+                for (FirebaseToken token:
+                        firebaseTokens) {
+                    request.setToken(token.getDeviceToken());
+                    pushNotificationService.sendPushNotificationToToken(request);
+                }
             } else {
                 isCancel = false;
             }
@@ -573,6 +663,57 @@ public class ReservationImpl implements ReservationService {
         parkingLotOwnerMapper.updatePloBalanceAndCurrentSlotById(plo.getPloID(), newPloBalance, newCurrentSlot);
 
         message = Message.BOOKING_RESERVATION_SUCCESS;
+
+        //sentnoti PLO
+        PushNotificationRequest request = new PushNotificationRequest();
+        request.setImage("https://fiftyfifty.b-cdn.net/eparking/Logo.png?fbclid=IwAR0Cp0mqjcD5-DCi9DvSSomsni8_gA-tg14f2GskVlpIYReh-tagSlOrb-4");
+        request.setMessage("Khách hàng: "+customer.getFullName()+" đã đặt chỗ");
+        request.setTitle("Thông báo trạng thái bãi xe");
+        request.setTopic("Thông báo trạng thái bãi xe");
+        List<FirebaseToken> firebaseTokens = tokenMapper.getTokenByID(plo.getPloID());
+        if(firebaseTokens==null){
+            throw new ApiRequestException("Failed to get firebaseTokens");
+        }
+        for (FirebaseToken token:
+                firebaseTokens) {
+            request.setToken(token.getDeviceToken());
+            pushNotificationService.sendPushNotificationToToken(request);
+        }
+//        Notifications notifications = new Notifications();
+//        notifications.setSender_type("CUSTOMER");
+//        notifications.setSender_id(id);
+//        notifications.setRecipient_type("PLO");
+//        notifications.setRecipient_id(bookingReservationDTO.getPloID());
+//        notifications.setCreated_at(currentTimestamp);
+//        notifications.setContent("Khách hàng: "+id+" đã đặt chỗ");
+//        userMapper.insertNotification(notifications);
+
+        //sendNotiCustomer
+        List<Image> images = imageMapper.getImageByPloId(plo.getPloID());
+        String a = images.get(0).getImageLink();
+        PushNotificationRequest requestCustomer = new PushNotificationRequest();
+        requestCustomer.setImage(images.get(0).getImageLink());
+        requestCustomer.setMessage("Bạn đã đặt chỗ ở bãi xe: "+plo.getParkingName());
+        requestCustomer.setTitle("Thông báo tình trạng đặt xe");
+        requestCustomer.setTopic("Thông báo tình trạng đặt xe");
+        List<FirebaseToken> firebaseTokensCustomer = tokenMapper.getTokenByID(customer.getCustomerID());
+        if(firebaseTokensCustomer==null){
+            throw new ApiRequestException("Failed to get firebaseTokens");
+        }
+        for (FirebaseToken token:
+                firebaseTokensCustomer) {
+            requestCustomer.setToken(token.getDeviceToken());
+            pushNotificationService.sendPushNotificationToToken(requestCustomer);
+        }
+        Notifications notifications = new Notifications();
+        notifications.setSender_type("PLO");
+        notifications.setSender_id(plo.getPloID());
+        notifications.setRecipient_type("CUSTOMER");
+        notifications.setRecipient_id(id);
+        notifications.setCreated_at(currentTimestamp);
+        notifications.setContent("Bạn đã đặt chỗ ở bãi xe: "+plo.getParkingName());
+        notifications.setImageLink(images.get(0).getImageLink());
+        userMapper.insertNotification(notifications);
         return message;
     }
 

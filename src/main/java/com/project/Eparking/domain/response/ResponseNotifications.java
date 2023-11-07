@@ -16,4 +16,5 @@ public class ResponseNotifications {
     private String senderName;
     private String content;
     private Timestamp created_at;
+    private String imageLink;
 }
