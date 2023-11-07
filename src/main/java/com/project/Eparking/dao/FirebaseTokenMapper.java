@@ -13,6 +13,6 @@ public interface FirebaseTokenMapper {
     void deleteTokenByTokenDevice(String deviceToken);
 
     List<FirebaseToken> getFirebaseTokenByCustomerID(String customerID);
-    FirebaseToken getFirebaseTokenByCustomerID(String customerID);
+//    FirebaseToken getFirebaseTokenByCustomerID(String customerID);
     List<FirebaseToken> getTokenByID(String userID);
 }

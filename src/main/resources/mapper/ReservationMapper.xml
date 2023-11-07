@@ -280,4 +280,5 @@
             isRating = #{isRating}
         WHERE reservationID = #{reservationID}
     </update>
+
 </mapper>
