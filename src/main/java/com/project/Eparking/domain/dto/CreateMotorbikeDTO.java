@@ -7,7 +7,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class LicensePlateDTO {
-    private int licencePlateID;
-    private String licencePlate;
+public class CreateMotorbikeDTO {
+    private String licensePlate;
+    private String motorbikeName;
+    private String motorbikeColor;
 }

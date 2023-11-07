@@ -24,15 +24,11 @@ import com.project.Eparking.service.interf.LicensePlateService;
 import com.project.Eparking.service.interf.ReservationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.ApplicationContext;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.socket.WebSocketHandler;
 
-
-import java.math.BigDecimal;
 
 import java.sql.Time;
 
@@ -58,13 +54,13 @@ public class ReservationImpl implements ReservationService {
     private final UserMapper userMapper;
     private final ParkingMapper parkingMapper;
     private final ParkingLotOwnerMapper parkingLotOwnerMapper;
-    private final LicensePlateMapper licensePlateMapper;
     private final ReservationStatusMapper reservationStatusMapper;
     private final CustomerMapper customerMapper;
     private final ParkingMethodMapper parkingMethodMapper;
     private final PushNotificationService pushNotificationService;
     private final FirebaseTokenMapper tokenMapper;
     private final ImageMapper imageMapper;
+    private final MotorbikeMapper motorbikeMapper;
 
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss - dd/MM/yyyy");
 
@@ -274,8 +270,8 @@ public class ReservationImpl implements ReservationService {
         Reservation reservation;
         reservation = reservationMapper.findReservationByLicensePlateAndPloId(licensePlate, id, status);
         if (Objects.isNull(reservation)) {
-            List<String> licensePlates = licensePlateMapper.getListLicensePlate()
-                    .stream().map(LicensePlate::getLicensePlate).collect(Collectors.toList());
+            List<String> licensePlates = motorbikeMapper.getListLicensePlate()
+                    .stream().map(Motorbike::getLicensePlate).collect(Collectors.toList());
             String cleanLicensePlate = licensePlate.replaceAll("[-.]", "");
             for (String licenString : licensePlates) {
                 if (cleanLicensePlate.contains(licenString.replaceAll("[-.]", ""))) {
@@ -299,14 +295,16 @@ public class ReservationImpl implements ReservationService {
         Customer customer = customerMapper.getCustomerById(reservation.getCustomerID());
         ReservationMethod reservationMethod = reservationMethodMapper.getReservationMethodById(reservation.getMethodID());
         ReservationStatus reservationStatus = reservationStatusMapper.getReservationStatusByID(reservation.getStatusID());
-        LicensePlate licensePlates = licensePlateMapper.getLicensePlateById(reservation.getLicensePlateID());
+        Motorbike motorbike = motorbikeMapper.getLicensePlateById(reservation.getMotorbikeID());
 
         ReservationInforDTO reservationInforDTO = new ReservationInforDTO();
         reservationInforDTO.setCustomerName(customer.getFullName());
         reservationInforDTO.setMethodName(reservationMethod.getMethodName());
         reservationInforDTO.setStatus(reservationStatus.getStatusID());
         reservationInforDTO.setStatusName(reservationStatus.getStatusName());
-        reservationInforDTO.setLicensePlate(licensePlates.getLicensePlate());
+        reservationInforDTO.setLicensePlate(motorbike.getLicensePlate());
+        reservationInforDTO.setMotorbikeName(motorbike.getMotorbikeName());
+        reservationInforDTO.setMotorbikeColor(motorbike.getMotorbikeColor());
         reservationInforDTO.setReservationID(reservation.getReservationID());
         reservationInforDTO.setCheckIn(Objects.nonNull(reservation.getCheckIn()) ?
                 dateFormat.format(reservation.getCheckIn()) : "");
@@ -395,13 +393,13 @@ public class ReservationImpl implements ReservationService {
         ReservationDetailDTO reservationDetailDTO = new ReservationDetailDTO();
         PLO plo = parkingLotOwnerMapper.getPloById(reservation.getPloID());
         ReservationMethod reservationMethod = reservationMethodMapper.getReservationMethodById(reservation.getMethodID());
-        LicensePlate licensePlate = licensePlateMapper.getLicensePlateById(reservation.getLicensePlateID());
+        Motorbike motorbike = motorbikeMapper.getLicensePlateById(reservation.getMotorbikeID());
         ReservationStatus reservationStatus = reservationStatusMapper.getReservationStatusByID(reservation.getStatusID());
         reservationDetailDTO.setFee(reservation.getPrice());
         reservationDetailDTO.setParkingName(plo.getParkingName());
         reservationDetailDTO.setAddress(plo.getAddress());
         reservationDetailDTO.setMethodName(reservationMethod.getMethodName());
-        reservationDetailDTO.setLicensePlate(licensePlate.getLicensePlate());
+        reservationDetailDTO.setLicensePlate(motorbike.getLicensePlate());
         reservationDetailDTO.setStatusName(reservationStatus.getStatusName());
         reservationDetailDTO.setStartTime(Objects.nonNull(reservation.getStartTime()) ?
                 dateFormat.format(reservation.getStartTime()) : "");
@@ -576,11 +574,11 @@ public class ReservationImpl implements ReservationService {
         Customer customer = customerMapper.getCustomerById(id);
         PLO plo = parkingLotOwnerMapper.getPloById(bookingReservationDTO.getPloID());
 
-        LicensePlate licensePlates = licensePlateMapper.
+        Motorbike licensePlates = motorbikeMapper.
                 getLicensePlateByLicensePlate(bookingReservationDTO.getLicensePlate(), id);
 
         // ** If this license plate have reservation and status reservation ! 4 or !5 -> not allow booking
-        List<Reservation> reservations = reservationMapper.getReservationByLicensesPlateId(licensePlates.getLicensePlateID());
+        List<Reservation> reservations = reservationMapper.getReservationByLicensesPlateId(licensePlates.getMotorbikeID());
         for (Reservation reservation : reservations){
             if (reservation.getStatusID() == 1 || reservation.getStatusID() == 2 || reservation.getStatusID() == 3 ){
                 message = Message.NOT_ALLOW_TO_BOOKING;
@@ -648,7 +646,7 @@ public class ReservationImpl implements ReservationService {
         reservation.setPloID(plo.getPloID());
         reservation.setCustomerID(customer.getCustomerID());
         reservation.setPrice(methodPrice);
-        reservation.setLicensePlateID(licensePlates.getLicensePlateID());
+        reservation.setMotorbikeID(licensePlates.getMotorbikeID());
         reservation.setStartTime(currentTimestamp);
         reservation.setEndTime(endTime);
         reservation.setMethodID(reservationMethod.getMethodID());
@@ -932,13 +930,15 @@ public class ReservationImpl implements ReservationService {
             }
         }
 
-        List<LicensePlate> licensePlates = licensePlateMapper.getListLicensePlateByCustomerID(id);
-        List<LicensePlateDTO> licensePlateDTOS = new ArrayList<>();
-        for (LicensePlate licensePlate : licensePlates){
-            LicensePlateDTO licensePlateDTO = new LicensePlateDTO();
-            licensePlateDTO.setLicencePlateID(licensePlate.getLicensePlateID());
-            licensePlateDTO.setLicencePlate(licensePlate.getLicensePlate());
-            licensePlateDTOS.add(licensePlateDTO);
+        List<Motorbike> motorbikes = motorbikeMapper.getListLicensePlateByCustomerID(id);
+        List<MotorbikeDTO> motorbikeDTOS = new ArrayList<>();
+        for (Motorbike motorbike : motorbikes){
+            MotorbikeDTO motorbikeDTO = new MotorbikeDTO();
+            motorbikeDTO.setMotorbikeID(motorbike.getMotorbikeID());
+            motorbikeDTO.setLicensePlate(motorbike.getLicensePlate());
+            motorbikeDTO.setMotorbikeColor(motorbike.getMotorbikeColor());
+            motorbikeDTO.setMotorbikeName(motorbike.getMotorbikeName());
+            motorbikeDTOS.add(motorbikeDTO);
         }
         SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
         BookingDetailDTO bookingDetailDTO = new BookingDetailDTO();
@@ -951,7 +951,7 @@ public class ReservationImpl implements ReservationService {
         bookingDetailDTO.setWaitingTime(Objects.nonNull(ploEntity.getWaitingTime()) ?
                 timeFormat.format(ploEntity.getWaitingTime()) : "");
         bookingDetailDTO.setReservationMethod(reservationBookingMethodDTOS);
-        bookingDetailDTO.setCustomerLicensePlate(licensePlateDTOS);
+        bookingDetailDTO.setCustomerLicensePlate(motorbikeDTOS);
         return bookingDetailDTO;
     }
 }

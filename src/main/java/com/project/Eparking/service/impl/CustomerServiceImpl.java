@@ -35,7 +35,6 @@ import java.util.concurrent.TimeUnit;
 public class CustomerServiceImpl implements CustomerService {
 
     private final CustomerMapper customerMapper;
-    private final LicensePlateMapper licensePlateMapper;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
     private final PaymentService paymentService;
@@ -48,6 +47,8 @@ public class CustomerServiceImpl implements CustomerService {
     private final PushNotificationService pushNotificationService;
     private final ReservationMapper reservationMapper;
     private final ParkingMapper parkingMapper;
+    private final MotorbikeMapper motorbikeMapper;
+    private final ReservationMapper reservationMapper;
 
     private SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
     @Override
@@ -73,8 +74,10 @@ public class CustomerServiceImpl implements CustomerService {
             customerDTO.setRegistrationDate(registrationDate);
 
             //2.1. Get licensePlate total number by list customerId;
-            List<LicensePlate> licensePlateList = licensePlateMapper.getListLicensePlateByCustomerID(c.getCustomerID());
-            customerDTO.setTotalNumber(licensePlateList.size());
+            List<Motorbike> motorbikes = motorbikeMapper.getListLicensePlateByCustomerID(c.getCustomerID());
+            customerDTO.setTotalNumber(motorbikes.size());
+            int totalReservation = reservationMapper.getTotalReservationByCustomerId(c.getCustomerID(),5);
+            customerDTO.setTotalReservation(totalReservation);
             customerDTOList.add(customerDTO);
         }
 
@@ -108,8 +111,10 @@ public class CustomerServiceImpl implements CustomerService {
             customerDTO.setRegistrationDate(registrationDate);
 
             //2.1. Get licensePlate total number by list customerId;
-            List<LicensePlate> licensePlateList = licensePlateMapper.getListLicensePlateByCustomerID(c.getCustomerID());
-            customerDTO.setTotalNumber(licensePlateList.size());
+            List<Motorbike> motorbikes = motorbikeMapper.getListLicensePlateByCustomerID(c.getCustomerID());
+            customerDTO.setTotalNumber(motorbikes.size());
+            int totalReservation = reservationMapper.getTotalReservationByCustomerId(c.getCustomerID(),5);
+            customerDTO.setTotalReservation(totalReservation);
             customerDTOList.add(customerDTO);
         }
 

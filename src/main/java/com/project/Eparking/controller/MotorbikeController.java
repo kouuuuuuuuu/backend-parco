@@ -1,45 +1,39 @@
 package com.project.Eparking.controller;
 
 import com.project.Eparking.constant.Message;
-import com.project.Eparking.domain.LicensePlate;
-import com.project.Eparking.domain.dto.LicensePlateDTO;
+import com.project.Eparking.domain.dto.CreateMotorbikeDTO;
+import com.project.Eparking.domain.dto.MotorbikeDTO;
 import com.project.Eparking.domain.response.Response;
-import com.project.Eparking.service.interf.LicensePlateService;
+import com.project.Eparking.service.interf.MotorbikeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/licensePlate")
+@RequestMapping("/motorbike")
 @RequiredArgsConstructor
-public class LicensePlateController {
+public class MotorbikeController {
 
-    private final LicensePlateService licensePlateService;
+    private final MotorbikeService motorbikeService;
 
     @GetMapping("/getLicensePlate")
     public Response getListLicensePlate() {
         try {
-            List<LicensePlate> licensePlates = licensePlateService.getListLicensePlate();
-            List<LicensePlateDTO> licensePlateDTOS = new ArrayList<>();
-            for (LicensePlate licensePlate : licensePlates) {
-                LicensePlateDTO licensePlateDTO = new LicensePlateDTO(licensePlate.getLicensePlateID(), licensePlate.getLicensePlate());
-                licensePlateDTOS.add(licensePlateDTO);
-            }
-            return new Response(HttpStatus.OK.value(), Message.GET_LIST_LICENSE_PLATE_SUCCESS, licensePlateDTOS);
+            List<MotorbikeDTO> motorbikeDTOS = motorbikeService.getListLicensePlate();
+            return new Response(HttpStatus.OK.value(), Message.GET_LIST_LICENSE_PLATE_SUCCESS, motorbikeDTOS);
         } catch (Exception e) {
             return new Response(HttpStatus.INTERNAL_SERVER_ERROR.value(), Message.GET_LIST_LICENSE_PLATE_FAIL, null);
         }
     }
 
     @DeleteMapping("/deleteLicensePlate")
-    public ResponseEntity<?> deleteLicensePlateByLicensePlateID(@RequestParam("licensePlateID") int licensePlateID) {
+    public ResponseEntity<?> deleteLicensePlateByLicensePlateID(@RequestParam("motorbikeID") int motorbikeID) {
         try {
-            boolean isDeleteSuccess = licensePlateService.deleteLicensePlateByLicensePlateID(licensePlateID);
+            boolean isDeleteSuccess = motorbikeService.deleteLicensePlateByLicensePlateID(motorbikeID);
             if (!isDeleteSuccess){
                 return ResponseEntity.badRequest().body(Message.DELETE_LICENSE_PLATE_FAIL);
             }
@@ -51,9 +45,9 @@ public class LicensePlateController {
 
 
     @PostMapping("/addLicensePlate")
-    public ResponseEntity<?> addLicensePlate(@RequestParam("licensePlate") String licensePlate){
+    public ResponseEntity<?> addLicensePlate(@RequestBody CreateMotorbikeDTO motorbikeDTO){
         try {
-            String message = licensePlateService.addLicensePlate(licensePlate);
+            String message = motorbikeService.addLicensePlate(motorbikeDTO);
             if (message.equals(Message.DUPLICATE_LICENSE_PLATE)){
                 return ResponseEntity.badRequest().body(message);
             }

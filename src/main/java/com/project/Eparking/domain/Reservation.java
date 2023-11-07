@@ -13,7 +13,7 @@ public class Reservation {
     private String customerID;
     private String ploID;
     private int statusID;
-    private int licensePlateID;
+    private int motorbikeID;
     private Timestamp startTime;
     private Timestamp endTime;
     private double price;
