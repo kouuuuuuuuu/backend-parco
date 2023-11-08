@@ -432,7 +432,7 @@ public class CustomerServiceImpl implements CustomerService {
                     List<FirebaseToken> firebaseTokensPLO = firebaseTokenMapper.getFirebaseTokenByCustomerID(reservation.getPloID());
                     PushNotificationRequest requestPLO = new PushNotificationRequest();
                     Customer customer = userMapper.getCustomerByCustomerID(reservation.getCustomerID());
-                    LicensePlate licensePlate = licensePlateMapper.getLicensePlateById(reservation.getLicensePlateID());
+                    Motorbike licensePlate = motorbikeMapper.getLicensePlateById(reservation.getLicensePlateID());
                     requestPLO.setTitle("Thông báo trạng thái của bãi xe hiện tại");
                     requestPLO.setTopic("Thông báo trạng thái của bãi xe hiện tại");
                     requestPLO.setMessage("Khách hàng mang tên: "+customer.getFullName()+ " có biển số là: "+ licensePlate.getLicensePlate()+" đã bị quá giờ lấy xe!");
