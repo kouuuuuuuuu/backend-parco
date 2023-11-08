@@ -49,7 +49,7 @@ public class MotorbikeServiceImpl implements MotorbikeService {
         }
         for (Motorbike motorbike : motorbikes){
             MotorbikeDTO motorbikeDTO = new MotorbikeDTO();
-            motorbikeDTO.setMotorbikeID(motorbike.getMotorbikeID());
+            motorbikeDTO.setMotorbikeID(motorbike.getLicensePlateID());
             motorbikeDTO.setLicensePlate(motorbike.getLicensePlate());
             motorbikeDTO.setMotorbikeName(motorbike.getMotorbikeName());
             motorbikeDTO.setMotorbikeColor(motorbike.getMotorbikeColor());
@@ -64,7 +64,7 @@ public class MotorbikeServiceImpl implements MotorbikeService {
         String id = authentication.getName();
         boolean isDeleteSuccess = true;
         List<Integer> licensePlatesId = motorbikeMapper.getListLicensePlateByCustomerID(id)
-                .stream().map(Motorbike::getMotorbikeID).collect(Collectors.toList());
+                .stream().map(Motorbike::getLicensePlateID).collect(Collectors.toList());
         if(!licensePlatesId.contains(licensePlateID)){
             isDeleteSuccess = false;
         }else {

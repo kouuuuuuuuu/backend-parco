@@ -5,7 +5,7 @@
 <mapper namespace="com.project.Eparking.dao.MotorbikeMapper">
 
     <resultMap id = "resultLicensePlate" type = "com.project.Eparking.domain.Motorbike">
-        <result property = "motorbikeID" column = "motorbikeID"/>
+        <result property = "licensePlateID" column = "licensePlateID"/>
         <result property = "customerID" column = "customerID"/>
         <result property = "licensePlate" column = "licensePlate"/>
         <result property = "isDelete" column = "isDelete"/>
@@ -15,13 +15,13 @@
 
     <select id="getListLicensePlateByCustomerID" resultMap="resultLicensePlate">
         SELECT
-            motorbikeID,
+            licensePlateID,
             customerID,
             licensePlate,
             isDelete,
             motorbikeName,
             motorbikeColor
-        FROM motorbike
+        FROM licenseplate
         WHERE customerID = #{customerID}
         AND isDelete = 0;
     </select>
@@ -29,42 +29,42 @@
 
     <select id="getLicensePlateById" resultType="com.project.Eparking.domain.Motorbike">
         SELECT
-            motorbikeID,
+            licensePlateID,
             customerID,
             licensePlate,
             isDelete,
             motorbikeName,
             motorbikeColor
         FROM
-            motorbike
+            licenseplate
         WHERE
-            motorbikeID = #{motorbikeID};
+            licensePlateID = #{motorbikeID};
     </select>
 
     <update id="deleteLicensePlate" parameterType="map">
-        UPDATE motorbike
+        UPDATE licenseplate
         SET isDelete = 1
         WHERE
-            motorbikeID = #{motorbikeID}
+            licensePlateID = #{motorbikeID}
         AND
             customerID = #{customerID}
     </update>
 
     <insert id="createLicensePlate" parameterType="map">
-        INSERT INTO motorbike (customerID,licensePlate, isDelete, motorbikeName, motorbikeColor )
+        INSERT INTO licenseplate (customerID,licensePlate, isDelete, motorbikeName, motorbikeColor )
         VALUES (#{customerID}, #{motorbike.licensePlate}, 0, #{motorbike.motorbikeName}, #{motorbike.motorbikeColor});
     </insert>
 
     <select id="getLicensePlateByLicensePlate" resultType="com.project.Eparking.domain.Motorbike">
         SELECT
-            motorbikeID,
+            licensePlateID,
             customerID,
             licensePlate,
             isDelete,
             motorbikeName,
             motorbikeColor
         FROM
-            motorbike
+            licenseplate
         WHERE
             licensePlate = #{licensePlate}
         AND customerID = #{customerID};
@@ -72,46 +72,46 @@
 
     <select id="getListLicensePlate" resultType="com.project.Eparking.domain.Motorbike">
         SELECT
-            motorbikeID,
+            licensePlateID,
             customerID,
             licensePlate,
             isDelete,
             motorbikeName,
             motorbikeColor
         FROM
-            motorbike
+            licenseplate
     </select>
 
     <update id="updateLicensesPlateStatusById" parameterType="map">
-        UPDATE motorbike
+        UPDATE licenseplate
         SET isDelete = 0
         WHERE
-            motorbikeID = #{motorbikeID}
+            licensePlateID = #{motorbikeID}
         AND
             customerID = #{customerID}
     </update>
 
     <select id="getAllLicensePlateByCustomerId" resultType="com.project.Eparking.domain.Motorbike">
         SELECT
-            motorbikeID,
+            licensePlateID,
             customerID,
             licensePlate,
             isDelete,
             motorbikeName,
             motorbikeColor
-        FROM motorbike
+        FROM licenseplate
         WHERE customerID = #{customerID}
     </select>
 
     <select id="getLicensePlateByLicensePlateString" resultType="com.project.Eparking.domain.Motorbike">
         SELECT
-            motorbikeID,
+            licensePlateID,
             customerID,
             licensePlate,
             isDelete,
             motorbikeName,
             motorbikeColor
-        FROM motorbike
+        FROM licenseplate
         WHERE licensePlate = #{licensePlate}
     </select>
 

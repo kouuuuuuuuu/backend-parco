@@ -46,9 +46,7 @@ public class CustomerServiceImpl implements CustomerService {
     private final FirebaseTokenMapper firebaseTokenMapper;
     private final PushNotificationService pushNotificationService;
     private final ReservationMapper reservationMapper;
-    private final ParkingMapper parkingMapper;
     private final MotorbikeMapper motorbikeMapper;
-    private final ReservationMapper reservationMapper;
 
     private SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
     @Override
@@ -320,7 +318,7 @@ public class CustomerServiceImpl implements CustomerService {
             request.setMessage("Còn 15 phút trước khi lần đặt này bị hủy");
             List<Image> images = imageMapper.getImageListByPLOID(reservation.getPloID());
             Image image = images.get(0);
-            request.setImage("https://fiftyfifty.b-cdn.net/eparking/Logo.png?fbclid=IwAR3x6Nj8bIgirE0qXYMzXlHHe2AihooslWKegmc9iLVBO7ihisPqJm4pM3k");
+            request.setImage(image.getImageLink());
             for (FirebaseToken token :
                     firebaseTokens) {
                 request.setToken(token.getDeviceToken());
@@ -345,7 +343,7 @@ public class CustomerServiceImpl implements CustomerService {
         request.setMessage("Lần đặt xe của nhà xe: " + plo.getParkingName()+ " đã bị hủy");
         List<Image> images = imageMapper.getImageListByPLOID(reservation.getPloID());
         Image image = images.get(0);
-        request.setImage("https://fiftyfifty.b-cdn.net/eparking/Logo.png?fbclid=IwAR3x6Nj8bIgirE0qXYMzXlHHe2AihooslWKegmc9iLVBO7ihisPqJm4pM3k");
+        request.setImage(image.getImageLink());
         for (FirebaseToken token:
                 firebaseTokens) {
             request.setToken(token.getDeviceToken());
@@ -383,9 +381,7 @@ public class CustomerServiceImpl implements CustomerService {
                 }
                 if(currentTimestamp.equals(cancelBooking) || currentTimestamp.after(cancelBooking)){
                     notificationCancelBooking(reservationID);
-                    reservationMapper.updateReservationStatus(5,reservationID,2,currentTimestamp,currentTimestamp);
-                    int currentSlot = plo.getCurrentSlot() - 1;
-                    parkingMapper.updateCurrentSlot(currentSlot, plo.getPloID());
+                    reservationMapper.updateReservationStatus(5,reservationID,1);
                     return true;
                 }
                 return false;

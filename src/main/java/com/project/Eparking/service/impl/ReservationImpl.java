@@ -20,7 +20,6 @@ import com.project.Eparking.domain.request.RequestUpdateStatusReservation;
 import com.project.Eparking.domain.response.*;
 import com.project.Eparking.exception.ApiRequestException;
 import com.project.Eparking.service.PushNotificationService;
-import com.project.Eparking.service.interf.LicensePlateService;
 import com.project.Eparking.service.interf.ReservationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -295,7 +294,7 @@ public class ReservationImpl implements ReservationService {
         Customer customer = customerMapper.getCustomerById(reservation.getCustomerID());
         ReservationMethod reservationMethod = reservationMethodMapper.getReservationMethodById(reservation.getMethodID());
         ReservationStatus reservationStatus = reservationStatusMapper.getReservationStatusByID(reservation.getStatusID());
-        Motorbike motorbike = motorbikeMapper.getLicensePlateById(reservation.getMotorbikeID());
+        Motorbike motorbike = motorbikeMapper.getLicensePlateById(reservation.getLicensePlateID());
 
         ReservationInforDTO reservationInforDTO = new ReservationInforDTO();
         reservationInforDTO.setCustomerName(customer.getFullName());
@@ -393,7 +392,7 @@ public class ReservationImpl implements ReservationService {
         ReservationDetailDTO reservationDetailDTO = new ReservationDetailDTO();
         PLO plo = parkingLotOwnerMapper.getPloById(reservation.getPloID());
         ReservationMethod reservationMethod = reservationMethodMapper.getReservationMethodById(reservation.getMethodID());
-        Motorbike motorbike = motorbikeMapper.getLicensePlateById(reservation.getMotorbikeID());
+        Motorbike motorbike = motorbikeMapper.getLicensePlateById(reservation.getLicensePlateID());
         ReservationStatus reservationStatus = reservationStatusMapper.getReservationStatusByID(reservation.getStatusID());
         reservationDetailDTO.setFee(reservation.getPrice());
         reservationDetailDTO.setParkingName(plo.getParkingName());
@@ -578,7 +577,7 @@ public class ReservationImpl implements ReservationService {
                 getLicensePlateByLicensePlate(bookingReservationDTO.getLicensePlate(), id);
 
         // ** If this license plate have reservation and status reservation ! 4 or !5 -> not allow booking
-        List<Reservation> reservations = reservationMapper.getReservationByLicensesPlateId(licensePlates.getMotorbikeID());
+        List<Reservation> reservations = reservationMapper.getReservationByLicensesPlateId(licensePlates.getLicensePlateID());
         for (Reservation reservation : reservations){
             if (reservation.getStatusID() == 1 || reservation.getStatusID() == 2 || reservation.getStatusID() == 3 ){
                 message = Message.NOT_ALLOW_TO_BOOKING;
@@ -646,7 +645,7 @@ public class ReservationImpl implements ReservationService {
         reservation.setPloID(plo.getPloID());
         reservation.setCustomerID(customer.getCustomerID());
         reservation.setPrice(methodPrice);
-        reservation.setMotorbikeID(licensePlates.getMotorbikeID());
+        reservation.setLicensePlateID(licensePlates.getLicensePlateID());
         reservation.setStartTime(currentTimestamp);
         reservation.setEndTime(endTime);
         reservation.setMethodID(reservationMethod.getMethodID());
@@ -934,7 +933,7 @@ public class ReservationImpl implements ReservationService {
         List<MotorbikeDTO> motorbikeDTOS = new ArrayList<>();
         for (Motorbike motorbike : motorbikes){
             MotorbikeDTO motorbikeDTO = new MotorbikeDTO();
-            motorbikeDTO.setMotorbikeID(motorbike.getMotorbikeID());
+            motorbikeDTO.setMotorbikeID(motorbike.getLicensePlateID());
             motorbikeDTO.setLicensePlate(motorbike.getLicensePlate());
             motorbikeDTO.setMotorbikeColor(motorbike.getMotorbikeColor());
             motorbikeDTO.setMotorbikeName(motorbike.getMotorbikeName());

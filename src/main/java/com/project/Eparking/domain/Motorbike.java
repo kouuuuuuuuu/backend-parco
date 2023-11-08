@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Motorbike {
-    private int motorbikeID;
+    private int licensePlateID;
     private String customerID;
     private String licensePlate;
     private boolean isDelete;
