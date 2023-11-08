@@ -277,8 +277,9 @@
     <update id="updateReservationStatus" parameterType="com.project.Eparking.domain.Reservation">
         UPDATE reservation
         SET statusID = #{statusID},
-            isRating = #{isRating}
+            isRating = #{isRating},
+            checkOut = #{checkOut},
+            checkIn = #{checkIn}
         WHERE reservationID = #{reservationID}
     </update>
-
 </mapper>

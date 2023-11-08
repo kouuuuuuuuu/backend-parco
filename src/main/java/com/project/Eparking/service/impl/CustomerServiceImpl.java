@@ -378,7 +378,7 @@ public class CustomerServiceImpl implements CustomerService {
                 }
                 if(currentTimestamp.equals(cancelBooking) || currentTimestamp.after(cancelBooking)){
                     notificationCancelBooking(reservationID);
-                    reservationMapper.updateReservationStatus(5,reservationID,1);
+                    reservationMapper.updateReservationStatus(5,reservationID,2,currentTimestamp,currentTimestamp);
                     int currentSlot = plo.getCurrentSlot() - 1;
                     parkingMapper.updateCurrentSlot(currentSlot, plo.getPloID());
                     return true;

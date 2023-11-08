@@ -690,9 +690,8 @@ public class ReservationImpl implements ReservationService {
 
         //sendNotiCustomer
         List<Image> images = imageMapper.getImageByPloId(plo.getPloID());
-        String a = images.get(0).getImageLink();
         PushNotificationRequest requestCustomer = new PushNotificationRequest();
-        requestCustomer.setImage(images.get(0).getImageLink());
+        requestCustomer.setImage("https://fiftyfifty.b-cdn.net/eparking/Logo.png?fbclid=IwAR0Cp0mqjcD5-DCi9DvSSomsni8_gA-tg14f2GskVlpIYReh-tagSlOrb-4");
         requestCustomer.setMessage("Bạn đã đặt chỗ ở bãi xe: "+plo.getParkingName());
         requestCustomer.setTitle("Thông báo tình trạng đặt xe");
         requestCustomer.setTopic("Thông báo tình trạng đặt xe");
@@ -712,7 +711,7 @@ public class ReservationImpl implements ReservationService {
         notifications.setRecipient_id(id);
         notifications.setCreated_at(currentTimestamp);
         notifications.setContent("Bạn đã đặt chỗ ở bãi xe: "+plo.getParkingName());
-        notifications.setImageLink(images.get(0).getImageLink());
+        notifications.setImageLink("https://fiftyfifty.b-cdn.net/eparking/Logo.png?fbclid=IwAR0Cp0mqjcD5-DCi9DvSSomsni8_gA-tg14f2GskVlpIYReh-tagSlOrb-4");
         userMapper.insertNotification(notifications);
         return message;
     }
