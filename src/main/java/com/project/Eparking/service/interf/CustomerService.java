@@ -28,5 +28,5 @@ public interface CustomerService {
     void notificationBefore15mCancelBooking(int reservationID);
     void notificationCancelBooking(int reservationID);
     Boolean updateReservationStatusToCancelBooking(int reservationID);
-
+    Boolean updateReservationStatusToLateBooking(int reservationID);
 }

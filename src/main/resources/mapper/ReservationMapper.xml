@@ -282,4 +282,10 @@
             checkIn = #{checkIn}
         WHERE reservationID = #{reservationID}
     </update>
+    <update id="updateStatusOnly" parameterType="com.project.Eparking.domain.Reservation">
+        UPDATE reservation
+        SET
+            statusID = #{statusID},
+        WHERE reservationID = #{reservationID}
+    </update>
 </mapper>

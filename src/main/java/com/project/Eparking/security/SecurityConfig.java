@@ -135,6 +135,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //        http.authorizeRequests().antMatchers(POST, "/customer/notiCancelBookingBefore15m").hasAnyAuthority("CUSTOMER","PLO");
 //        http.authorizeRequests().antMatchers(POST, "/customer/notiCancelBooking").hasAnyAuthority("CUSTOMER","PLO");
         http.authorizeRequests().antMatchers(PUT, "/customer/updateReservationToCancel").hasAnyAuthority("CUSTOMER","PLO");
+        http.authorizeRequests().antMatchers(PUT, "/customer/updateReservationToLate").hasAnyAuthority("CUSTOMER","PLO");
         http.authorizeRequests().anyRequest().authenticated();
         http.addFilter(customAuthenticationFilter);
         http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);

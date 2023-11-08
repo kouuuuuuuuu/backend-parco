@@ -40,4 +40,5 @@ public interface ReservationMapper {
 
     void updateCheckInCheckOutIsRatedAndStatusById(int reservationID, Timestamp checkIn, Timestamp checkOut, int status, int isRating);
     void updateReservationStatus(int statusID,int reservationID, int isRating, Timestamp checkOut,Timestamp checkIn);
+    void updateStatusOnly(int statusID,int reservationID);
 }

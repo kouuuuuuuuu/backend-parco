@@ -391,4 +391,67 @@ public class CustomerServiceImpl implements CustomerService {
         }
     }
 
+    @Override
+    public Boolean updateReservationStatusToLateBooking(int reservationID) {
+        try {
+            Reservation reservation = reservationMapper.getReservationByReservationID(reservationID);
+            if(reservation.getStatusID() == 2){
+                Timestamp endTime = reservation.getEndTime();
+                Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
+                Timestamp endTimeBefore15m = new Timestamp(endTime.getTime() - (15 * 60 * 1000));
+                if(currentTimestamp.equals(endTimeBefore15m) && currentTimestamp.before(endTime)|| currentTimestamp.after(endTimeBefore15m) && currentTimestamp.before(endTime)){
+                    //sendNotiToCustomer
+                    List<FirebaseToken> firebaseTokens = firebaseTokenMapper.getFirebaseTokenByCustomerID(reservation.getCustomerID());
+                    PushNotificationRequest request = new PushNotificationRequest();
+                    request.setTitle("Thông báo trạng thái của lần đặt xe");
+                    request.setTopic("Thông báo trạng thái của lần đặt xe");
+                    request.setMessage("Còn 15 phút trước trễ giờ lấy xe.Vui lòng hãy lấy lấy xe đúng giờ quy định");
+                    request.setImage("https://fiftyfifty.b-cdn.net/eparking/Logo.png?fbclid=IwAR3x6Nj8bIgirE0qXYMzXlHHe2AihooslWKegmc9iLVBO7ihisPqJm4pM3k");
+                    for (FirebaseToken token:
+                            firebaseTokens) {
+                        request.setToken(token.getDeviceToken());
+                        pushNotificationService.sendPushNotificationToToken(request);
+                    }
+                    return false;
+                }
+                if(currentTimestamp.equals(endTime) || currentTimestamp.after(endTime)){
+                    //sendNotiCustomer
+                    List<FirebaseToken> firebaseTokens = firebaseTokenMapper.getFirebaseTokenByCustomerID(reservation.getCustomerID());
+                    PushNotificationRequest request = new PushNotificationRequest();
+                    request.setTitle("Thông báo trạng thái của lần đặt xe");
+                    request.setTopic("Thông báo trạng thái của lần đặt xe");
+                    request.setMessage("Bạn đã bị quá giờ lấy xe.Hãy liên hệ với chủ bãi xe để xử lý!");
+                    request.setImage("https://fiftyfifty.b-cdn.net/eparking/Logo.png?fbclid=IwAR3x6Nj8bIgirE0qXYMzXlHHe2AihooslWKegmc9iLVBO7ihisPqJm4pM3k");
+                    for (FirebaseToken token:
+                            firebaseTokens) {
+                        request.setToken(token.getDeviceToken());
+                        pushNotificationService.sendPushNotificationToToken(request);
+                    }
+                    //sendNotiPLO
+                    List<FirebaseToken> firebaseTokensPLO = firebaseTokenMapper.getFirebaseTokenByCustomerID(reservation.getPloID());
+                    PushNotificationRequest requestPLO = new PushNotificationRequest();
+                    Customer customer = userMapper.getCustomerByCustomerID(reservation.getCustomerID());
+                    LicensePlate licensePlate = licensePlateMapper.getLicensePlateById(reservation.getLicensePlateID());
+                    requestPLO.setTitle("Thông báo trạng thái của bãi xe hiện tại");
+                    requestPLO.setTopic("Thông báo trạng thái của bãi xe hiện tại");
+                    requestPLO.setMessage("Khách hàng mang tên: "+customer.getFullName()+ " có biển số là: "+ licensePlate.getLicensePlate()+" đã bị quá giờ lấy xe!");
+                    requestPLO.setImage("https://fiftyfifty.b-cdn.net/eparking/Logo.png?fbclid=IwAR3x6Nj8bIgirE0qXYMzXlHHe2AihooslWKegmc9iLVBO7ihisPqJm4pM3k");
+                    for (FirebaseToken token:
+                         firebaseTokensPLO) {
+                        requestPLO.setToken(token.getDeviceToken());
+                        pushNotificationService.sendPushNotificationToToken(requestPLO);
+                    }
+                    reservationMapper.updateStatusOnly(3,reservation.getReservationID());
+                    return true;
+                }
+            }if(reservation.getStatusID() ==1){
+                return false;
+            }if(reservation.getStatusID() == 3){
+                return true;
+            }
+            return true;
+        }catch (Exception e){
+            throw new ApiRequestException("Failed to update reservation to late status" +e.getMessage());
+        }
+    }
 }

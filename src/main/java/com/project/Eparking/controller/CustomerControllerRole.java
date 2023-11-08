@@ -153,9 +153,17 @@ public class CustomerControllerRole {
 //        }
 //    }
     @PutMapping("/updateReservationToCancel")
-    ResponseEntity<Boolean> updateReservationCancelBooking(@RequestParam int reservationID){
+    public ResponseEntity<Boolean> updateReservationCancelBooking(@RequestParam int reservationID){
         try {
             return ResponseEntity.ok(customerService.updateReservationStatusToCancelBooking(reservationID));
+        }catch (ApiRequestException e){
+            throw e;
+        }
+    }
+    @PutMapping("/updateReservationToLate")
+    public ResponseEntity<Boolean> updateReservationToLate(@RequestParam int reservationID){
+        try {
+            return ResponseEntity.ok(customerService.updateReservationStatusToLateBooking(reservationID));
         }catch (ApiRequestException e){
             throw e;
         }
