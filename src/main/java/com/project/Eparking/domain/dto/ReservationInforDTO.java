@@ -17,5 +17,7 @@ public class ReservationInforDTO {
     private String startTime;
     private String endTime;
     private String licensePlate;
+    private String motorbikeName;
+    private String motorbikeColor;
     private int reservationID;
 }

@@ -113,9 +113,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests().antMatchers(POST, "/user/deleteDeviceToken").hasAnyAuthority("ADMIN","PLO","CUSTOMER");
         http.authorizeRequests().antMatchers(GET, "/reservation/reservationHistory").hasAnyAuthority("CUSTOMER");
         http.authorizeRequests().antMatchers(GET, "/reservation/reservationHistoryDetail").hasAnyAuthority("CUSTOMER");
-        http.authorizeRequests().antMatchers(GET, "/licensePlate/getLicensePlate").hasAnyAuthority("CUSTOMER");
-        http.authorizeRequests().antMatchers(DELETE, "/licensePlate/deleteLicensePlate").hasAnyAuthority("CUSTOMER");
-        http.authorizeRequests().antMatchers(POST, "/licensePlate/addLicensePlate").hasAnyAuthority("CUSTOMER");
+        http.authorizeRequests().antMatchers(GET, "/motorbike/getLicensePlate").hasAnyAuthority("CUSTOMER");
+        http.authorizeRequests().antMatchers(DELETE, "/motorbike/deleteLicensePlate").hasAnyAuthority("CUSTOMER");
+        http.authorizeRequests().antMatchers(POST, "/motorbike/addLicensePlate").hasAnyAuthority("CUSTOMER");
         http.authorizeRequests().antMatchers(POST, "/customer/createPayment").hasAnyAuthority("CUSTOMER");
         http.authorizeRequests().antMatchers(GET, "/customer/walletScreen").hasAnyAuthority("CUSTOMER");
         http.authorizeRequests().antMatchers(GET, "/rating/getRatingOfCustomer").hasAnyAuthority("CUSTOMER");

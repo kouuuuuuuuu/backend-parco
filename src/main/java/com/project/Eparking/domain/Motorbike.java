@@ -1,5 +1,6 @@
 package com.project.Eparking.domain;
 
+import com.google.firebase.database.annotations.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -7,9 +8,11 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class LicensePlate {
+public class Motorbike {
     private int licensePlateID;
     private String customerID;
     private String licensePlate;
     private boolean isDelete;
+    private String motorbikeName;
+    private String motorbikeColor;
 }

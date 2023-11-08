@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.project.Eparking.dao.MotorbikeMapper">
+
+    <resultMap id = "resultLicensePlate" type = "com.project.Eparking.domain.Motorbike">
+        <result property = "licensePlateID" column = "licensePlateID"/>
+        <result property = "customerID" column = "customerID"/>
+        <result property = "licensePlate" column = "licensePlate"/>
+        <result property = "isDelete" column = "isDelete"/>
+        <result property = "motorbikeName" column = "motorbikeName"/>
+        <result property = "motorbikeColor" column = "motorbikeColor"/>
+    </resultMap>
+
+    <select id="getListLicensePlateByCustomerID" resultMap="resultLicensePlate">
+        SELECT
+            licensePlateID,
+            customerID,
+            licensePlate,
+            isDelete,
+            motorbikeName,
+            motorbikeColor
+        FROM licenseplate
+        WHERE customerID = #{customerID}
+        AND isDelete = 0;
+    </select>
+
+
+    <select id="getLicensePlateById" resultType="com.project.Eparking.domain.Motorbike">
+        SELECT
+            licensePlateID,
+            customerID,
+            licensePlate,
+            isDelete,
+            motorbikeName,
+            motorbikeColor
+        FROM
+            licenseplate
+        WHERE
+            licensePlateID = #{motorbikeID};
+    </select>
+
+    <update id="deleteLicensePlate" parameterType="map">
+        UPDATE licenseplate
+        SET isDelete = 1
+        WHERE
+            licensePlateID = #{motorbikeID}
+        AND
+            customerID = #{customerID}
+    </update>
+
+    <insert id="createLicensePlate" parameterType="map">
+        INSERT INTO licenseplate (customerID,licensePlate, isDelete, motorbikeName, motorbikeColor )
+        VALUES (#{customerID}, #{motorbike.licensePlate}, 0, #{motorbike.motorbikeName}, #{motorbike.motorbikeColor});
+    </insert>
+
+    <select id="getLicensePlateByLicensePlate" resultType="com.project.Eparking.domain.Motorbike">
+        SELECT
+            licensePlateID,
+            customerID,
+            licensePlate,
+            isDelete,
+            motorbikeName,
+            motorbikeColor
+        FROM
+            licenseplate
+        WHERE
+            licensePlate = #{licensePlate}
+        AND customerID = #{customerID};
+    </select>
+
+    <select id="getListLicensePlate" resultType="com.project.Eparking.domain.Motorbike">
+        SELECT
+            licensePlateID,
+            customerID,
+            licensePlate,
+            isDelete,
+            motorbikeName,
+            motorbikeColor
+        FROM
+            licenseplate
+    </select>
+
+    <update id="updateLicensesPlateStatusById" parameterType="map">
+        UPDATE licenseplate
+        SET isDelete = 0
+        WHERE
+            licensePlateID = #{motorbikeID}
+        AND
+            customerID = #{customerID}
+    </update>
+
+    <select id="getAllLicensePlateByCustomerId" resultType="com.project.Eparking.domain.Motorbike">
+        SELECT
+            licensePlateID,
+            customerID,
+            licensePlate,
+            isDelete,
+            motorbikeName,
+            motorbikeColor
+        FROM licenseplate
+        WHERE customerID = #{customerID}
+    </select>
+
+    <select id="getLicensePlateByLicensePlateString" resultType="com.project.Eparking.domain.Motorbike">
+        SELECT
+            licensePlateID,
+            customerID,
+            licensePlate,
+            isDelete,
+            motorbikeName,
+            motorbikeColor
+        FROM licenseplate
+        WHERE licensePlate = #{licensePlate}
+    </select>
+
+</mapper>

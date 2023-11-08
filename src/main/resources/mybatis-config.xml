@@ -10,8 +10,6 @@
 
             <mapper resource="mapper/UserMapper.xml"></mapper>
 
-            <mapper resource="mapper/LicensePlateMapper.xml"></mapper>
-
             <mapper resource="mapper/ParkingMapper.xml"></mapper>
 
             <mapper resource="mapper/CustomerMapper.xml"></mapper>
@@ -39,6 +37,8 @@
             <mapper resource="mapper/CustomerTransaction.xml"></mapper>
 
             <mapper resource="mapper/FirebaseTokenMapper.xml"></mapper>
+
+            <mapper resource="mapper/MotorbikeMapper.xml"></mapper>
         </mappers>
 
     </configuration>

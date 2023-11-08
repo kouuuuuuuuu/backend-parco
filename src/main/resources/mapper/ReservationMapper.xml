@@ -288,4 +288,10 @@
             statusID = #{statusID},
         WHERE reservationID = #{reservationID}
     </update>
+    <select id="getTotalReservationByCustomerId" resultType="Integer">
+        SELECT COUNT(*)
+        FROM reservation
+        Where customerID = #{customerID}
+        AND statusID != #{status}
+    </select>
 </mapper>
