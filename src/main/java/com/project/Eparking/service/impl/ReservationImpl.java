@@ -564,7 +564,7 @@ public class ReservationImpl implements ReservationService {
 
         return isCancel;
     }
-
+    @Transactional
     @Override
     public String bookingReservation(BookingReservationDTO bookingReservationDTO) {
         String message = "";

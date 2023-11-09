@@ -285,4 +285,8 @@ public class UserController {
             throw e;
         }
     }
+    @GetMapping("/testcontroller12")
+    public String hello(){
+        return "hello 1";
+    }
 }

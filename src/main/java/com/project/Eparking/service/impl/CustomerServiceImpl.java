@@ -364,7 +364,7 @@ public class CustomerServiceImpl implements CustomerService {
                 Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
 
 //                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-//                Date parsedDate = dateFormat.parse("2023-11-06 23:59:00");
+//                Date parsedDate = dateFormat.parse("2023-11-09 03:13:00");
 //                Timestamp currentTimestamp = new Timestamp(parsedDate.getTime());
 
                 //cộng time
@@ -381,7 +381,7 @@ public class CustomerServiceImpl implements CustomerService {
                 }
                 if(currentTimestamp.equals(cancelBooking) || currentTimestamp.after(cancelBooking)){
                     notificationCancelBooking(reservationID);
-                    reservationMapper.updateReservationStatus(5,reservationID,1);
+                    reservationMapper.updateReservationStatus(5,reservationID,1,currentTimestamp,currentTimestamp);
                     return true;
                 }
                 return false;
@@ -399,6 +399,11 @@ public class CustomerServiceImpl implements CustomerService {
             if(reservation.getStatusID() == 2){
                 Timestamp endTime = reservation.getEndTime();
                 Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
+
+//                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//                Date parsedDate = dateFormat.parse("2023-11-10 00:29:32");
+//                Timestamp currentTimestamp = new Timestamp(parsedDate.getTime());
+
                 Timestamp endTimeBefore15m = new Timestamp(endTime.getTime() - (15 * 60 * 1000));
                 if(currentTimestamp.equals(endTimeBefore15m) && currentTimestamp.before(endTime)|| currentTimestamp.after(endTimeBefore15m) && currentTimestamp.before(endTime)){
                     //sendNotiToCustomer
@@ -445,7 +450,8 @@ public class CustomerServiceImpl implements CustomerService {
                     reservationMapper.updateStatusOnly(3,reservation.getReservationID());
                     return true;
                 }
-            }if(reservation.getStatusID() ==1){
+                return false;
+            }if(reservation.getStatusID() == 1){
                 return false;
             }if(reservation.getStatusID() == 3){
                 return true;

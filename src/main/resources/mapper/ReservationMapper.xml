@@ -285,7 +285,7 @@
     <update id="updateStatusOnly" parameterType="com.project.Eparking.domain.Reservation">
         UPDATE reservation
         SET
-            statusID = #{statusID},
+            statusID = #{statusID}
         WHERE reservationID = #{reservationID}
     </update>
     <select id="getTotalReservationByCustomerId" resultType="Integer">

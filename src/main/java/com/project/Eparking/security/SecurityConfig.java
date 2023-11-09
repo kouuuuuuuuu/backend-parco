@@ -59,6 +59,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/parking/getReturnPayment",
                         "/customer/returnPayment",
                         "/user/sendNoti",
+                        "/user/testcontroller",
                         "/privateReservation",
                         "/privatePLO",
                         "/swagger-ui.html", "/webjars/**", "/v2/api-docs", "/swagger-resources/**").permitAll();
