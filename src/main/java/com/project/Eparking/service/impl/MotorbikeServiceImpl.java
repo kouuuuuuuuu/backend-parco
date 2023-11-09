@@ -112,20 +112,22 @@ public class MotorbikeServiceImpl implements MotorbikeService {
                         getLicensePlateByLicensePlateString(licensePlates.get(i));
 
                 //** If this licensePlate have deleted -> update isDelete = 0
-                if (licensePlatesEntity.isDelete() && !id.contains(licensePlatesEntity.getCustomerID())){
-                    Motorbike motorbike = new Motorbike();
-                    motorbike.setLicensePlate(motorbikeDTO.getLicensePlate());
-                    motorbike.setMotorbikeName(motorbikeDTO.getMotorbikeName());
-                    motorbike.setMotorbikeColor(motorbikeDTO.getMotorbikeColor());
-                    motorbikeMapper.createLicensePlate(motorbike, id);
-                    message = Message.ADD_LICENSE_PLATE_SUCCESS;
-                    break;
-                }else {
-                    message = Message.DUPLICATE_LICENSE_PLATE;
-                    break;
+
+                    if (licensePlatesEntity == null){
+                        Motorbike motorbike = new Motorbike();
+                        motorbike.setLicensePlate(motorbikeDTO.getLicensePlate());
+                        motorbike.setMotorbikeName(motorbikeDTO.getMotorbikeName());
+                        motorbike.setMotorbikeColor(motorbikeDTO.getMotorbikeColor());
+                        motorbikeMapper.createLicensePlate(motorbike, id);
+                        message = Message.ADD_LICENSE_PLATE_SUCCESS;
+                        break;
+                    }else {
+                        message = Message.DUPLICATE_LICENSE_PLATE;
+                        break;
+                    }
                 }
+
             }
-        }
         return message;
     }
 }

@@ -113,6 +113,8 @@
             motorbikeColor
         FROM licenseplate
         WHERE licensePlate = #{licensePlate}
+        AND
+        isDelete = 0
     </select>
 
 </mapper>
