@@ -285,7 +285,7 @@ public class UserController {
             throw e;
         }
     }
-    @GetMapping("/testcontroller12")
+    @GetMapping("/testcontroller13")
     public String hello(){
         return "hello 1";
     }

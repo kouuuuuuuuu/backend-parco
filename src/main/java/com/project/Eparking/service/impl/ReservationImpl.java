@@ -297,6 +297,7 @@ public class ReservationImpl implements ReservationService {
         Motorbike motorbike = motorbikeMapper.getLicensePlateById(reservation.getLicensePlateID());
 
         ReservationInforDTO reservationInforDTO = new ReservationInforDTO();
+        reservationInforDTO.setCustomerID(customer.getCustomerID());
         reservationInforDTO.setCustomerName(customer.getFullName());
         reservationInforDTO.setMethodName(reservationMethod.getMethodName());
         reservationInforDTO.setStatus(reservationStatus.getStatusID());

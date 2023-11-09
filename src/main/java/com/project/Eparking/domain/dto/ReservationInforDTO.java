@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ReservationInforDTO {
+    private String customerID;
     private String customerName;
     private String methodName;
     private int status;
