@@ -67,7 +67,8 @@
             licenseplate
         WHERE
             licensePlate = #{licensePlate}
-        AND customerID = #{customerID};
+        AND customerID = #{customerID}
+        AND isDelete = 0;
     </select>
 
     <select id="getListLicensePlate" resultType="com.project.Eparking.domain.Motorbike">
