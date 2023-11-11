@@ -26,7 +26,9 @@
             parkingStatusID = #{parkingStatusID},
             registerContract = #{registerContract},
             latitude = #{latitude},
-            longtitude = #{longtitude}
+            longtitude = #{longtitude},
+            waitingTime = #{waitingTime},
+            cancelBookingTime = #{cancelBookingTime}
         WHERE ploID = #{ploID}
     </update>
 

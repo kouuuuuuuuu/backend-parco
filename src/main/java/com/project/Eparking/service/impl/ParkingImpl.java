@@ -46,10 +46,10 @@ public class ParkingImpl implements ParkingService {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String id = authentication.getName();
-            PLOTransaction ploTransaction = transactionMapper.getTransactionByUUID(registerParking.getUUID());
-            if(ploTransaction == null){
-                return "The user has not paid the parking registration fee";
-            }
+//            PLOTransaction ploTransaction = transactionMapper.getTransactionByUUID(registerParking.getUUID());
+//            if(ploTransaction == null){
+//                return "The user has not paid the parking registration fee";
+//            }
             RequestParking requestParking = new RequestParking();
             requestParking.setPloID(id);
             requestParking.setParkingName(registerParking.getParkingName());
@@ -62,6 +62,8 @@ public class ParkingImpl implements ParkingService {
             requestParking.setLongtitude(registerParking.getLongitude());
             requestParking.setParkingStatusID(2);
             requestParking.setCurrentSlot(0);
+            requestParking.setCancelBookingTime(new Time(2,0,0));
+            requestParking.setWaitingTime(new Time(0,15,0));
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
             requestParking.setRegisterContract(timestamp);
             parkingMapper.registerParking(requestParking);

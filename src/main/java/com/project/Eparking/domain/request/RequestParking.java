@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -24,4 +25,6 @@ public class RequestParking {
     private Timestamp registerContract;
     private Double latitude;
     private Double longtitude;
+    private Time waitingTime;
+    private Time cancelBookingTime;
 }
