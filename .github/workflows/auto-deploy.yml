@@ -2,7 +2,7 @@ name: auto-build-deploy
 on:
     push:
         branches:
-            - 'master'
+            - 'develop'
 jobs:
     build-check:
         runs-on: ubuntu-latest
