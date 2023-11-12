@@ -1,10 +1,21 @@
-#FROM openjdk:17-jdk-alpine
-#COPY target/Eparking-0.0.1-SNAPSHOT.jar Eparking-0.0.1-SNAPSHOT.jar
-#EXPOSE 8000
-#CMD ["java", "-jar", "Eparking-0.0.1-SNAPSHOT.jar"]
 
-FROM openjdk:11
-COPY target/springboot-capstone-project.jar springboot-capstone-project.jar
+# Use the official Maven image with OpenJDK 11 as a base image
+FROM maven:3.8.4-openjdk-11
+
+# Set the working directory inside the container
+WORKDIR /usr/src/app
+
+# Copy the Maven project files into the container
+COPY pom.xml .
+COPY src ./src
+
+# Build the application
+RUN mvn clean package
+
+# Expose the port on which the application will run
 EXPOSE 8000
-ENTRYPOINT ["java","-jar","/springboot-capstone-project.jar"]
+
+# Command to run the application
+CMD ["java", "-jar", "target/springboot-capstone-project.jar"]
+
 
