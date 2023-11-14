@@ -12,7 +12,7 @@
     </resultMap>
 
     <insert id="addDeviceToken" parameterType="com.project.Eparking.domain.request.RequestFirebaseTokenMapper" >
-        Insert into FirebaseToken (recipientType, recipientID,deviceToken)
+        Insert into firebasetoken (recipientType, recipientID,deviceToken)
         values (#{recipientType},#{recipientID},#{deviceToken})
     </insert>
 
@@ -22,12 +22,12 @@
             recipientType,
             recipientID,
             deviceToken
-        FROM FirebaseToken
+        FROM firebasetoken
         WHERE deviceToken = #{deviceToken}
     </select>
 
     <delete id="deleteTokenByTokenDevice" parameterType="com.project.Eparking.domain.FirebaseToken">
-        DELETE FROM FirebaseToken
+        DELETE FROM firebasetoken
         WHERE deviceToken = #{deviceToken}
     </delete>
 
@@ -37,7 +37,7 @@
             recipientType,
             recipientID,
             deviceToken
-        FROM FirebaseToken
+        FROM firebasetoken
         WHERE recipientID = #{customerID}
     </select>
     <select id="getTokenByID" resultMap="listToken">
@@ -46,7 +46,7 @@
             recipientType,
             recipientID,
             deviceToken
-        FROM FirebaseToken
+        FROM firebasetoken
         WHERE recipientID = #{userID}
     </select>
 </mapper>

@@ -24,8 +24,8 @@
         ploID,
         reservationID,
         feedbackDate
-        FROM Rating,Customer
-        WHERE ploID = #{ploID} AND Rating.customerID = Customer.customerID
+        FROM rating,customer
+        WHERE ploID = #{ploID} AND rating.customerID = customer.customerID
         ORDER BY feedbackDate DESC
     </select>
 

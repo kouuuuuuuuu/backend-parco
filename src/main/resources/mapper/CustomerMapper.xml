@@ -17,7 +17,7 @@
             registrationDate,
             status
         FROM
-            Customer
+            customer
         WHERE
             customerID = #{customerID};
     </select>
@@ -35,7 +35,7 @@
             registrationDate,
             status
         FROM
-            Customer
+            customer
         LIMIT
             #{pageSize}
         OFFSET
@@ -46,7 +46,7 @@
         SELECT
             COUNT(*)
         FROM
-            Customer
+            customer
         <if test="keywords != null and !keywords.isEmpty()">
         WHERE
             fullName REGEXP #{keywords}
@@ -66,7 +66,7 @@
             registrationDate,
             status
         FROM
-            Customer
+            customer
         WHERE
             fullName REGEXP #{name}
         LIMIT
@@ -76,20 +76,20 @@
     </select>
 
     <update id="updateCustomerProfile" parameterType="com.project.Eparking.domain.request.RequestCustomerUpdateProfile">
-        UPDATE Customer
+        UPDATE customer
             SET fullName = #{profile.fullName},
             email = #{profile.email}
         WHERE customerID = #{customerID}
     </update>
 
     <update id="updatePasswordCustomer" parameterType="com.project.Eparking.domain.Customer">
-        UPDATE Customer
+        UPDATE customer
         SET password = #{password}
         WHERE customerID = #{customerID}
     </update>
 
     <update id="updateBalance" parameterType="com.project.Eparking.domain.Customer">
-        UPDATE Customer
+        UPDATE customer
         Set wallet_balance = #{balance}
         WHERE customerID = #{customerID}
     </update>
@@ -128,7 +128,7 @@
             registrationDate,
             status
         FROM
-            Customer
+            customer
         WHERE
             customerID = #{customerID};
     </select>

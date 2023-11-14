@@ -26,17 +26,17 @@
             reservationmethod;
     </select>
     <update id="updateStatusReservation" parameterType="com.project.Eparking.domain.response.ResponseReservation">
-        UPDATE Reservation
+        UPDATE reservation
         SET statusID = #{statusID}
         WHERE reservationID = #{reservationID};
     </update>
     <update id="updateCheckoutReservation" parameterType="com.project.Eparking.domain.request.RequestUpdateStatusReservation">
-        UPDATE Reservation
+        UPDATE reservation
         SET checkOut = #{checkOut}
         WHERE reservationID = #{reservationID};
     </update>
     <update id="updateCheckinReservation" parameterType="com.project.Eparking.domain.request.RequestUpdateStatusReservation">
-        UPDATE Reservation
+        UPDATE reservation
         SET checkIn = #{checkIn}
         WHERE reservationID = #{reservationID};
     </update>
@@ -55,14 +55,14 @@
 
     <select id="getMethodByTime" resultMap="listMethodByTime">
         SELECT methodID, methodName, startTime, endTime
-        FROM ReservationMethod
+        FROM reservationmethod
         WHERE TIME(#{currentTime}) BETWEEN startTime AND endTime;
     </select>
 
     <select id="getMethodByID" resultMap="listMethod">
         SELECT
             RM.methodID, RM.methodName,PM.price
-        FROM ParkingMethod PM
+        FROM parkingmethod PM
         JOIN ReservationMethod RM ON PM.methodID = RM.methodID
         WHERE ploID = #{ploID}
     </select>
