@@ -39,7 +39,7 @@ public class PaymentImpl implements PaymentService {
     private final CustomerTransactionMapper transactionMapperCustomer;
     private final CustomerMapper customerMapper;
     private final UserMapper userMapper;
-    private final String urlResponseCustomer= "https://eparkingcapstone.azurewebsites.net/customer/returnPayment";
+    private final String urlResponseCustomer= "https://parco.monoinfinity.net/customer/returnPayment";
     public ResponseEntity<?> createPayment(HttpServletRequest req, Payment payment,String UUID) throws UnsupportedEncodingException {
         try {
             String vnp_Version = "2.1.0";
