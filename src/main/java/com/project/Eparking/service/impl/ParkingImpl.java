@@ -325,6 +325,9 @@ public class ParkingImpl implements ParkingService {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String id = authentication.getName();
             ResponseRevenuePLO plo = reservationMapper.getReservationMethodByMethodID(id);
+            if(plo==null){
+                return plo = new ResponseRevenuePLO();
+            }
             plo.setBalance(userMapper.getBalancePlO(id));
             plo.setHistory(transactionMapper.historyTransactionByPLOandStatus(id,3));
             return plo;
