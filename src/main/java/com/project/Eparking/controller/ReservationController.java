@@ -115,7 +115,7 @@ public class ReservationController {
     public synchronized ResponseEntity<?> bookingReservation(@RequestBody BookingReservationDTO bookingReservationDTO){
         try{
             String message = reservationService.bookingReservation(bookingReservationDTO);
-            if (!message.equals(Message.BOOKING_RESERVATION_SUCCESS)){
+            if (!message.equals(Message.BOOKING_RESERVATION_SUCCESS) && !message.equals(Message.PARKING_LOT_IS_FULL)){
                 return ResponseEntity.badRequest().body(message);
             }
             return ResponseEntity.ok().body(message);
