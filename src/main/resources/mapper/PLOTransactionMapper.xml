@@ -13,44 +13,44 @@
     </resultMap>
 
     <insert id="insertTransactionPLO" parameterType="com.project.Eparking.domain.request.RequestPLOTransaction" >
-        INSERT INTO PloTransaction (ploID, status, depositAmount, transactionDate, transactionResultDate, vnPay_ref, UUID)
+        INSERT INTO plotransaction (ploID, status, depositAmount, transactionDate, transactionResultDate, vnPay_ref, UUID)
         VALUES (#{ploID}, #{status}, #{depositAmount}, #{transactionDate}, #{transactionResultDate}, #{vnPay_ref}, #{UUID});
     </insert>
 
     <select id="getTransactionPLOByID" resultType="com.project.Eparking.domain.PLOTransaction">
         SELECT historyID,ploID,status,depositAmount,transactionDate,transactionResultDate,vnPay_ref, UUID
-        FROM PloTransaction
+        FROM plotransaction
         WHERE ploID = #{ploID} AND status = #{status}
     </select>
 
     <select id="getTransactionMethodByHistoryID" resultType="com.project.Eparking.domain.TransactionMethod">
         SELECT transactionMethodID,historyID,bankCode,bankName,bankNumber
-        FROM TransactionMethod
+        FROM transactionmethod
         WHERE historyID = #{historyID}
     </select>
 
     <select id="getTransactionByUUID" resultType="com.project.Eparking.domain.PLOTransaction">
         SELECT historyID,ploID,status,depositAmount,transactionDate,transactionResultDate,vnPay_ref, UUID
-        FROM PloTransaction
+        FROM plotransaction
         WHERE UUID = #{UUID}
     </select>
     <insert id="insertTransactionMethod" parameterType="com.project.Eparking.domain.TransactionMethod">
-        INSERT INTO TransactionMethod (historyID, bankCode, bankName, bankNumber)
+        INSERT INTO transactionmethod (historyID, bankCode, bankName, bankNumber)
         VALUES (#{historyID}, #{bankCode}, #{bankName}, #{bankNumber});
     </insert>
   
     <select id="historyTransactionByPLOandStatus" resultMap="historyResponse">
         SELECT historyID,depositAmount,transactionDate,transactionResultDate
-        FROM PloTransaction
+        FROM plotransaction
         WHERE ploID = #{ploID} AND status = #{status}
     </select>
     <insert id="insertTransactionPLOByPLOID" parameterType="com.project.Eparking.domain.request.RequestPLOTransactionWithdrawa" >
-        INSERT INTO PloTransaction (ploID, status, depositAmount, transactionDate)
+        INSERT INTO plotransaction (ploID, status, depositAmount, transactionDate)
         VALUES (#{ploID}, #{status}, #{depositAmount}, #{transactionDate});
     </insert>
 
     <insert id="insertBatchTransactionMethod" parameterType="java.util.List">
-        INSERT INTO TransactionMethod (historyID, bankCode, bankName, bankNumber)
+        INSERT INTO transactionmethod (historyID, bankCode, bankName, bankNumber)
         VALUES
         <foreach collection="list" item="item" separator=",">
             (#{item.historyID}, #{item.bankCode}, #{item.bankName}, #{item.bankNumber})
@@ -62,7 +62,7 @@
         SELECT
             COUNT(*)
         FROM
-            PloTransaction pts
+            plotransaction pts
         JOIN
             plo pl ON pts.ploID = pl.ploID
         WHERE
@@ -89,14 +89,14 @@
             vnPay_ref,
             UUID
         FROM
-            PloTransaction
+            plotransaction
         WHERE
             historyID = #{transactionId}
     </select>
 
     <update id="updatePloTransactionStatusByHistoryId" parameterType="map">
         UPDATE
-            PloTransaction
+            plotransaction
         SET
             status = #{status}
         WHERE
@@ -114,7 +114,7 @@
             pts.vnPay_ref,
             pts.UUID
         FROM
-            PloTransaction pts
+            plotransaction pts
         JOIN
             plo pl ON pts.ploID = pl.ploID
         WHERE

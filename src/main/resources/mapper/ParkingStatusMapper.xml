@@ -9,7 +9,7 @@
             parkingStatusID,
             statusName
         FROM
-            parkingStatus
+            parkingstatus
         WHERE
             parkingStatusID = #{parkingStatusID};
     </select>

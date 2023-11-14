@@ -13,7 +13,7 @@
     </resultMap>
 
     <update id="registerParking" parameterType="com.project.Eparking.domain.request.RequestParking">
-        UPDATE PLO
+        UPDATE plo
         SET
             parkingName = #{parkingName},
             length = #{length},
@@ -33,7 +33,7 @@
     </update>
 
     <insert id="addImage" parameterType="com.project.Eparking.domain.request.RequestImage" >
-        Insert into Image (ploID, imageLink)
+        Insert into image (ploID, imageLink)
         values (#{ploID},#{imageLink})
     </insert>
 
@@ -49,9 +49,9 @@
         imageLinkTransaction,
         ps.statusName
         FROM
-        PLO p,
-        Image i,
-        ParkingStatus ps
+        plo p,
+        image i,
+        parkingstatus ps
         Where
         i.ploID = p.ploID and
         ps.parkingStatusID = p.parkingStatusID and
@@ -64,15 +64,15 @@
         p.parkingStatusID,
         ps.statusName
         FROM
-        PLO p,
-        ParkingStatus ps
+        plo p,
+        parkingstatus ps
         Where
         ps.parkingStatusID = p.parkingStatusID and
         p.ploID = #{ploID}
     </select>
 
     <update id="updateParkingStatusID" parameterType="com.project.Eparking.domain.response.ResponseParkingStatus">
-        UPDATE PLO
+        UPDATE plo
         SET
         parkingStatusID = #{parkingStatusID}
         WHERE ploID = #{ploID}
@@ -80,10 +80,10 @@
 
     <select id="getListParkingOngoing" resultType="com.project.Eparking.domain.response.ParkingComing">
         Select R.reservationID, L.licensePlate, C.fullName, RM.methodName
-        FROM Reservation R
-        JOIN LicensePlate L ON R.licensePlateID = L.licensePlateID
-        JOIN Customer C ON R.customerID = C.customerID
-        JOIN ReservationMethod RM ON R.methodID = RM.methodID
+        FROM reservation R
+        JOIN licenseplate L ON R.licensePlateID = L.licensePlateID
+        JOIN customer C ON R.customerID = C.customerID
+        JOIN reservationmethod RM ON R.methodID = RM.methodID
         WHERE R.statusID = 1 AND R.ploID = #{ploID}
         ORDER BY R.startTime DESC;
     </select>
@@ -93,17 +93,17 @@
         R.customerID, R.price, R.startTime, R.endTime,
         C.fullName, C.phoneNumber,R.reservationID,
         L.licensePlate, RM.methodName,RS.statusName
-        FROM Reservation R
-        JOIN Customer C ON R.customerID = C.customerID
-        JOIN LicensePlate L ON R.licensePlateID = L.licensePlateID
-        JOIN ReservationMethod RM ON R.methodID = RM.methodID
-        JOIN ReservationStatus RS ON R.statusID = RS.statusID
+        FROM reservation R
+        JOIN customer C ON R.customerID = C.customerID
+        JOIN licenseplate L ON R.licensePlateID = L.licensePlateID
+        JOIN reservationmethod RM ON R.methodID = RM.methodID
+        JOIN reservationstatus RS ON R.statusID = RS.statusID
         WHERE R.ploID = #{ploID} AND R.statusID = #{statusID}
     </select>
 
 
     <update id="updateParkingProfile" parameterType="com.project.Eparking.domain.request.RequestUpdateProfilePLO">
-        UPDATE PLO
+        UPDATE plo
         SET
             parkingName = #{plo.parkingName},
             description = #{plo.description},
@@ -125,17 +125,17 @@
         R.endTime,
         R.checkIn,
         R.checkOut
-        FROM Reservation R
-        JOIN LicensePlate L ON R.licensePlateID = L.licensePlateID
-        JOIN Customer C ON R.customerID = C.customerID
-        JOIN ReservationStatus RS ON R.statusID = RS.statusID
-        JOIN ReservationMethod RM ON R.methodID = RM.methodID
+        FROM reservation R
+        JOIN licenseplate L ON R.licensePlateID = L.licensePlateID
+        JOIN customer C ON R.customerID = C.customerID
+        JOIN reservationstatus RS ON R.statusID = RS.statusID
+        JOIN reservationmethod RM ON R.methodID = RM.methodID
         WHERE R.reservationID = #{ID};
     </select>
 
 
     <update id="updateParkingOwner" parameterType="com.project.Eparking.domain.request.ParamTransferParking">
-        UPDATE PLO
+        UPDATE plo
         SET
             phoneNumber = #{phoneNumberTransfer}
         WHERE ploID = #{ploID}
@@ -145,18 +145,18 @@
 
     <select id="getParkingSettingByPLOID" resultMap="listSetting">
         SELECT pm.methodID, rm.methodName, rm.startTime, rm.endTime, pm.price
-        FROM ParkingMethod pm
-        JOIN ReservationMethod rm ON pm.methodID = rm.methodID
+        FROM parkingmethod pm
+        JOIN reservationmethod rm ON pm.methodID = rm.methodID
         WHERE pm.ploID = #{ploID}
     </select>
 
     <delete id="deleteParkingSetting" parameterType="com.project.Eparking.domain.PLO">
-        DELETE FROM ParkingMethod
+        DELETE FROM parkingmethod
         WHERE ploID = #{ploID}
     </delete>
 
     <insert id="batchInsertSettingMethod" parameterType="java.util.List">
-        INSERT INTO ParkingMethod (ploID, methodID, price)
+        INSERT INTO parkingmethod (ploID, methodID, price)
         VALUES
         <foreach collection="list" item="settings" separator=",">
             (#{settings.ploID}, #{settings.methodID},#{settings.price})
@@ -164,7 +164,7 @@
     </insert>
 
     <update id="updateCurrentSlot" parameterType="com.project.Eparking.domain.PLO">
-        UPDATE PLO
+        UPDATE plo
         SET currentSlot = #{currentSlot}
         WHERE ploID = #{ploID}
     </update>

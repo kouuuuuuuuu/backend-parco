@@ -31,9 +31,9 @@
 
     <select id="findReservationByLicensePlate" resultType="com.project.Eparking.domain.response.ResponseReservation">
         SELECT R.reservationID,R.customerID,R.ploID,R.statusID,LP.licensePlate,R.startTime,R.endTime,R.price,R.checkOut,RM.methodName,R.checkIn
-        FROM Reservation AS R
-        JOIN LicensePlate AS LP ON R.licensePlateID = LP.licensePlateID
-        JOIN ReservationMethod RM ON R.methodID = RM.methodID
+        FROM reservation AS R
+        JOIN licenseplate AS LP ON R.licensePlateID = LP.licensePlateID
+        JOIN reservationmethod RM ON R.methodID = RM.methodID
         WHERE R.ploID = #{ploID}
         AND R.statusID = #{status}
         AND LP.licensePlate = #{licensePlate};
@@ -41,7 +41,7 @@
 
     <select id="sumPriceReservationCurrentDateByPLO" resultType="Double">
         SELECT SUM(price) AS total_price
-        FROM Reservation
+        FROM reservation
         WHERE DATE(startTime) = CURDATE() AND ploID = #{ploID};
     </select>
     <select id="getReservationMethodByMethodID" resultType="com.project.Eparking.domain.response.ResponseRevenuePLO">
@@ -50,13 +50,13 @@
         SUM(CASE WHEN methodID = 2 THEN 1 ELSE 0 END) AS TotalVehicleMethodNight,
         SUM(CASE WHEN methodID = 3 THEN 1 ELSE 0 END) AS TotalVehicleMethodOvernight,
         COUNT(*) AS TotalVehicle
-        FROM Reservation
+        FROM reservation
         WHERE ploID = #{ploID}
     </select>
 
     <select id="getSumByDateANDPLOID" resultType="Double">
         SELECT IFNULL(SUM(price), 0) AS totalPrice
-        FROM Reservation
+        FROM reservation
         WHERE startTime >= #{startTime} AND startTime <![CDATA[<= CONCAT(#{startTime2th}, ' 23:59:59') AND ploID = #{ploID}]]>
     </select>
 
@@ -180,16 +180,16 @@
             checkIn,
             methodID,
             isRating
-        FROM Reservation
+        FROM reservation
         WHERE reservationID = #{reservationID}
     </select>
 
 
     <select id="findReservationByLicensePlateAndPloId" resultType="com.project.Eparking.domain.Reservation">
         SELECT R.reservationID,R.customerID,R.ploID,R.statusID,R.licensePlateID,R.startTime,R.endTime,R.price,R.checkOut,R.checkIn, R.methodID, R.isRating
-        FROM Reservation AS R
-        JOIN LicensePlate AS LP ON R.licensePlateID = LP.licensePlateID
-        JOIN ReservationMethod RM ON R.methodID = RM.methodID
+        FROM reservation AS R
+        JOIN licenseplate AS LP ON R.licensePlateID = LP.licensePlateID
+        JOIN reservationmethod RM ON R.methodID = RM.methodID
         WHERE R.ploID = #{ploId}
         AND R.statusID
         NOT IN
@@ -220,7 +220,7 @@
             methodID,
             isRating
         FROM
-            Reservation
+            reservation
         WHERE
             licensePlateID = #{licensePlateID}
     </select>
@@ -250,10 +250,10 @@
     </insert>
     <select id="getReservationByIsRating" resultType="com.project.Eparking.domain.response.ResponseReservationSC">
         SELECT R.reservationID,R.price,RM.methodName,LP.licensePlate,R.statusID,R.ploID,RS.statusName,R.startTime,R.endTime,R.checkIn,R.checkOut
-        FROM Reservation R
-        JOIN ReservationMethod RM ON R.methodID = RM.methodID
-        JOIN LicensePlate LP ON R.licensePlateID = LP.licensePlateID
-        JOIN ReservationStatus RS ON R.statusID = RS.statusID
+        FROM reservation R
+        JOIN reservationMethod RM ON R.methodID = RM.methodID
+        JOIN licenseplate LP ON R.licensePlateID = LP.licensePlateID
+        JOIN reservationstatus RS ON R.statusID = RS.statusID
         WHERE R.customerID = #{customerID} AND isRating = #{rating}
     </select>
 

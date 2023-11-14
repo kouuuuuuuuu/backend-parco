@@ -12,13 +12,13 @@
     </resultMap>
 
     <insert id="insertCustomerTransaction" parameterType="com.project.Eparking.domain.request.RequestCustomerTransactionMapper" >
-        INSERT INTO CustomerTransaction (depositAmount, rechargeTime, customerID, bankCode, vnPay_ref)
+        INSERT INTO customertransaction (depositAmount, rechargeTime, customerID, bankCode, vnPay_ref)
         VALUES (#{depositAmount}, #{rechargeTime}, #{customerID}, #{bankCode}, #{vnPay_ref});
     </insert>
 
     <select id="getListTransactionCustomer" resultMap="listTransactionCustomer">
         SELECT transactionID, depositAmount, rechargeTime, bankCode
-        FROM CustomerTransaction
+        FROM customertransaction
         WHERE customerID = #{customerID}
         ORDER BY rechargeTime DESC;
     </select>

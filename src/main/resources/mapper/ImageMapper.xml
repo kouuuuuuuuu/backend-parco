@@ -14,7 +14,7 @@
             imageID,
             ploID,
             imageLink
-        FROM Image
+        FROM image
         WHERE ploID = #{ploID}
     </select>
 
@@ -34,7 +34,7 @@
     </delete>
 
     <insert id="batchInsertImages" parameterType="java.util.List">
-        INSERT INTO Image (ploID, imageLink)
+        INSERT INTO image (ploID, imageLink)
         VALUES
         <foreach collection="list" item="image" separator=",">
             (#{image.ploID}, #{image.imageLink})
