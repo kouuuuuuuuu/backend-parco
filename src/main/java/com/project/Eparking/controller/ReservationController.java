@@ -112,7 +112,7 @@ public class ReservationController {
     }
 
     @PostMapping("/bookingReservation")
-    public ResponseEntity<?> bookingReservation(@RequestBody BookingReservationDTO bookingReservationDTO){
+    public synchronized ResponseEntity<?> bookingReservation(@RequestBody BookingReservationDTO bookingReservationDTO){
         try{
             String message = reservationService.bookingReservation(bookingReservationDTO);
             if (!message.equals(Message.BOOKING_RESERVATION_SUCCESS)){
