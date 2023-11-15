@@ -63,7 +63,7 @@
         SELECT
             RM.methodID, RM.methodName,PM.price
         FROM parkingmethod PM
-        JOIN ReservationMethod RM ON PM.methodID = RM.methodID
+        JOIN reservationmethod RM ON PM.methodID = RM.methodID
         WHERE ploID = #{ploID}
     </select>
 
