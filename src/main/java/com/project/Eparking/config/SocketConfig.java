@@ -13,7 +13,11 @@ public class SocketConfig implements WebSocketConfigurer {
     private final DelayTimeSocket delayTimeSocket;
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-            registry.addHandler(new PrivateWebSocketHandler(), "/privateReservation").setAllowedOrigins("*");
-            registry.addHandler(new socketPLO(), "/privatePLO").setAllowedOrigins("*");
+            registry.addHandler(new PrivateWebSocketHandler(), "/privateReservation")
+                    .setAllowedOrigins("https://parco.monoinfinity.net/")
+            ;
+            registry.addHandler(new socketPLO(), "/privatePLO")
+                    .setAllowedOrigins("https://parco.monoinfinity.net")
+            ;
     }
 }
