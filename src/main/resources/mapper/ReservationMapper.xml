@@ -251,7 +251,7 @@
     <select id="getReservationByIsRating" resultType="com.project.Eparking.domain.response.ResponseReservationSC">
         SELECT R.reservationID,R.price,RM.methodName,LP.licensePlate,R.statusID,R.ploID,RS.statusName,R.startTime,R.endTime,R.checkIn,R.checkOut
         FROM reservation R
-        JOIN reservationMethod RM ON R.methodID = RM.methodID
+        JOIN reservationmethod RM ON R.methodID = RM.methodID
         JOIN licenseplate LP ON R.licensePlateID = LP.licensePlateID
         JOIN reservationstatus RS ON R.statusID = RS.statusID
         WHERE R.customerID = #{customerID} AND isRating = #{rating}

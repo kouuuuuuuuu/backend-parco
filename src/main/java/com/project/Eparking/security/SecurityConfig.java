@@ -51,7 +51,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.sessionManagement().sessionCreationPolicy(STATELESS);
         http.authorizeRequests()
                 .antMatchers("/user/loginUser/**",
-                        "/user/regiterUser/**",
+                        "/user/registerUser/**",
                         "/user/confirmRegisterOTP",
                         "/user/checkPhoneNumber",
                         "/user/checkOTPcode",

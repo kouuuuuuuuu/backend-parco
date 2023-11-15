@@ -193,7 +193,7 @@
 
                 IFNULL(SUM(CASE WHEN browseContract >= DATE_ADD(STR_TO_DATE(CONCAT(#{year}, '-', #{month}, '-01 00:00:00'), '%Y-%m-%d'), INTERVAL 3 WEEK)
                               AND browseContract < DATE_ADD(STR_TO_DATE(CONCAT(#{year}, '-', #{month}, '-01 00:00:00'), '%Y-%m-%d'), INTERVAL 4 WEEK) THEN 1 ELSE 0 END), 0) AS Week4
-            FROM PLO
+            FROM plo
             WHERE MONTH(browseContract) = MONTH(#{inputDate}) AND YEAR(browseContract) = YEAR(#{inputDate});
         ]]>
     </select>
