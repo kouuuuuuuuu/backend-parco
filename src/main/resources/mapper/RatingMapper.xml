@@ -19,7 +19,7 @@
         ratingID,
         star,
         content,
-        Rating.customerID,
+        rating.customerID,
         fullName,
         ploID,
         reservationID,
