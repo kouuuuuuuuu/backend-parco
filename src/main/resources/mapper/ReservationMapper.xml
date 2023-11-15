@@ -201,7 +201,7 @@
 
     <select id="getAllCoordinatesPLO" resultMap="ListCoordinates">
         SELECT ploID, latitude, longtitude
-        FROM PLO
+        FROM plo
         WHERE latitude IS NOT NULL AND longtitude IS NOT NULL
     </select>
 
