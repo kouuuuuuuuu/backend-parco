@@ -14,10 +14,10 @@ public class SocketConfig implements WebSocketConfigurer {
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
             registry.addHandler(new PrivateWebSocketHandler(), "/privateReservation")
-                    .setAllowedOrigins("https://parco.monoinfinity.net/")
+                    .setAllowedOrigins("parco.monoinfinity.net/","*")
             ;
             registry.addHandler(new socketPLO(), "/privatePLO")
-                    .setAllowedOrigins("https://parco.monoinfinity.net")
+                    .setAllowedOrigins("parco.monoinfinity.net","*")
             ;
     }
 }
