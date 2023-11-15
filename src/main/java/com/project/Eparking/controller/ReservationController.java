@@ -61,9 +61,9 @@ public class ReservationController {
     public Response getReservationHistory(){
         try {
             List<ReservationDTO> reservationDTOS = reservationService.getReservationHistory();
-            if (reservationDTOS.isEmpty()){
-                return new Response(HttpStatus.NOT_FOUND.value(), Message.RESERVATION_HISTORY_EMPTY, null);
-            }
+//            if (reservationDTOS.isEmpty()){
+//                return new Response(HttpStatus.NOT_FOUND.value(), Message.RESERVATION_HISTORY_EMPTY, null);
+//            }
             return new Response(HttpStatus.OK.value(), Message.GET_RESERVATION_HISTORY_SUCCESS, reservationDTOS);
         }catch (Exception e){
             return new Response(HttpStatus.INTERNAL_SERVER_ERROR.value(), Message.ERROR_GET_RESERVATION_HISTORY, null);
