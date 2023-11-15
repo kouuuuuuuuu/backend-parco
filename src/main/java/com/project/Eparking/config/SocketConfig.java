@@ -13,7 +13,7 @@ public class SocketConfig implements WebSocketConfigurer {
     private final DelayTimeSocket delayTimeSocket;
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-            registry.addHandler(new PrivateWebSocketHandler(), "/privateReservation");
-            registry.addHandler(new socketPLO(), "/privatePLO");
+            registry.addHandler(new PrivateWebSocketHandler(), "/privateReservation").setAllowedOrigins("*");
+            registry.addHandler(new socketPLO(), "/privatePLO").setAllowedOrigins("*");
     }
 }
