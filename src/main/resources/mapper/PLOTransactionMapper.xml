@@ -98,7 +98,8 @@
         UPDATE
             plotransaction
         SET
-            status = #{status}
+            status = #{status},
+            transactionResultDate = #{transactionResultDate}
         WHERE
             historyID = #{transactionId}
     </update>
