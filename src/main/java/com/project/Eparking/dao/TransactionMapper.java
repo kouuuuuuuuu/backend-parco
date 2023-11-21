@@ -8,6 +8,7 @@ import com.project.Eparking.domain.request.RequestPLOTransactionWithdrawa;
 import com.project.Eparking.domain.response.HistoryResponse;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 @Mapper
@@ -30,7 +31,7 @@ public interface TransactionMapper {
 
     PLOTransaction getPloTransactionByHistoryId(int transactionId);
 
-    void updatePloTransactionStatusByHistoryId(int transactionId, int status);
+    void updatePloTransactionStatusByHistoryId(int transactionId, int status, Timestamp transactionResultDate);
 
     List<PLOTransaction> searchPloTransactionByKeyword(List<Integer> status, String keyword, int pageNum, int pageSize);
 

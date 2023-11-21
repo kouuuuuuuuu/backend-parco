@@ -50,7 +50,8 @@ public class PloTransactionServiceImpl implements PloTransactionService {
             double newBalance = plo.getBalance() - ploTransaction.getDepositAmount();
             parkingLotOwnerMapper.updatePloBalanceById(plo.getPloID(), newBalance);
         }
-        transactionMapper.updatePloTransactionStatusByHistoryId(transactionId, status);
+        Timestamp transactionResultDate = new Timestamp(System.currentTimeMillis());
+        transactionMapper.updatePloTransactionStatusByHistoryId(transactionId, status, transactionResultDate);
 
         //send noti
         PushNotificationRequest request = new PushNotificationRequest();

@@ -13,7 +13,6 @@ public class Rating {
     private int star;
     private String content;
     private String customerID;
-    private String fullName;
     private String ploID;
     private int reservationID;
     private Timestamp feedbackDate;

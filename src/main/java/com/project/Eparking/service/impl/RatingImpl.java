@@ -47,8 +47,9 @@ public class RatingImpl implements RatingService {
             List<RatingResponse> ratingResponses =new ArrayList<>();
             for (Rating ratingList:
                     rating) {
+                Customer customer = customerMapper.getCustomerById(id);
                 String date = Objects.nonNull(ratingList.getFeedbackDate())? dateFormat.format(ratingList.getFeedbackDate()) : "";
-                ratingResponses.add(new RatingResponse(ratingList.getRatingID(),ratingList.getStar(),ratingList.getContent(),ratingList.getCustomerID(),ratingList.getFullName(),ratingList.getPloID(),ratingList.getReservationID(),date));
+                ratingResponses.add(new RatingResponse(ratingList.getRatingID(),ratingList.getStar(),ratingList.getContent(),ratingList.getCustomerID(),customer.getFullName(),ratingList.getPloID(),ratingList.getReservationID(),date));
             }
             return ratingResponses;
         }catch (Exception e){
@@ -113,8 +114,9 @@ public class RatingImpl implements RatingService {
         Reservation reservation = reservationMapper.getReservationByReservationID(createRatingDTO.getReservationID());
         reservationMapper.updateReservationIsRatedById(reservation.getReservationID(), 1);
 
+        Customer customer = customerMapper.getCustomerById(id);
         Rating rating = new Rating();
-        rating.setCustomerID(id);
+        rating.setCustomerID(customer.getCustomerID());
         rating.setPloID(createRatingDTO.getPloID());
         rating.setReservationID(createRatingDTO.getReservationID());
         rating.setStar(createRatingDTO.getStar());
