@@ -27,7 +27,7 @@ public class Message {
     public static final String UPDATE_WITHDRAWAL_STATUS_SUCCESS = "Update Withdrawal Status Success";
     public static final String GET_TOTAL_CUST_AND_PLO_SUCCESS = "Get Total Customer And Parking Lot Owner Success";
     public static final String NOT_FOUND_PLO_TRANSACTION_BY_KEYWORD = "Not Found Withdrawal By Keyword";
-    public static final String SEARCH_PLO_TRANSACTION_BY_KEYWORD_SUCCESS = "Search Withdrawal By Keyword";
+    public static final String SEARCH_PLO_TRANSACTION_BY_KEYWORD_SUCCESS = "Search Withdrawal By Keyword Success";
     public static final String ERROR_GET_RESERVATION_HISTORY = "Error When Get Reservation History";
     public static final String RESERVATION_HISTORY_EMPTY = "Reservation History Is Empty";
     public static final String GET_RESERVATION_HISTORY_SUCCESS = "Get Reservation History Success";
