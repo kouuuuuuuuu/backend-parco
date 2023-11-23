@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
@@ -28,6 +29,9 @@ public class ReservationController {
         try{
             return ResponseEntity.ok(reservationService.checkOutStatusReservationByReservationID(reservation.getReservationID()));
         }catch (ApiRequestException e){
+            long currentTimeMillis = System.currentTimeMillis();
+            Timestamp currentTimestamp = new Timestamp(currentTimeMillis);
+            System.out.println(currentTimestamp + ". Error :"+ e);
             throw e;
         }
     }
@@ -36,6 +40,9 @@ public class ReservationController {
         try{
             return ResponseEntity.ok(reservationService.checkInStatusReservationByReservationID(reservation.getReservationID()));
         }catch (ApiRequestException e){
+            long currentTimeMillis = System.currentTimeMillis();
+            Timestamp currentTimestamp = new Timestamp(currentTimeMillis);
+            System.out.println(currentTimestamp + ". Error :"+ e);
             throw e;
         }
     }
@@ -45,6 +52,9 @@ public class ReservationController {
         try{
             return ResponseEntity.ok(reservationService.checkOutStatusReservation(reservation));
         }catch (ApiRequestException e){
+            long currentTimeMillis = System.currentTimeMillis();
+            Timestamp currentTimestamp = new Timestamp(currentTimeMillis);
+            System.out.println(currentTimestamp + ". Error :"+ e);
             throw e;
         }
     }
@@ -53,6 +63,9 @@ public class ReservationController {
         try{
             return ResponseEntity.ok(reservationService.checkInStatusReservation(reservation));
         }catch (ApiRequestException e){
+            long currentTimeMillis = System.currentTimeMillis();
+            Timestamp currentTimestamp = new Timestamp(currentTimeMillis);
+            System.out.println(currentTimestamp + ". Error :"+ e);
             throw e;
         }
     }
@@ -106,6 +119,9 @@ public class ReservationController {
             }
             return ResponseEntity.ok().body(Message.CANCEL_RESERVATION_SUCCESS);
         }catch (Exception e){
+            long currentTimeMillis = System.currentTimeMillis();
+            Timestamp currentTimestamp = new Timestamp(currentTimeMillis);
+            System.out.println(currentTimestamp + ". Error :"+ e);
             return ResponseEntity.internalServerError().body(Message.ERROR_CANCEL_RESERVATION);
 
         }

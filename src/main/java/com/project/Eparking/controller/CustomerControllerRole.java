@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Objects;
 
@@ -157,6 +158,9 @@ public class CustomerControllerRole {
         try {
             return ResponseEntity.ok(customerService.updateReservationStatusToCancelBooking(reservationID));
         }catch (ApiRequestException e){
+            long currentTimeMillis = System.currentTimeMillis();
+            Timestamp currentTimestamp = new Timestamp(currentTimeMillis);
+            System.out.println(currentTimestamp + ". Error :"+ e);
             throw e;
         }
     }
@@ -165,6 +169,9 @@ public class CustomerControllerRole {
         try {
             return ResponseEntity.ok(customerService.updateReservationStatusToLateBooking(reservationID));
         }catch (ApiRequestException e){
+            long currentTimeMillis = System.currentTimeMillis();
+            Timestamp currentTimestamp = new Timestamp(currentTimeMillis);
+            System.out.println(currentTimestamp + ". Error :"+ e);
             throw e;
         }
     }
