@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.socket.*;
 
 import java.io.IOException;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 @Component
@@ -25,14 +27,18 @@ public class PrivateWebSocketHandler implements WebSocketHandler {
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-        System.out.println("The connection is success");
+        long currentTimeMillis = System.currentTimeMillis();
+        Timestamp currentTimestamp = new Timestamp(currentTimeMillis);
+        System.out.println("The connection is success at: " + currentTimestamp);
         sessions.add(session);
     }
 
         @Override
         public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
             var clientValue = message.getPayload();
-            System.out.println("The send message is success: " + clientValue);
+            long currentTimeMillis = System.currentTimeMillis();
+            Timestamp currentTimestamp = new Timestamp(currentTimeMillis);
+            System.out.println("Time: " + currentTimestamp + " The send message is success: " + clientValue);
             SocketMessage socketMessage = convertToChatMessage((String) clientValue);
 
             assert socketMessage != null;
@@ -65,7 +71,9 @@ public class PrivateWebSocketHandler implements WebSocketHandler {
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus closeStatus) throws Exception {
-        System.out.println("The close is success");
+        long currentTimeMillis = System.currentTimeMillis();
+        Timestamp currentTimestamp = new Timestamp(currentTimeMillis);
+        System.out.println("The close is success in: "+ currentTimestamp);
         sessions.remove(session);
         for (List<WebSocketSession> chatParticipants : chatRooms.values()) {
             chatParticipants.remove(session);

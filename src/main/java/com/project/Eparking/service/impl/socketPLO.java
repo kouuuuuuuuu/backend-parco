@@ -6,6 +6,7 @@ import com.project.Eparking.domain.SocketPLO;
 import com.project.Eparking.exception.ApiRequestException;
 import org.springframework.web.socket.*;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,14 +21,18 @@ public class socketPLO implements WebSocketHandler {
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-        System.out.println("The connection is success");
+        long currentTimeMillis = System.currentTimeMillis();
+        Timestamp currentTimestamp = new Timestamp(currentTimeMillis);
+        System.out.println("The connection is success at: " + currentTimestamp);
         sessions.add(session);
     }
 
     @Override
     public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
+        long currentTimeMillis = System.currentTimeMillis();
+        Timestamp currentTimestamp = new Timestamp(currentTimeMillis);
         var clientValue = message.getPayload();
-        System.out.println("The send message is success: " + clientValue);
+        System.out.println("Time: " + currentTimestamp + " The send message is success: " + clientValue);
         SocketPLO socketMessage = convertToChatMessage((String) clientValue);
 
         assert socketMessage != null;
@@ -60,7 +65,9 @@ public class socketPLO implements WebSocketHandler {
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus closeStatus) throws Exception {
-        System.out.println("The close is success");
+        long currentTimeMillis = System.currentTimeMillis();
+        Timestamp currentTimestamp = new Timestamp(currentTimeMillis);
+        System.out.println("The close is success in: "+ currentTimestamp);
         sessions.remove(session);
         for (List<WebSocketSession> chatParticipants : chatRooms.values()) {
             chatParticipants.remove(session);
