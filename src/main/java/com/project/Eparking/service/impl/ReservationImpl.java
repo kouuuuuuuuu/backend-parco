@@ -575,7 +575,7 @@ public class ReservationImpl implements ReservationService {
         PLO plo = parkingLotOwnerMapper.getPloById(bookingReservationDTO.getPloID());
 
         Motorbike licensePlates = motorbikeMapper.
-                getLicensePlateByLicensePlate(bookingReservationDTO.getMotorbikeID(), id);
+                getLicensePlateByLicensePlate(bookingReservationDTO.getLicensePlate(), id);
 
         // ** If this license plate have reservation and status reservation ! 4 or !5 -> not allow booking
         List<Reservation> reservations = reservationMapper.getReservationByLicensesPlateId(licensePlates.getLicensePlateID());
