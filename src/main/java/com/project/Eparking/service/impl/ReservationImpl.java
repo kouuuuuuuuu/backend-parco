@@ -257,7 +257,7 @@ public class ReservationImpl implements ReservationService {
             java.sql.Date sqlDate = new java.sql.Date(inputDate.getTime());
             return reservationMapper.getTop5ParkingHaveHighestRevenue(sqlDate);
         } catch (Exception e) {
-            throw new ApiRequestException("Failed to get top 5 parking have most reservation" + e.getMessage());
+            throw new ApiRequestException("Failed to get top 5 parking have highest revenue" + e.getMessage());
         }
     }
 
@@ -575,7 +575,7 @@ public class ReservationImpl implements ReservationService {
         PLO plo = parkingLotOwnerMapper.getPloById(bookingReservationDTO.getPloID());
 
         Motorbike licensePlates = motorbikeMapper.
-                getLicensePlateByLicensePlate(bookingReservationDTO.getLicensePlate(), id);
+                getLicensePlateByLicensePlate(bookingReservationDTO.getMotorbikeID(), id);
 
         // ** If this license plate have reservation and status reservation ! 4 or !5 -> not allow booking
         List<Reservation> reservations = reservationMapper.getReservationByLicensesPlateId(licensePlates.getLicensePlateID());
