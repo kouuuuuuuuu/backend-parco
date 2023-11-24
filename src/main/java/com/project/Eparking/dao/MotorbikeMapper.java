@@ -15,7 +15,7 @@ public interface MotorbikeMapper {
 
     void createLicensePlate(Motorbike motorbike, String customerID);
 
-    Motorbike getLicensePlateByLicensePlate(String licensePlate, String customerID);
+    Motorbike getLicensePlateByLicensePlate(int motorbikeID, String customerID);
 
     List<Motorbike> getListLicensePlate();
 
