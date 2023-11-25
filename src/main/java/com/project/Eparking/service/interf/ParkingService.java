@@ -3,7 +3,7 @@ package com.project.Eparking.service.interf;
 import com.project.Eparking.domain.PLOTransaction;
 import com.project.Eparking.domain.ParkingInformation;
 
-import com.project.Eparking.domain.Payment;
+import com.project.Eparking.domain.dto.ListFindLicensePlateDTO;
 import com.project.Eparking.domain.request.*;
 
 import com.project.Eparking.domain.ReservationMethod;
@@ -46,4 +46,6 @@ public interface ParkingService {
     ResponseRevenuePLO getRevenuePLO();
     String withdrawalRequest(RequestWithdrawal drawlRequest);
     Double getSumReservation(RequestGetSumPLO requestGetSumPLO);
+
+    List<ListFindLicensePlateDTO> getMotorbikeHistoryByLicensePlate(String licensePlate);
 }

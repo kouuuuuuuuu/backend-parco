@@ -18,4 +18,6 @@ public interface ParkingLotOwnerService {
     Page<ListPloDTO> getPloByParkingStatus(int status, int pageNum, int pageSize);
     Page<RegistrationHistoryDTO> getListRegistrationHistory(int status, int pageNum, int pageSize, String keywords);
     List<WeekData> chartPLO(RequestMonthANDYear requestMonthANDYear);
+
+    List<ListFindLicensePlateDTO> getMotorbikeHistoryByLicensePlate(String licensePlate);
 }

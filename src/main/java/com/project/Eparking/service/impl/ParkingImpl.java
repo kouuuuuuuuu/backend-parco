@@ -5,6 +5,9 @@ import com.project.Eparking.dao.*;
 import com.project.Eparking.domain.*;
 
 
+import com.project.Eparking.domain.dto.FindLicensePlateDTO;
+import com.project.Eparking.domain.dto.ListFindLicensePlateDTO;
+import com.project.Eparking.domain.dto.MotorbikeDTO;
 import com.project.Eparking.domain.request.*;
 import com.project.Eparking.domain.response.*;
 import com.project.Eparking.exception.ApiRequestException;
@@ -21,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.servlet.http.HttpServletRequest;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -39,6 +43,10 @@ public class ParkingImpl implements ParkingService {
     private final PaymentService paymentService;
     private final TransactionMapper transactionMapper;
     private final ReservationMapper reservationMapper;
+
+    private final MotorbikeMapper motorbikeMapper;
+
+    private final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 
     @Override
     @Transactional
@@ -404,6 +412,50 @@ public class ParkingImpl implements ParkingService {
         }catch (Exception e){
             throw new ApiRequestException("Failed to get Sum reservation" + e.getMessage());
         }
+    }
+
+    @Override
+    public List<ListFindLicensePlateDTO> getMotorbikeHistoryByLicensePlate(String licensePlate) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String id = authentication.getName();
+        List<FindLicensePlateDTO> findLicensePlateDTOS = new ArrayList<>();
+        ListFindLicensePlateDTO listFindLicensePlateDTO = new ListFindLicensePlateDTO();
+        List<ListFindLicensePlateDTO> listFindLicensePlateDTOS = new ArrayList<>();
+
+        int status = 4;
+        List<Reservation> reservations = reservationMapper.getReservationOfPloByStatus(status, id);
+        if (reservations.isEmpty()){
+            return listFindLicensePlateDTOS;
+        }
+
+        String cleanLicensePlate = licensePlate.replaceAll("[-.]","");
+        int totalBooking = 0;
+        for (Reservation reservation : reservations){
+            Motorbike motorbike = motorbikeMapper.getLicensePlateById(reservation.getLicensePlateID());
+            String l = motorbike.getLicensePlate().replaceAll("[-.]","");
+            if (l.equalsIgnoreCase(cleanLicensePlate)){
+                FindLicensePlateDTO findLicensePlateDTO = new FindLicensePlateDTO();
+                MotorbikeDTO motorbikeDTO = new MotorbikeDTO();
+                motorbikeDTO.setMotorbikeID(motorbike.getLicensePlateID());
+                motorbikeDTO.setLicensePlate(motorbike.getLicensePlate());
+                motorbikeDTO.setMotorbikeColor(motorbike.getMotorbikeColor());
+                motorbikeDTO.setMotorbikeName(motorbike.getMotorbikeName());
+                findLicensePlateDTO.setMotorbikeDTOS(motorbikeDTO);
+                findLicensePlateDTO.setCheckIn(Objects.nonNull(reservation.getCheckIn()) ?
+                        dateFormat.format(reservation.getCheckIn()) : "");
+                findLicensePlateDTO.setCheckOut(Objects.nonNull(reservation.getCheckOut()) ?
+                        dateFormat.format(reservation.getCheckOut()) : "");
+                totalBooking = (int) reservations.stream().filter(t -> t.getLicensePlateID() == motorbikeDTO.getMotorbikeID()).count();
+                findLicensePlateDTO.setPloID(id);
+                findLicensePlateDTOS.add(findLicensePlateDTO);
+            }
+            listFindLicensePlateDTO.setLicensePlateDTOS(findLicensePlateDTOS);
+            listFindLicensePlateDTO.setTotalBooking(totalBooking);
+        }
+            listFindLicensePlateDTOS.add(listFindLicensePlateDTO);
+
+
+        return listFindLicensePlateDTOS;
     }
 }
 

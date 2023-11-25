@@ -1,7 +1,12 @@
 package com.project.Eparking.controller;
 
+import com.project.Eparking.constant.Message;
+import com.project.Eparking.domain.Motorbike;
 import com.project.Eparking.domain.ParkingInformation;
 import com.project.Eparking.domain.Rating;
+import com.project.Eparking.domain.dto.FindLicensePlateDTO;
+import com.project.Eparking.domain.dto.ListFindLicensePlateDTO;
+import com.project.Eparking.domain.dto.MotorbikeDTO;
 import com.project.Eparking.domain.request.*;
 import com.project.Eparking.domain.response.RatingResponse;
 import com.project.Eparking.domain.response.ResponsePLOProfile;
@@ -121,6 +126,17 @@ public class ParkingOwnerController {
             return ResponseEntity.ok(parkingService.getSumReservation(plo));
         }catch (ApiRequestException e){
             throw e;
+        }
+    }
+
+    @GetMapping("/getMotorbikeHistory")
+    public ResponseEntity<?> getMotorbikeHistory(@RequestParam String licensePlate){
+        try {
+            List<ListFindLicensePlateDTO> listMotorbikeHistory = parkingService.getMotorbikeHistoryByLicensePlate(licensePlate);
+            return ResponseEntity.ok().body(listMotorbikeHistory);
+
+        }catch (Exception e){
+            return ResponseEntity.internalServerError().body(Message.ERROR_GET_MOTORBIKE_HISTORY);
         }
     }
 }
