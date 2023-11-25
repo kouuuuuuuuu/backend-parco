@@ -43,4 +43,8 @@ public interface ReservationMapper {
     void updateStatusOnly(int statusID,int reservationID);
 
     int getTotalReservationByCustomerId(String customerID, int status);
+
+    List<Reservation> getReservationOfPloByStatus(int status, String ploID);
+
+    List<Reservation> getAllReservationByStatus(int status);
 }

@@ -67,5 +67,7 @@ public class Message {
     public static final String CANCEL_RATING_SUCCESS = "Cancel Rating Success";
     public static final String ERROR_CANCEL_RATING = "Error When Cancel Rating";
     public static final String NOT_FOUND_PLO_TO_GET_BOOKING_DETAIL = "Not Found PLO To Get Booking Detail";
-    public static final Object ERROR_GET_BOOKING_DETAIL = "Error Get Booking Detail";
+    public static final String ERROR_GET_BOOKING_DETAIL = "Error Get Booking Detail";
+    public static final String ERROR_GET_MOTORBIKE_HISTORY = "Error When Get Motorbike History";
+    public static final String GET_LIST_MOTORBIKE_HISTORY_SUCCESS = "Get List Motorbike History Success";
 }
