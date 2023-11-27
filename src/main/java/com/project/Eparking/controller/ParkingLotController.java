@@ -1,5 +1,6 @@
 package com.project.Eparking.controller;
 
+import com.google.firebase.database.annotations.NotNull;
 import com.project.Eparking.domain.PLOTransaction;
 import com.project.Eparking.domain.ParkingInformation;
 import com.project.Eparking.domain.Payment;
@@ -35,9 +36,14 @@ public class ParkingLotController {
     private final UserService userService;
     private final PaymentService paymentService;
 
+
     @PostMapping("/registerParking")
     public ResponseEntity<String> registerParking(@RequestBody RequestRegisterParking registerParking) {
         try {
+            if(registerParking.getParkingName().isEmpty() || registerParking.getImages().isEmpty() || registerParking.getLength() == 0 || registerParking.getWidth() == 0 || registerParking.getSlot() == 0 ||
+            registerParking.getAddress().isEmpty() || registerParking.getDescription().isEmpty() || registerParking.getUUID().isEmpty() || registerParking.getLatitude() == 0 ||registerParking.getLongitude() == 0){
+                throw new ApiRequestException("");
+            }
             return ResponseEntity.ok(parkingService.addParking(registerParking));
         } catch (ApiRequestException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Register parking failure");
@@ -62,6 +68,9 @@ public class ParkingLotController {
     public ResponseEntity<MessageResponse> updateParkingStatusID(
             @RequestParam int parkingStatusID) {
         try {
+            if(parkingStatusID<1 || parkingStatusID > 6){
+                throw new ApiRequestException("Invalid status");
+            }
             parkingService.updateParkingStatusID(parkingStatusID);
             return ResponseEntity.ok(new MessageResponse("Update status successfully"));
         } catch (ApiRequestException e) {
@@ -73,6 +82,9 @@ public class ParkingLotController {
     public ResponseEntity<List<ResponseShowVehicleInParking>> showListVehicleInParkingByStatusID(
             @RequestParam int statusID) {
         try {
+            if(statusID <1 || statusID >5){
+                throw new ApiRequestException("Invalid status");
+            }
             List<ResponseShowVehicleInParking> responseShowVehicleInParking = parkingService.showListVehicleInParking(statusID);
             return ResponseEntity.ok(responseShowVehicleInParking);
         } catch (ApiRequestException e) {
@@ -120,6 +132,9 @@ public class ParkingLotController {
     @PutMapping("/updateParkingSetting")
     public ResponseEntity<String> updateParkingSetting(@RequestBody List<RequestParkingSetting> settings){
         try{
+            if(settings.isEmpty()){
+                throw new ApiRequestException("Invalid Fields");
+            }
             parkingService.settingParking(settings);
             return ResponseEntity.ok("Update setting successfully");
         }catch (ApiRequestException e){

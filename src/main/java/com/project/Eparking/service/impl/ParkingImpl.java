@@ -46,10 +46,10 @@ public class ParkingImpl implements ParkingService {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String id = authentication.getName();
-//            PLOTransaction ploTransaction = transactionMapper.getTransactionByUUID(registerParking.getUUID());
-//            if(ploTransaction == null){
-//                return "The user has not paid the parking registration fee";
-//            }
+            PLOTransaction ploTransaction = transactionMapper.getTransactionByUUID(registerParking.getUUID());
+            if(ploTransaction == null){
+                return "The user has not paid the parking registration fee";
+            }
             RequestParking requestParking = new RequestParking();
             requestParking.setPloID(id);
             requestParking.setParkingName(registerParking.getParkingName());
@@ -188,9 +188,11 @@ public class ParkingImpl implements ParkingService {
     @Override
     public ResponseReservationDetail getReservationDetailByPLOID(int reservationID) {
         try{
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String id = authentication.getName();
-            return parkingMapper.getReservationDetailByReservationID(reservationID);
+            ResponseReservationDetail detail = parkingMapper.getReservationDetailByReservationID(reservationID);
+            if(detail == null){
+                throw new ApiRequestException("There are no reservations with this id");
+            }
+            return detail;
         }catch (Exception e){
             throw new ApiRequestException("Failed to get parking information" + e.getMessage());
         }

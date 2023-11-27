@@ -13,6 +13,7 @@ import com.project.Eparking.domain.dto.ListPloDTO;
 import com.project.Eparking.domain.dto.RatingDTO;
 import com.project.Eparking.domain.response.Page;
 import com.project.Eparking.domain.response.RatingResponse;
+import com.project.Eparking.domain.response.ResponseRating;
 import com.project.Eparking.exception.ApiRequestException;
 import com.project.Eparking.service.interf.RatingService;
 import lombok.RequiredArgsConstructor;
@@ -43,11 +44,11 @@ public class RatingImpl implements RatingService {
         try{
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String id = authentication.getName();
-            List<Rating> rating = ratingMapper.getRatingListByPLOID(id);
+            List<ResponseRating> rating = ratingMapper.getRatingListByPLOID(id);
             List<RatingResponse> ratingResponses =new ArrayList<>();
-            for (Rating ratingList:
+            for (ResponseRating ratingList:
                     rating) {
-                Customer customer = customerMapper.getCustomerById(id);
+                Customer customer = customerMapper.getCustomerById(ratingList.getCustomerID());
                 String date = Objects.nonNull(ratingList.getFeedbackDate())? dateFormat.format(ratingList.getFeedbackDate()) : "";
                 ratingResponses.add(new RatingResponse(ratingList.getRatingID(),ratingList.getStar(),ratingList.getContent(),ratingList.getCustomerID(),customer.getFullName(),ratingList.getPloID(),ratingList.getReservationID(),date));
             }
@@ -83,14 +84,14 @@ public class RatingImpl implements RatingService {
         List<CustomerRatingDTO> customerRatingDTOList = new ArrayList<>();
 
         //1. Get rating list by ploID
-        List<Rating> ratingList = ratingMapper.getRatingListByPLOID(ploID);
+        List<ResponseRating> ratingList = ratingMapper.getRatingListByPLOID(ploID);
         if (ratingList.isEmpty()){
             return customerRatingDTOList;
         }
         //1.1 Sort ratingList by feedbackDate in descending order (from newest to oldest)
         ratingList.sort((r1, r2) -> r2.getFeedbackDate().compareTo(r1.getFeedbackDate()));
         //2. Mapping data
-        for (Rating rating : ratingList){
+        for (ResponseRating rating : ratingList){
             //2.1 Get customer information from rating customer ID
             Customer customer = customerMapper.getCustomerById(rating.getCustomerID());
             CustomerRatingDTO customerRatingDTO = new CustomerRatingDTO();

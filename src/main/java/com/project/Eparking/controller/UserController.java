@@ -12,6 +12,7 @@ import com.project.Eparking.service.PushNotificationService;
 import com.project.Eparking.service.interf.FirebaseTokenService;
 import com.project.Eparking.service.interf.UserService;
 import lombok.RequiredArgsConstructor;
+import net.bytebuddy.implementation.bytecode.Throw;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -177,6 +178,11 @@ public class UserController {
     @PostMapping("/registerUser")
     public ResponseEntity<String> registerUser(RequestRegisterUser user){
         try{
+            if(user.getPhoneNumber() == null || user.getRole() == null){
+                throw new ApiRequestException("Fields are invalid");
+            }if(!user.getRole().equalsIgnoreCase("PLO") && !user.getRole().equalsIgnoreCase("CUSTOMER")) {
+                throw new ApiRequestException("Role is invalid");
+            }
             if(user.getRole().equalsIgnoreCase("PLO")){
                 String responsePLO = userService.registerPLO(user);
                 if(responsePLO.equals("")){
@@ -199,6 +205,12 @@ public class UserController {
     @PostMapping("/confirmRegisterOTP")
     public ResponseEntity<String> confirmOTPassword(@RequestBody RequestConfirmOTP requestConfirmOTP) throws IOException {
         try {
+            if(requestConfirmOTP.getOTPcode() == null || requestConfirmOTP.getRole() == null || requestConfirmOTP.getPhoneNumber() == null || requestConfirmOTP.getFullName() == null || requestConfirmOTP.getPassword() == null){
+                throw new ApiRequestException("Fields are invalid");
+            }
+            if(requestConfirmOTP.getOTPcode().isEmpty() || requestConfirmOTP.getRole().isEmpty() || requestConfirmOTP.getPhoneNumber().isEmpty() || requestConfirmOTP.getFullName().isEmpty() || requestConfirmOTP.getPassword().isEmpty()){
+                throw new ApiRequestException("Fields are invalid");
+            }
             return ResponseEntity.ok(userService.registerConfirmOTPcode(requestConfirmOTP));
         }catch (Exception e){
             throw e;
@@ -207,6 +219,12 @@ public class UserController {
     @PostMapping("/checkPhoneNumber")
     public ResponseEntity<String> checkPhoneNumber(@RequestBody RequestForgotPassword requestForgotPassword){
         try{
+            if(requestForgotPassword.getPhoneNumber().isEmpty() ||requestForgotPassword.getRole().isEmpty()){
+                throw new ApiRequestException("Invalid field value");
+            }
+            if(!requestForgotPassword.getRole().equalsIgnoreCase("PLO") && !requestForgotPassword.getRole().equalsIgnoreCase("CUSTOMER")) {
+                throw new ApiRequestException("Role is invalid");
+            }
             return  ResponseEntity.ok(userService.checkPhoneNumber(requestForgotPassword));
         }catch (Exception e){
             throw e;
@@ -215,6 +233,9 @@ public class UserController {
     @PostMapping("/checkOTPcode")
     public ResponseEntity<String> checkOTPcode(@RequestBody RequestForgotPasswordOTPcode requestForgotPasswordOTPcode) {
         try {
+            if(requestForgotPasswordOTPcode.getOTPcode().isEmpty() || requestForgotPasswordOTPcode.getPhoneNumber().isEmpty()){
+                throw new ApiRequestException("Invalid field value");
+            }
             return ResponseEntity.ok(userService.forgotPasswordCheckOTP(requestForgotPasswordOTPcode));
         } catch (Exception e) {
             throw e;
@@ -223,6 +244,12 @@ public class UserController {
     @PutMapping("/updatePassword")
     public ResponseEntity<String> updateNewPassword(@RequestBody RequestChangePassword password){
         try{
+            if(password.getPassword().isEmpty() || password.getRole().isEmpty() || password.getPhoneNumber().isEmpty()){
+                throw new ApiRequestException("Invalid field value");
+            }
+            if(password.getPassword().length()<5){
+                throw new ApiRequestException("Password must be longer than 4 characters ");
+            }
             return ResponseEntity.ok(userService.updatePasswordUser(password));
         }catch (Exception e){
             throw e;

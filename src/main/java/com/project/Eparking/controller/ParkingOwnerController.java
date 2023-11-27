@@ -69,13 +69,16 @@ public class ParkingOwnerController {
     @PutMapping("/updateParkingInformation")
     public ResponseEntity<ParkingInformation> updateParkingInformation(@RequestBody RequestUpdateProfilePLOTime plo){
         try {
+            if(plo.getParkingName().isEmpty() || plo.getDescription().isEmpty() || plo.getSlot() == 0 || plo.getWaitingTime().getMinutes() == 0 && plo.getWaitingTime().getSeconds() == 0 || plo.getCancelBookingTime().getMinutes() == 0 && plo.getCancelBookingTime().getSeconds() == 0 || plo.getImage().isEmpty()){
+                throw new ApiRequestException("Fields is invalid");
+            }
             return ResponseEntity.ok(parkingService.updateParkingInformation(plo));
         }catch (Exception e){
             throw e;
         }
     }
     @GetMapping("/checkPLOTransfer")
-    public ResponseEntity<String> checkPLOTransfer(@RequestParam RequestTransferParking phoneNumber){
+        public ResponseEntity<String> checkPLOTransfer(@RequestParam RequestTransferParking phoneNumber){
         try{
             return ResponseEntity.ok(parkingService.checkPLOTransfer(phoneNumber));
         }catch (ApiRequestException e){
