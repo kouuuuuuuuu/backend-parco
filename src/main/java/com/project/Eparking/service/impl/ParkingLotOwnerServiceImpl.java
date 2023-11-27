@@ -44,6 +44,7 @@ public class ParkingLotOwnerServiceImpl implements ParkingLotOwnerService {
 
     private final MotorbikeMapper motorbikeMapper;
     private final ReservationMapper reservationMapper;
+    private final CustomerMapper customerMapper;
 
 
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
@@ -408,8 +409,9 @@ public class ParkingLotOwnerServiceImpl implements ParkingLotOwnerService {
         for (Reservation reservation : reservations){
             Motorbike motorbike = motorbikeMapper.getLicensePlateById(reservation.getLicensePlateID());
             String l = motorbike.getLicensePlate().replaceAll("[-.]","");
+            Customer customer = customerMapper.getCustomerById(motorbike.getCustomerID());
             if (l.equalsIgnoreCase(cleanLicensePlate)){
-
+                PLO plo = parkingLotOwnerMapper.getPloById(reservation.getPloID());
                 FindLicensePlateDTO findLicensePlateDTO = new FindLicensePlateDTO();
                 MotorbikeDTO motorbikeDTO = new MotorbikeDTO();
                 motorbikeDTO.setMotorbikeID(motorbike.getLicensePlateID());
@@ -423,8 +425,10 @@ public class ParkingLotOwnerServiceImpl implements ParkingLotOwnerService {
                         dateFormat.format(reservation.getCheckOut()) : "");
                 totalBooking = (int) reservations.stream().filter(t -> t.getLicensePlateID() == motorbikeDTO.getMotorbikeID()).count();
                 findLicensePlateDTO.setPloID(reservation.getPloID());
+                findLicensePlateDTO.setPloName(plo.getParkingName());
                 findLicensePlateDTOS.add(findLicensePlateDTO);
             }
+            listFindLicensePlateDTO.setCustomerName(customer.getFullName());
             listFindLicensePlateDTO.setLicensePlateDTOS(findLicensePlateDTOS);
             listFindLicensePlateDTO.setTotalBooking(totalBooking);
         }

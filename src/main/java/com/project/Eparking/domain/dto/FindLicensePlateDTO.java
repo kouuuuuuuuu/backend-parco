@@ -11,6 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 public class FindLicensePlateDTO {
     private String ploID;
+    private String ploName;
     private String checkIn;
     private String checkOut;
     private MotorbikeDTO motorbikeDTOS;

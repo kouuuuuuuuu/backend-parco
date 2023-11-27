@@ -11,5 +11,6 @@ import java.util.List;
 @AllArgsConstructor
 public class ListFindLicensePlateDTO {
     private List<FindLicensePlateDTO>  licensePlateDTOS;
+    private String customerName;
     private int totalBooking;
 }
