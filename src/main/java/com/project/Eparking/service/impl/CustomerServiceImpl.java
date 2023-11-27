@@ -302,6 +302,9 @@ public class CustomerServiceImpl implements CustomerService {
         parkingLotOwnerDTO.setImages(imageDTOS);
         parkingLotOwnerDTO.setWaitingTime(Objects.nonNull(ploEntity.getWaitingTime()) ?
                 timeFormat.format(ploEntity.getWaitingTime()) : "");
+        parkingLotOwnerDTO.setCancelBookingTime(Objects.nonNull(ploEntity.getCancelBookingTime()) ?
+                timeFormat.format(ploEntity.getCancelBookingTime()) : "");
+        parkingLotOwnerDTO.setDescription(ploEntity.getDescription());
         return parkingLotOwnerDTO;
     }
 

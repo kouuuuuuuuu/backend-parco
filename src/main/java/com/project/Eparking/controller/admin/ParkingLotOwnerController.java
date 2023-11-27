@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -151,6 +152,16 @@ public class ParkingLotOwnerController {
             return ResponseEntity.ok(parkingLotOwnerService.chartPLO(requestMonthANDYear));
         }catch (ApiRequestException e){
             throw e;
+        }
+    }
+
+    @GetMapping("/getMotorbikeHistoryOfAdmin")
+    public Response getMotorbikeHistory(@RequestParam String licensePlate){
+        try {
+            List<ListFindLicensePlateDTO> listMotorbikeHistory = parkingLotOwnerService.getMotorbikeHistoryByLicensePlate(licensePlate);
+            return new Response(HttpStatus.OK.value(), Message.GET_LIST_MOTORBIKE_HISTORY_SUCCESS, listMotorbikeHistory);
+        }catch (Exception e){
+            return new Response(HttpStatus.INTERNAL_SERVER_ERROR.value(), Message.ERROR_GET_MOTORBIKE_HISTORY, new ArrayList<>());
         }
     }
 }

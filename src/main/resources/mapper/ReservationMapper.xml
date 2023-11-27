@@ -294,4 +294,46 @@
         Where customerID = #{customerID}
         AND statusID != #{status}
     </select>
+
+    <select id="getReservationOfPloByStatus" resultType="com.project.Eparking.domain.Reservation">
+        SELECT
+            reservationID,
+            customerID,
+            ploID,
+            statusID,
+            licensePlateID,
+            startTime,
+            endTime,
+            price,
+            checkOut,
+            checkIn,
+            methodID,
+            isRating
+        FROM
+            reservation
+        WHERE
+            statusID = #{status}
+        AND
+            ploID = #{ploID};
+    </select>
+
+    <select id="getAllReservationByStatus" resultType="com.project.Eparking.domain.Reservation">
+        SELECT
+            reservationID,
+            customerID,
+            ploID,
+            statusID,
+            licensePlateID,
+            startTime,
+            endTime,
+            price,
+            checkOut,
+            checkIn,
+            methodID,
+            isRating
+        FROM
+            reservation
+        WHERE
+            statusID = #{status}
+    </select>
 </mapper>

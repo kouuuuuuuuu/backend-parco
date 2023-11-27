@@ -42,6 +42,10 @@ public class ParkingLotOwnerServiceImpl implements ParkingLotOwnerService {
     private final PushNotificationService pushNotificationService;
     private final FirebaseTokenMapper tokenMapper;
 
+    private final MotorbikeMapper motorbikeMapper;
+    private final ReservationMapper reservationMapper;
+    private final CustomerMapper customerMapper;
+
 
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
@@ -387,5 +391,50 @@ public class ParkingLotOwnerServiceImpl implements ParkingLotOwnerService {
         }catch (Exception e){
             throw new ApiRequestException("Failed to get chart week for PLO" +e.getMessage());
         }
+    }
+
+    @Override
+    public List<ListFindLicensePlateDTO> getMotorbikeHistoryByLicensePlate(String licensePlate) {
+        List<FindLicensePlateDTO> findLicensePlateDTOS = new ArrayList<>();
+        ListFindLicensePlateDTO listFindLicensePlateDTO = new ListFindLicensePlateDTO();
+        List<ListFindLicensePlateDTO> listFindLicensePlateDTOS = new ArrayList<>();
+
+        int status = 4;
+        List<Reservation> reservations = reservationMapper.getAllReservationByStatus(status);
+        if (reservations.isEmpty()){
+            return listFindLicensePlateDTOS;
+        }
+        String cleanLicensePlate = licensePlate.replaceAll("[-.]","");
+        int totalBooking = 0;
+        for (Reservation reservation : reservations){
+            Motorbike motorbike = motorbikeMapper.getLicensePlateById(reservation.getLicensePlateID());
+            String l = motorbike.getLicensePlate().replaceAll("[-.]","");
+            Customer customer = customerMapper.getCustomerById(motorbike.getCustomerID());
+            if (l.equalsIgnoreCase(cleanLicensePlate)){
+                PLO plo = parkingLotOwnerMapper.getPloById(reservation.getPloID());
+                FindLicensePlateDTO findLicensePlateDTO = new FindLicensePlateDTO();
+                MotorbikeDTO motorbikeDTO = new MotorbikeDTO();
+                motorbikeDTO.setMotorbikeID(motorbike.getLicensePlateID());
+                motorbikeDTO.setLicensePlate(motorbike.getLicensePlate());
+                motorbikeDTO.setMotorbikeColor(motorbike.getMotorbikeColor());
+                motorbikeDTO.setMotorbikeName(motorbike.getMotorbikeName());
+                findLicensePlateDTO.setMotorbikeDTOS(motorbikeDTO);
+                findLicensePlateDTO.setCheckIn(Objects.nonNull(reservation.getCheckIn()) ?
+                        dateFormat.format(reservation.getCheckIn()) : "");
+                findLicensePlateDTO.setCheckOut(Objects.nonNull(reservation.getCheckOut()) ?
+                        dateFormat.format(reservation.getCheckOut()) : "");
+                totalBooking = (int) reservations.stream().filter(t -> t.getLicensePlateID() == motorbikeDTO.getMotorbikeID()).count();
+                findLicensePlateDTO.setPloID(reservation.getPloID());
+                findLicensePlateDTO.setPloName(plo.getParkingName());
+                findLicensePlateDTOS.add(findLicensePlateDTO);
+            }
+            listFindLicensePlateDTO.setCustomerName(customer.getFullName());
+            listFindLicensePlateDTO.setLicensePlateDTOS(findLicensePlateDTOS);
+            listFindLicensePlateDTO.setTotalBooking(totalBooking);
+        }
+        listFindLicensePlateDTOS.add(listFindLicensePlateDTO);
+
+
+        return listFindLicensePlateDTOS;
     }
 }

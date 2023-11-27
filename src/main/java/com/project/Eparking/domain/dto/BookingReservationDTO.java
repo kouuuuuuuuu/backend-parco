@@ -10,5 +10,5 @@ import lombok.NoArgsConstructor;
 public class BookingReservationDTO {
     private String ploID;
     private int methodID;
-    private String licensePlate;
+    private int motorbikeID;
 }

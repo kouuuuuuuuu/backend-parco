@@ -19,4 +19,6 @@ public class PloDetailForCustomerDTO {
     private int currentSlot;
     private List<ImageDTO> images;
     private String waitingTime;
+    private String cancelBookingTime;
+    private String description;
 }
