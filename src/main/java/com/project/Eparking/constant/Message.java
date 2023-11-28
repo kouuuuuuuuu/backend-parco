@@ -70,4 +70,5 @@ public class Message {
     public static final String ERROR_GET_BOOKING_DETAIL = "Error Get Booking Detail";
     public static final String ERROR_GET_MOTORBIKE_HISTORY = "Error When Get Motorbike History";
     public static final String GET_LIST_MOTORBIKE_HISTORY_SUCCESS = "Get List Motorbike History Success";
+    public static final String NOT_FOUND_MOTORBIKE_HISTORY = "Not Found Motorbike History By LicensePlate";
 }

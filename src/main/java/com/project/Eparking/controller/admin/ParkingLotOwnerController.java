@@ -158,7 +158,10 @@ public class ParkingLotOwnerController {
     @GetMapping("/getMotorbikeHistoryOfAdmin")
     public Response getMotorbikeHistory(@RequestParam String licensePlate){
         try {
-            List<ListFindLicensePlateDTO> listMotorbikeHistory = parkingLotOwnerService.getMotorbikeHistoryByLicensePlate(licensePlate);
+            ListFindLicensePlateDTO listMotorbikeHistory = parkingLotOwnerService.getMotorbikeHistoryByLicensePlate(licensePlate);
+            if (listMotorbikeHistory.getReservationHistory().isEmpty()){
+                return new Response(HttpStatus.NOT_FOUND.value(), Message.NOT_FOUND_MOTORBIKE_HISTORY, new ArrayList<>());
+            }
             return new Response(HttpStatus.OK.value(), Message.GET_LIST_MOTORBIKE_HISTORY_SUCCESS, listMotorbikeHistory);
         }catch (Exception e){
             return new Response(HttpStatus.INTERNAL_SERVER_ERROR.value(), Message.ERROR_GET_MOTORBIKE_HISTORY, new ArrayList<>());
