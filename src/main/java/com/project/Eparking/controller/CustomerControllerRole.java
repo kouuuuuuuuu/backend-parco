@@ -63,7 +63,9 @@ public class CustomerControllerRole {
     }
     @PostMapping("/createPayment")
     public ResponseEntity<?> createPaymentCustomer(HttpServletRequest request, @RequestBody RequestCustomerTransaction transaction){
-        try {
+        try {if(transaction.getAmount() == 0){
+            throw new ApiRequestException("Amount is Invalid!");
+        }
             return customerService.createPaymentCustomer(request,transaction);
         }catch (ApiRequestException e){
             throw e;
@@ -106,6 +108,9 @@ public class CustomerControllerRole {
     @GetMapping("/findParkingList")
     public ResponseEntity<?> findParkingList(@RequestParam Double latitude,@RequestParam Double longitude,@RequestParam Double radius,@RequestParam int method){
         try {
+            if(latitude == 0 || longitude == 0 || radius == 0){
+                throw new ApiRequestException("Field is invalid");
+            }
             if(method == 1){
                 RequestFindParkingList requestFindParkingList = new RequestFindParkingList(latitude,longitude,radius);
                 return ResponseEntity.ok(reservationService.nearestParkingList(requestFindParkingList));
@@ -130,6 +135,9 @@ public class CustomerControllerRole {
     @GetMapping("/getListMethodByTime")
     public ResponseEntity<List<ResponseMethodByTime>> getMethodByTime(@RequestParam String ploID){
         try {
+            if(ploID.isEmpty()){
+                throw new ApiRequestException("ploID is invalid");
+            }
             return  ResponseEntity.ok(reservationService.getListMethodByTime(ploID));
         }catch (ApiRequestException e){
             throw e;

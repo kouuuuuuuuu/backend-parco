@@ -85,6 +85,9 @@ public class ParkingOwnerController {
     @GetMapping("/checkPLOTransfer")
         public ResponseEntity<String> checkPLOTransfer(@RequestParam RequestTransferParking phoneNumber){
         try{
+            if(phoneNumber.getPhoneNumberTransfer().length() < 8 || phoneNumber.getPhoneNumberTransfer().length() > 13){
+                throw new ApiRequestException("Invalid phone number");
+            }
             return ResponseEntity.ok(parkingService.checkPLOTransfer(phoneNumber));
         }catch (ApiRequestException e){
             throw e;
@@ -93,6 +96,12 @@ public class ParkingOwnerController {
     @PutMapping("/checkOTPcodeTransferParking")
     public ResponseEntity<String> checkOTPcodeTransferParking(RequestCheckOTPTransferParking transferParking){
         try{
+            if(transferParking.getOTPcode().isEmpty() || transferParking.getPhoneNumber().isEmpty()){
+                throw new ApiRequestException("Fields is invalid");
+            }
+            if(transferParking.getPhoneNumber().length()<8 || transferParking.getPhoneNumber().length() >13){
+                throw new ApiRequestException("Invalid phone number");
+            }
             return ResponseEntity.ok(parkingService.checkOTPcodeTransferParking(transferParking));
         }catch (ApiRequestException e){
             throw e;
@@ -135,6 +144,9 @@ public class ParkingOwnerController {
     @GetMapping("/getMotorbikeHistory")
     public ResponseEntity<?> getMotorbikeHistory(@RequestParam String licensePlate){
         try {
+            if(licensePlate.isEmpty()){
+                throw new ApiRequestException("Fields is invalid");
+            }
             List<ListFindLicensePlateDTO> listMotorbikeHistory = parkingService.getMotorbikeHistoryByLicensePlate(licensePlate);
             return ResponseEntity.ok().body(listMotorbikeHistory);
 

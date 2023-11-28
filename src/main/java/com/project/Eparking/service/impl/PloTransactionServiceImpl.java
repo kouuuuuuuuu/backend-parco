@@ -143,6 +143,7 @@ public class PloTransactionServiceImpl implements PloTransactionService {
 
             for (TransactionMethod transactionMethod : transactionMethods) {
                 WithdrawalTransactionMethodDTO transactionMethodDTO = new WithdrawalTransactionMethodDTO();
+                transactionMethodDTO.setBankCode(transactionMethod.getBankCode());
                 transactionMethodDTO.setBankName(transactionMethod.getBankName());
                 transactionMethodDTO.setBankNumber(transactionMethod.getBankNumber());
                 transactionMethodDTOS.add(transactionMethodDTO);
