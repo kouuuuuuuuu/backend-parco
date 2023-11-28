@@ -41,8 +41,8 @@ public class ParkingLotController {
     public ResponseEntity<String> registerParking(@RequestBody RequestRegisterParking registerParking) {
         try {
             if(registerParking.getParkingName().isEmpty() || registerParking.getImages().isEmpty() || registerParking.getLength() == 0 || registerParking.getWidth() == 0 || registerParking.getSlot() == 0 ||
-            registerParking.getAddress().isEmpty() || registerParking.getDescription().isEmpty() || registerParking.getUUID().isEmpty() || registerParking.getLatitude() == 0 ||registerParking.getLongitude() == 0){
-                throw new ApiRequestException("");
+            registerParking.getAddress().isEmpty() || registerParking.getUUID().isEmpty() || registerParking.getLatitude() == 0 ||registerParking.getLongitude() == 0){
+                throw new ApiRequestException("Fields is invalid");
             }
             return ResponseEntity.ok(parkingService.addParking(registerParking));
         } catch (ApiRequestException e) {
