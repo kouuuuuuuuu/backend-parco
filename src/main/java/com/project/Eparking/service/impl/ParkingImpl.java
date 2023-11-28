@@ -451,7 +451,7 @@ public class ParkingImpl implements ParkingService {
                 findLicensePlateDTO.setPloID(id);
                 findLicensePlateDTOS.add(findLicensePlateDTO);
             }
-            listFindLicensePlateDTO.setLicensePlateDTOS(findLicensePlateDTOS);
+            listFindLicensePlateDTO.setReservationHistory(findLicensePlateDTOS);
             listFindLicensePlateDTO.setTotalBooking(totalBooking);
         }
             listFindLicensePlateDTOS.add(listFindLicensePlateDTO);

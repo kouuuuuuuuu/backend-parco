@@ -10,7 +10,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ListFindLicensePlateDTO {
-    private List<FindLicensePlateDTO>  licensePlateDTOS;
+    private List<FindLicensePlateDTO>  reservationHistory;
     private String customerName;
+    private String phoneNumber;
     private int totalBooking;
 }
