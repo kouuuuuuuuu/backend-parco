@@ -3,6 +3,7 @@ package com.project.Eparking.service.interf;
 import com.project.Eparking.domain.dto.*;
 import com.project.Eparking.domain.request.RequestMonthANDYear;
 import com.project.Eparking.domain.response.Page;
+import com.project.Eparking.domain.response.Response;
 import com.project.Eparking.domain.response.WeekData;
 
 import java.util.List;
@@ -18,5 +19,7 @@ public interface ParkingLotOwnerService {
     Page<RegistrationHistoryDTO> getListRegistrationHistory(int status, int pageNum, int pageSize, String keywords);
     List<WeekData> chartPLO(RequestMonthANDYear requestMonthANDYear);
 
-    ListFindLicensePlateDTO getMotorbikeHistoryByLicensePlate(String licensePlate);
+    Response getMotorbikeHistoryByLicensePlate(String licensePlate);
+
+    boolean deleteRegistrationByPloID(String ploID);
 }

@@ -51,7 +51,7 @@ public class Message {
     public static final String GET_CUSTOMER_BALANCE_SUCCESS = "Get Customer Wallet Success";
     public static final String ERROR_GET_CUSTOMER_BALANCE = "Error When Get Customer Wallet";
     public static final String ERR_GET_INFOR_RESERVATION_BY_LICENSE_PLATE = "Error When Get Reservation Information By License Plate";
-    public static final String NOT_FOUND_RESERVATION_BY_LICENSEPLATE = "Not Found Reservation By License PLate";
+    public static final String NOT_FOUND_RESERVATION_BY_LICENSE_PLATE = "Not Found Reservation By License PLate";
     public static final String GET_RESERVATION_BY_LICENSE_PLATE_SUCCESS = "Get Reservation By License Plate Success";
     public static final String GET_PLO_DETAIL_FOR_CUSTOMER_FAIL = "Get Plo Detail For Customer Fail";
     public static final String GET_PLO_DETAIL_FOR_CUSTOMER_SUCCESS = "Get Plo Detail For Customer Success";
@@ -70,5 +70,9 @@ public class Message {
     public static final String ERROR_GET_BOOKING_DETAIL = "Error Get Booking Detail";
     public static final String ERROR_GET_MOTORBIKE_HISTORY = "Error When Get Motorbike History";
     public static final String GET_LIST_MOTORBIKE_HISTORY_SUCCESS = "Get List Motorbike History Success";
-    public static final String NOT_FOUND_MOTORBIKE_HISTORY = "Not Found Motorbike History By LicensePlate";
+    public static final String NOT_FOUND_RESERVATION_HISTORY = "Not Found Reservation History By LicensePlate";
+    public static final String ERROR_WHEN_DELETE_REGISTRATION = "Error When Delete Registration";
+    public static final String DELETE_REGISTRATION_SUCCESS = "Delete Registration Success";
+    public static final String CAN_NOT_DELETE_REGISTRATION = "Can Not Delete Registration";
+    public static final String LICENSE_PLATE_NOT_EXIST_IN_SYSTEM = "License Plate Not Exist In System";
 }

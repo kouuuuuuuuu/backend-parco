@@ -207,4 +207,11 @@
         WHERE
             ploID = #{ploID}
     </update>
+
+    <delete id="deletePloByPloID" parameterType="string">
+        DELETE FROM
+            plo
+        WHERE
+            ploID = #{ploID}
+    </delete>
 </mapper>
