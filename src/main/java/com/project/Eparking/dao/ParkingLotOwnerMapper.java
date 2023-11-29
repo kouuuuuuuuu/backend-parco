@@ -24,4 +24,6 @@ public interface ParkingLotOwnerMapper {
     Response4week countRecordsByWeekPLO(Date inputDate);
 
     void updatePloBalanceAndCurrentSlotById(String ploID, double balance, int currentSlot);
+
+    int deletePloByPloID(String ploID);
 }

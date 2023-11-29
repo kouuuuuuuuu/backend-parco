@@ -102,7 +102,7 @@ public class ReservationController {
 
             ReservationInforDTO reservationInforDTO = reservationService.getInforReservationByLicensesPlate(licensePlate);
             if (Objects.isNull(reservationInforDTO)){
-                return new Response(HttpStatus.NOT_FOUND.value(), Message.NOT_FOUND_RESERVATION_BY_LICENSEPLATE, null);
+                return new Response(HttpStatus.NOT_FOUND.value(), Message.NOT_FOUND_RESERVATION_BY_LICENSE_PLATE, null);
             }
             return new Response(HttpStatus.OK.value(), Message.GET_RESERVATION_BY_LICENSE_PLATE_SUCCESS, reservationInforDTO);
         }catch (Exception e){

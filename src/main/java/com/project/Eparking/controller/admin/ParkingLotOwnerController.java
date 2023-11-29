@@ -158,13 +158,22 @@ public class ParkingLotOwnerController {
     @GetMapping("/getMotorbikeHistoryOfAdmin")
     public Response getMotorbikeHistory(@RequestParam String licensePlate){
         try {
-            ListFindLicensePlateDTO listMotorbikeHistory = parkingLotOwnerService.getMotorbikeHistoryByLicensePlate(licensePlate);
-            if (listMotorbikeHistory.getReservationHistory().isEmpty()){
-                return new Response(HttpStatus.NOT_FOUND.value(), Message.NOT_FOUND_MOTORBIKE_HISTORY, new ArrayList<>());
-            }
-            return new Response(HttpStatus.OK.value(), Message.GET_LIST_MOTORBIKE_HISTORY_SUCCESS, listMotorbikeHistory);
+            return parkingLotOwnerService.getMotorbikeHistoryByLicensePlate(licensePlate);
         }catch (Exception e){
             return new Response(HttpStatus.INTERNAL_SERVER_ERROR.value(), Message.ERROR_GET_MOTORBIKE_HISTORY, new ArrayList<>());
+        }
+    }
+
+    @DeleteMapping("/deleteRegistrationOfPlo")
+    public Response deleteRegistration(@RequestParam String ploID){
+        try {
+            boolean isDelete = parkingLotOwnerService.deleteRegistrationByPloID(ploID);
+            if (!isDelete){
+                return new Response(HttpStatus.BAD_REQUEST.value(), Message.CAN_NOT_DELETE_REGISTRATION, isDelete);
+            }
+            return new Response(HttpStatus.OK.value(), Message.DELETE_REGISTRATION_SUCCESS, isDelete);
+        } catch (Exception e) {
+            return new Response(HttpStatus.INTERNAL_SERVER_ERROR.value(), Message.ERROR_WHEN_DELETE_REGISTRATION, false);
         }
     }
 }

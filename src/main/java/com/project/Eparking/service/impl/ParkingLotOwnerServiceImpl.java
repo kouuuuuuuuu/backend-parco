@@ -1,5 +1,6 @@
 package com.project.Eparking.service.impl;
 
+import com.project.Eparking.constant.Message;
 import com.project.Eparking.dao.*;
 import com.project.Eparking.domain.*;
 import com.project.Eparking.domain.dto.*;
@@ -9,6 +10,7 @@ import com.project.Eparking.domain.ReservationMethod;
 import com.project.Eparking.domain.request.PushNotificationRequest;
 import com.project.Eparking.domain.request.RequestMonthANDYear;
 import com.project.Eparking.domain.response.Page;
+import com.project.Eparking.domain.response.Response;
 import com.project.Eparking.domain.response.Response4week;
 import com.project.Eparking.domain.response.WeekData;
 import com.project.Eparking.exception.ApiRequestException;
@@ -16,6 +18,7 @@ import com.project.Eparking.service.PushNotificationService;
 import com.project.Eparking.service.interf.ParkingLotOwnerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -24,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -394,16 +398,24 @@ public class ParkingLotOwnerServiceImpl implements ParkingLotOwnerService {
     }
 
     @Override
-    public ListFindLicensePlateDTO getMotorbikeHistoryByLicensePlate(String licensePlate) {
+    public Response getMotorbikeHistoryByLicensePlate(String licensePlate) {
         List<FindLicensePlateDTO> findLicensePlateDTOS = new ArrayList<>();
         ListFindLicensePlateDTO listFindLicensePlateDTO = new ListFindLicensePlateDTO();
 
         int status = 4;
+        List<Motorbike> allMotorbike = motorbikeMapper.getListLicensePlate();
+        List<String> allLicensePlate = allMotorbike.stream().
+                map(m -> m.getLicensePlate().replaceAll("[-.]","")).
+                collect(Collectors.toList());
+        String cleanLicensePlate = licensePlate.replaceAll("[-.]","");
+        if (!allLicensePlate.contains(cleanLicensePlate)){
+            return new Response(HttpStatus.NOT_FOUND.value(), Message.LICENSE_PLATE_NOT_EXIST_IN_SYSTEM, new ArrayList<>());
+        }
+
         List<Reservation> reservations = reservationMapper.getAllReservationByStatus(status);
         if (reservations.isEmpty()){
-            return listFindLicensePlateDTO;
+            return new Response(HttpStatus.NOT_FOUND.value(), Message.NOT_FOUND_RESERVATION_HISTORY, new ArrayList<>());
         }
-        String cleanLicensePlate = licensePlate.replaceAll("[-.]","");
         int totalBooking = 0;
         Customer customer = new Customer();
         for (Reservation reservation : reservations){
@@ -427,15 +439,29 @@ public class ParkingLotOwnerServiceImpl implements ParkingLotOwnerService {
                 findLicensePlateDTO.setPloID(reservation.getPloID());
                 findLicensePlateDTO.setPloName(plo.getParkingName());
                 findLicensePlateDTOS.add(findLicensePlateDTO);
-
             }
             listFindLicensePlateDTO.setCustomerName(customer.getFullName());
             listFindLicensePlateDTO.setPhoneNumber(customer.getPhoneNumber());
             listFindLicensePlateDTO.setReservationHistory(findLicensePlateDTOS);
             listFindLicensePlateDTO.setTotalBooking(totalBooking);
         }
+        if (listFindLicensePlateDTO.getReservationHistory().isEmpty()){
+                return new Response(HttpStatus.NOT_FOUND.value(), Message.NOT_FOUND_RESERVATION_HISTORY, new ArrayList<>());
+        }
+        return new Response(HttpStatus.OK.value(), Message.GET_LIST_MOTORBIKE_HISTORY_SUCCESS, listFindLicensePlateDTO);
+    }
 
+    @Override
+    public boolean deleteRegistrationByPloID(String ploID) {
+        boolean isDelete = false;
+        PLO plo = parkingLotOwnerMapper.getPloById(ploID);
 
-        return listFindLicensePlateDTO;
+        if (Objects.isNull(plo)){
+            return isDelete;
+        }
+        int delete = parkingLotOwnerMapper.deletePloByPloID(plo.getPloID());
+        isDelete = delete != 0;
+
+        return isDelete;
     }
 }
