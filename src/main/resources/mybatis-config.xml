@@ -39,6 +39,8 @@
             <mapper resource="mapper/FirebaseTokenMapper.xml"></mapper>
 
             <mapper resource="mapper/MotorbikeMapper.xml"></mapper>
+
+            <mapper resource="mapper/PriceMethodMapper.xml"></mapper>
         </mappers>
 
     </configuration>
