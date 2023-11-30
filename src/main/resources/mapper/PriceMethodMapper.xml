@@ -15,4 +15,21 @@
         WHERE reservationID = #{reservationID}
     </update>
 
+    <insert id="create" parameterType="com.project.Eparking.domain.PriceMethod">
+        INSERT INTO
+            pricemethodreservation
+        (
+            reservationID,
+            method1,
+            method2,
+            method3
+        )
+        VALUES
+        (
+            #{reservationID},
+            #{method1},
+            #{method2},
+            #{method3}
+        );
+    </insert>
 </mapper>

@@ -225,7 +225,11 @@
             licensePlateID = #{licensePlateID}
     </select>
 
-    <insert id="createReservation" parameterType="com.project.Eparking.domain.Reservation">
+    <insert id="createReservation" parameterType="com.project.Eparking.domain.Reservation" useGeneratedKeys="true" keyProperty="reservationID">
+        <selectKey keyProperty="reservationID" resultType="java.lang.Integer" order="AFTER">
+            SELECT LAST_INSERT_ID() AS reservationID;
+        </selectKey>
+        <![CDATA[
         INSERT INTO reservation
         (   customerID,
             ploID,
@@ -246,7 +250,8 @@
             #{endTime},
             #{price},
             #{methodID}
-        );
+        )
+    ]]>
     </insert>
     <select id="getReservationByIsRating" resultType="com.project.Eparking.domain.response.ResponseReservationSC">
         SELECT R.reservationID,R.price,RM.methodName,LP.licensePlate,R.statusID,R.ploID,RS.statusName,R.startTime,R.endTime,R.checkIn,R.checkOut
