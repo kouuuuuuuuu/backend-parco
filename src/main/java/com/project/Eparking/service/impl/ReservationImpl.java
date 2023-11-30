@@ -60,6 +60,7 @@ public class ReservationImpl implements ReservationService {
     private final FirebaseTokenMapper tokenMapper;
     private final ImageMapper imageMapper;
     private final MotorbikeMapper motorbikeMapper;
+    private final PriceMethodMapper priceMethodMapper;
 
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss - dd/MM/yyyy");
 
@@ -659,6 +660,32 @@ public class ReservationImpl implements ReservationService {
         double newPloBalance = plo.getBalance() + methodPrice;
         int newCurrentSlot = plo.getCurrentSlot() + 1;
         parkingLotOwnerMapper.updatePloBalanceAndCurrentSlotById(plo.getPloID(), newPloBalance, newCurrentSlot);
+
+        // Update new logic booking to table priceMethodReservation
+        List<ParkingMethod> parkingMethods = parkingMethodMapper.getParkingMethodById(plo.getPloID());
+        PriceMethod priceMethod = new PriceMethod();
+        for (ParkingMethod parkingMethod : parkingMethods){
+            if (parkingMethod.getMethodID() == 1){
+                priceMethod.setMethod1(parkingMethod.getPrice());
+            }
+            if (parkingMethod.getMethodID() == 2){
+                priceMethod.setMethod2(parkingMethod.getPrice());
+            }
+            if (parkingMethod.getMethodID() == 3){
+                priceMethod.setMethod3(parkingMethod.getPrice());
+            }
+        }
+        if (priceMethod.getMethod1() == 0){
+            priceMethod.setMethod1(3000);
+        }
+        if (priceMethod.getMethod2() == 0){
+            priceMethod.setMethod2(4000);
+        }
+        if (priceMethod.getMethod3() == 0){
+            priceMethod.setMethod3(7000);
+        }
+        priceMethod.setReservationID(reservation.getReservationID());
+        priceMethodMapper.create(priceMethod);
 
         message = Message.BOOKING_RESERVATION_SUCCESS;
 
