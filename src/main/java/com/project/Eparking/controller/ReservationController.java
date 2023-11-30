@@ -69,7 +69,14 @@ public class ReservationController {
             throw e;
         }
     }
-
+    @PutMapping("/checkOutWithoutCondition")
+    public ResponseEntity<String> checkoutWithoutCondition(@RequestParam int reservationID){
+        try {
+            return ResponseEntity.ok(reservationService.checkOutWithoutCheckCondition(reservationID));
+        }catch (ApiRequestException e){
+            throw e;
+        }
+    }
     @GetMapping("/reservationHistory")
     public Response getReservationHistory(){
         try {

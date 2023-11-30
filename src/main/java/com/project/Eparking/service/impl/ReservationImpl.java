@@ -35,6 +35,7 @@ import java.sql.Timestamp;
 
 import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -60,9 +61,75 @@ public class ReservationImpl implements ReservationService {
     private final FirebaseTokenMapper tokenMapper;
     private final ImageMapper imageMapper;
     private final MotorbikeMapper motorbikeMapper;
+    private final PriceMethodMapper priceMethodMapper;
 
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss - dd/MM/yyyy");
 
+    private Timestamp setDate(int year, int month,int day,int hour,int minute,int second){
+        LocalDateTime localDateTimeStart = LocalDateTime.of(year, month, day , hour, minute, second, 0);
+        return Timestamp.valueOf(localDateTimeStart);
+    }
+
+    private double calculatePrice (int reservationID, Timestamp currentTime) {
+        Reservation reservation = reservationMapper.getReservationByReservationID(reservationID);
+        HashMap<String, Integer> method = new HashMap<>();
+        method.put("Morning", 0);
+        method.put("Night", 0);
+        method.put("Overnight", 0);
+        Timestamp startTime = reservation.getEndTime();
+        Timestamp endTime = currentTime;
+        ReservationMethod reservationMethod = reservationMethodMapper.getMethodByTimeReturn1(startTime);
+        if(currentTime.before(reservation.getEndTime())){
+            return 0;
+        }
+        LocalDateTime localDateTimeStart1 = startTime.toLocalDateTime();
+        int day = localDateTimeStart1.getDayOfMonth();
+        int month = localDateTimeStart1.getMonthValue();
+        int year = localDateTimeStart1.getYear();
+
+        LocalDateTime localDateTimeEnd1 = endTime.toLocalDateTime();
+        int dayEnd = localDateTimeEnd1.getDayOfMonth();
+        int monthEnd = localDateTimeEnd1.getMonthValue();
+        int yearEnd = localDateTimeEnd1.getYear();
+
+        LocalDateTime localDateTimeStart = LocalDateTime.of(year, month, day , 00, 00, 00, 0);
+        LocalDateTime localDateTimeEnd = LocalDateTime.of(yearEnd, monthEnd, dayEnd , 00, 00, 00, 0);
+        Timestamp onlyDateStart = Timestamp.valueOf(localDateTimeStart);
+        Timestamp onlyDateEnd = Timestamp.valueOf(localDateTimeEnd);
+        while (onlyDateStart.before(onlyDateEnd) || onlyDateStart.equals(onlyDateEnd)){
+
+
+            LocalDateTime current = onlyDateStart.toLocalDateTime();
+            int dayCurrent = current.getDayOfMonth();
+            int monthCurrent = current.getMonthValue();
+            int yearCurrent = current.getYear();
+
+            Timestamp method1 = setDate(yearCurrent, monthCurrent, dayCurrent, 06, 00, 00);
+            Timestamp method2 = setDate(yearCurrent, monthCurrent, dayCurrent, 17, 00, 00);
+            Timestamp method3 = setDate(yearCurrent, monthCurrent, dayCurrent, 23, 00, 00);
+
+            if(method1.after(startTime) && method1.before(endTime)){
+                method.put("Morning", method.get("Morning") + 1);
+            }
+            if(method2.after(startTime) && method2.before(endTime)){
+                method.put("Night", method.get("Night") + 1);
+            }
+            if(method3.after(startTime) && method3.before(endTime)){
+                method.put("Overnight", method.get("Overnight") + 1);
+            }
+
+            LocalDateTime localDateTime = onlyDateStart.toLocalDateTime();
+            LocalDateTime nextDay = localDateTime.plusDays(1);
+            onlyDateStart = Timestamp.valueOf(nextDay);
+        }
+        double total = 0;
+        PriceMethod priceMethod = priceMethodMapper.getPriceMethodByReservationID(reservationID);
+        total += priceMethod.getMethod1() * method.get("Morning");
+        total += priceMethod.getMethod2() * method.get("Night");
+        total += priceMethod.getMethod3() * method.get("Overnight");
+        return total;
+    }
+    //region Check-out
     @Override
     @Transactional
     public String checkOutStatusReservation(RequestUpdateStatusReservation reservation) {
@@ -72,17 +139,30 @@ public class ReservationImpl implements ReservationService {
             String id = authentication.getName();
             ResponseReservation responseReservation = reservationMapper.findReservationByLicensePlate(id, 2, reservation.getLicensePlate());
             if (responseReservation == null) {
-                responseReservation = reservationMapper.findReservationByLicensePlate(id, 3, reservation.getLicensePlate());
-            }
-            if (responseReservation == null) {
                 throw new ApiRequestException("Dont have any reservation with license plate");
             }
-            if (responseReservation.getStatusID() == 2 || responseReservation.getStatusID() == 3) {
+            if (responseReservation.getStatusID() == 2) {
+                Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+//                LocalDateTime localDateTime = LocalDateTime.of(2023, 12, 5, 03, 00, 00, 0);
+//
+//                // Chuyển đổi LocalDateTime thành Timestamp
+//                Timestamp  currentTime = Timestamp.valueOf(localDateTime);
+                double totalPrice = calculatePrice(responseReservation.getReservationID(), currentTime);
+                Customer customer = customerMapper.getCustomerById(responseReservation.getCustomerID());
+                double finalWallet = customer.getWalletBalance() - totalPrice;
+                if(customer.getWalletBalance() - totalPrice < 0){
+                    throw new ApiRequestException("Customer not enough wallet. Need " + Math.abs(finalWallet));
+                }
+                customerMapper.updateBalance(customer.getCustomerID(),finalWallet);
+
+                PLO plo = userMapper.getPLOByPLOID(responseReservation.getPloID());
+                double ploWallet = plo.getBalance() + totalPrice;
+                parkingLotOwnerMapper.updatePloBalanceById(responseReservation.getPloID(), ploWallet);
                 reservationMethodMapper.updateStatusReservation(responseReservation.getReservationID(), 4);
                 long epochMilli = Instant.now().toEpochMilli();
                 Timestamp timestamp = new Timestamp(epochMilli);
                 reservationMethodMapper.updateCheckoutReservation(responseReservation.getReservationID(), timestamp);
-                PLO plo = userMapper.getPLOByPLOID(responseReservation.getPloID());
+                priceMethodMapper.updateTotalPrice(responseReservation.getPrice() + totalPrice, responseReservation.getReservationID());
                 int currentSlot = plo.getCurrentSlot() - 1;
                 if (currentSlot < 0) {
                     throw new ApiRequestException("Something error with currentSlot plo");
@@ -115,7 +195,7 @@ public class ReservationImpl implements ReservationService {
         }
         return response;
     }
-
+    //endregion
     @Transactional
     @Override
     public String checkInStatusReservation(RequestUpdateStatusReservation reservation) {
@@ -201,14 +281,31 @@ public class ReservationImpl implements ReservationService {
         try {
             Reservation reservation = reservationMapper.getReservationByReservationID(reservationID);
             int statusID = reservation.getStatusID();
-            if (statusID == 2 || statusID == 3) {
+            if (statusID == 2) {
                 Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
                 String id = authentication.getName();
+                PLO plo = userMapper.getPLOByPLOID(id);
+                Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+//                LocalDateTime localDateTime = LocalDateTime.of(2023, 12, 5, 03, 00, 00, 0);
+//
+//                // Chuyển đổi LocalDateTime thành Timestamp
+//                Timestamp  currentTime = Timestamp.valueOf(localDateTime);
+                double totalPrice = calculatePrice(reservation.getReservationID(), currentTime);
+                Customer customer = customerMapper.getCustomerById(reservation.getCustomerID());
+                double finalWallet = customer.getWalletBalance() - totalPrice;
+                if(customer.getWalletBalance() - totalPrice < 0){
+                    throw new ApiRequestException("Customer not enough wallet. Need " + Math.abs(finalWallet));
+                }
+                customerMapper.updateBalance(customer.getCustomerID(),finalWallet);
+
+                double ploWallet = plo.getBalance() + totalPrice;
+                parkingLotOwnerMapper.updatePloBalanceById(reservation.getPloID(), ploWallet);
+                priceMethodMapper.updateTotalPrice(reservation.getPrice() + totalPrice, reservation.getReservationID());
                 reservationMethodMapper.updateStatusReservation(reservationID, 4);
                 long epochMilli = Instant.now().toEpochMilli();
                 Timestamp timestamp = new Timestamp(epochMilli);
                 reservationMethodMapper.updateCheckoutReservation(reservationID, timestamp);
-                PLO plo = userMapper.getPLOByPLOID(id);
+
                 int currentSlot = plo.getCurrentSlot() - 1;
                 if (currentSlot < 0) {
                     throw new ApiRequestException("Something error with currentSlot plo");
@@ -875,7 +972,6 @@ public class ReservationImpl implements ReservationService {
             }catch(Exception e){
             throw new ApiRequestException("Failed to get list method by ploID." + e.getMessage());
         }
-
         }
 
     @Override
@@ -953,5 +1049,61 @@ public class ReservationImpl implements ReservationService {
         bookingDetailDTO.setReservationMethod(reservationBookingMethodDTOS);
         bookingDetailDTO.setCustomerLicensePlate(motorbikeDTOS);
         return bookingDetailDTO;
+    }
+
+    @Override
+    public String checkOutWithoutCheckCondition(int reservationID) {
+        try{
+            Reservation reservation = reservationMapper.getReservationByReservationID(reservationID);
+            int statusID = reservation.getStatusID();
+            if (statusID == 2) {
+                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+                String id = authentication.getName();
+                PLO plo = userMapper.getPLOByPLOID(id);
+                Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+//                LocalDateTime localDateTime = LocalDateTime.of(2023, 12, 5, 03, 00, 00, 0);
+//
+//                // Chuyển đổi LocalDateTime thành Timestamp
+//                Timestamp  currentTime = Timestamp.valueOf(localDateTime);
+                double totalPrice = calculatePrice(reservation.getReservationID(), currentTime);
+                Customer customer = customerMapper.getCustomerById(reservation.getCustomerID());
+                double finalWallet = customer.getWalletBalance() - totalPrice;
+                if(customer.getWalletBalance() - totalPrice < 0){
+                    throw new ApiRequestException("Customer not enough wallet. Need " + Math.abs(finalWallet));
+                }
+                priceMethodMapper.updateTotalPrice(reservation.getPrice() + totalPrice, reservation.getReservationID());
+                reservationMethodMapper.updateStatusReservation(reservationID, 4);
+                long epochMilli = Instant.now().toEpochMilli();
+                Timestamp timestamp = new Timestamp(epochMilli);
+                reservationMethodMapper.updateCheckoutReservation(reservationID, timestamp);
+
+                int currentSlot = plo.getCurrentSlot() - 1;
+                if (currentSlot < 0) {
+                    throw new ApiRequestException("Something error with currentSlot plo");
+                }
+                parkingMapper.updateCurrentSlot(currentSlot, plo.getPloID());
+                //sendNoti
+                PushNotificationRequest requestCustomer = new PushNotificationRequest();
+                List<Image> images = imageMapper.getImageByPloId(plo.getPloID());
+                requestCustomer.setImage("https://fiftyfifty.b-cdn.net/eparking/Logo.png?fbclid=IwAR2J-hDEBo9BMtAlzpZFNxltZHP1o2Wh63OfUJwqg1vUJZFO-VHc97q1OLY");
+                requestCustomer.setMessage("Bạn đã check out ở bãi xe: "+plo.getParkingName());
+                requestCustomer.setTitle("Thông báo tình trạng đặt xe");
+                requestCustomer.setTopic("Thông báo tình trạng đặt xe");
+                List<FirebaseToken> firebaseTokensCustomer = tokenMapper.getTokenByID(reservation.getCustomerID());
+                if(firebaseTokensCustomer==null){
+                    throw new ApiRequestException("Failed to get firebaseTokens");
+                }
+                for (FirebaseToken token:
+                        firebaseTokensCustomer) {
+                    requestCustomer.setToken(token.getDeviceToken());
+                    pushNotificationService.sendPushNotificationToToken(requestCustomer);
+                }
+                return "Update successfully!";
+            }else {
+                throw new ApiRequestException("Wrong status");
+            }
+        }catch (Exception e){
+            throw new ApiRequestException("Failed to checkout reservation." + e.getMessage());
+        }
     }
 }

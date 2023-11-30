@@ -18,4 +18,6 @@ public interface ReservationMethodMapper {
     ReservationMethod getReservationMethodById(int methodID);
     List<ReservationMethod> getMethodByTime(Timestamp currentTime);
     List<ResponseMethod> getMethodByID(String ploID);
+
+    ReservationMethod getMethodByTimeReturn1(Timestamp currentTime);
 }

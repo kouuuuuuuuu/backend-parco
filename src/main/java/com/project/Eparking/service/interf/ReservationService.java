@@ -23,7 +23,6 @@ public interface ReservationService {
     List<Top5CustomerDTO> getTop5Customer(RequestMonthANDYear requestMonthANDYear) throws ParseException;
     List<ResponseTop5Parking> getTop5Parking(RequestMonthANDYear requestMonthANDYear);
     List<ResponseTop5Revenue> getTop5Revenue(RequestMonthANDYear requestMonthANDYear);
-
     ReservationInforDTO getInforReservationByLicensesPlate(String licensePlate);
     List<ResponseFindParkingList> nearestParkingList(RequestFindParkingList findParkingList);
     List<ResponseFindParkingList> cheapestParkingList(RequestFindParkingList findParkingList);
@@ -31,6 +30,6 @@ public interface ReservationService {
     String bookingReservation(BookingReservationDTO bookingReservationDTO);
     ResponseScreenReservation getScreenCustomer();
     List<ResponseMethodByTime> getListMethodByTime(String ploID);
-
     BookingDetailDTO bookingDetail(String ploID);
+    String checkOutWithoutCheckCondition(int reservationID);
 }

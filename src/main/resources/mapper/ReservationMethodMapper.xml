@@ -67,4 +67,9 @@
         WHERE ploID = #{ploID}
     </select>
 
+    <select id="getMethodByTimeReturn1" resultType="com.project.Eparking.domain.ReservationMethod">
+        SELECT methodID, methodName, startTime, endTime
+        FROM reservationmethod
+        WHERE TIME(#{currentTime}) BETWEEN startTime AND endTime;
+    </select>
 </mapper>
