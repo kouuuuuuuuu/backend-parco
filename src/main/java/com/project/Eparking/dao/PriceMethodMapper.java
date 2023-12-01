@@ -8,4 +8,6 @@ public interface PriceMethodMapper {
     PriceMethod getPriceMethodByReservationID(int reservationID);
     void updateTotalPrice(double total, int reservationID);
     void create(PriceMethod priceMethod);
+
+    PriceMethod getTotalPriceOfReservation(int reservationID);
 }

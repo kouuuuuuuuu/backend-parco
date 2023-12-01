@@ -474,6 +474,10 @@ public class ReservationImpl implements ReservationService {
                     dateFormat.format(reservation.getCheckOut()) : "");
             reservationDTO.setStatusID(reservationStatus.getStatusID());
             reservationDTO.setStatusName(reservationStatus.getStatusName());
+            PriceMethod priceMethod = priceMethodMapper.getTotalPriceOfReservation(reservation.getReservationID());
+            if (Objects.nonNull(priceMethod)) {
+                reservationDTO.setTotalPrice(priceMethod.getTotal());
+            }
             reservationDTOS.add(reservationDTO);
         }
         return reservationDTOS;
@@ -506,7 +510,10 @@ public class ReservationImpl implements ReservationService {
                 dateFormat.format(reservation.getCheckIn()) : "");
         reservationDetailDTO.setCheckOut(Objects.nonNull(reservation.getCheckOut()) ?
                 dateFormat.format(reservation.getCheckOut()) : "");
-
+        PriceMethod priceMethod = priceMethodMapper.getTotalPriceOfReservation(reservation.getReservationID());
+        if (Objects.nonNull(priceMethod)) {
+            reservationDetailDTO.setTotalPrice(priceMethod.getTotal());
+        }
         return reservationDetailDTO;
     }
 

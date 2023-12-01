@@ -32,4 +32,18 @@
             #{method3}
         );
     </insert>
+
+    <select id="getTotalPriceOfReservation" resultType="com.project.Eparking.domain.PriceMethod">
+        SELECT
+            priceReservationID,
+            reservationID,
+            total,
+            method1,
+            method2,
+            method3
+        FROM
+            pricemethodreservation
+        WHERE
+            reservationID = #{reservationID}
+    </select>
 </mapper>
