@@ -70,6 +70,15 @@ public class ReservationImpl implements ReservationService {
         return Timestamp.valueOf(localDateTimeStart);
     }
 
+    private Timestamp addTime(Timestamp currentTime, java.sql.Time timeToAdd){
+        LocalTime localTime = timeToAdd.toLocalTime();
+        LocalDateTime localDateTime = currentTime.toLocalDateTime();
+        localDateTime = localDateTime.plusHours(localTime.getHour())
+                .plusMinutes(localTime.getMinute())
+                .plusSeconds(localTime.getSecond());
+        return Timestamp.valueOf(localDateTime);
+    }
+
     private double calculatePrice (int reservationID, Timestamp currentTime) {
         Reservation reservation = reservationMapper.getReservationByReservationID(reservationID);
         HashMap<String, Integer> method = new HashMap<>();
@@ -78,7 +87,6 @@ public class ReservationImpl implements ReservationService {
         method.put("Overnight", 0);
         Timestamp startTime = reservation.getEndTime();
         Timestamp endTime = currentTime;
-        ReservationMethod reservationMethod = reservationMethodMapper.getMethodByTimeReturn1(startTime);
         if(currentTime.before(reservation.getEndTime())){
             return 0;
         }
@@ -98,15 +106,22 @@ public class ReservationImpl implements ReservationService {
         Timestamp onlyDateEnd = Timestamp.valueOf(localDateTimeEnd);
         while (onlyDateStart.before(onlyDateEnd) || onlyDateStart.equals(onlyDateEnd)){
 
-
             LocalDateTime current = onlyDateStart.toLocalDateTime();
             int dayCurrent = current.getDayOfMonth();
             int monthCurrent = current.getMonthValue();
             int yearCurrent = current.getYear();
 
+            PLO plo = userMapper.getPLOByPLOID(reservation.getPloID());
+
+
+
             Timestamp method1 = setDate(yearCurrent, monthCurrent, dayCurrent, 06, 00, 00);
             Timestamp method2 = setDate(yearCurrent, monthCurrent, dayCurrent, 17, 00, 00);
             Timestamp method3 = setDate(yearCurrent, monthCurrent, dayCurrent, 23, 00, 00);
+
+            method1 = addTime(method1,plo.getWaitingTime());
+            method2 = addTime(method2,plo.getWaitingTime());
+            method3 = addTime(method3,plo.getWaitingTime());
 
             if(method1.after(startTime) && method1.before(endTime)){
                 method.put("Morning", method.get("Morning") + 1);
@@ -543,6 +558,7 @@ public class ReservationImpl implements ReservationService {
         try {
             Date currentDate = new Date();
             Timestamp currentTimestamp = new Timestamp(currentDate.getTime());
+            
             ReservationMethod reservationMethod = reservationMethodMapper.getMethodByTimeReturn1(currentTimestamp);
             List<ResponseFindParkingList> responseFindParkingLists = new ArrayList<>();
             List<ResponseCoordinates> coordinates = reservationMapper.getAllCoordinatesPLO();
@@ -578,6 +594,7 @@ public class ReservationImpl implements ReservationService {
         try {
             Date currentDate = new Date();
             Timestamp currentTimestamp = new Timestamp(currentDate.getTime());
+
             ReservationMethod reservationMethod = reservationMethodMapper.getMethodByTimeReturn1(currentTimestamp);
             List<ResponseFindParkingList> responseFindParkingLists = new ArrayList<>();
             List<ResponseCoordinates> coordinates = reservationMapper.getAllCoordinatesPLO();

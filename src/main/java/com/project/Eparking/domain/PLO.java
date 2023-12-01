@@ -30,8 +30,8 @@ public class PLO {
     private String role;
     private Double length;
     private Double width;
-    private Time waitingTime;
-    private Time cancelBookingTime;
+    private java.sql.Time waitingTime;
+    private java.sql.Time cancelBookingTime;
     private String contractLink;
     private Timestamp registerContract;
     private Timestamp browseContract;
