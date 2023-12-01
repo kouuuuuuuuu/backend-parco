@@ -151,7 +151,7 @@ public class ReservationImpl implements ReservationService {
                 Customer customer = customerMapper.getCustomerById(responseReservation.getCustomerID());
                 double finalWallet = customer.getWalletBalance() - totalPrice;
                 if(customer.getWalletBalance() - totalPrice < 0){
-                    throw new ApiRequestException("Customer not enough wallet. Need " + Math.abs(finalWallet));
+                    throw new ApiRequestException("Tài khoản này cần: "+ Math.abs(finalWallet) + " để thanh toán");
                 }
                 customerMapper.updateBalance(customer.getCustomerID(),finalWallet);
 
@@ -294,7 +294,7 @@ public class ReservationImpl implements ReservationService {
                 Customer customer = customerMapper.getCustomerById(reservation.getCustomerID());
                 double finalWallet = customer.getWalletBalance() - totalPrice;
                 if(customer.getWalletBalance() - totalPrice < 0){
-                    throw new ApiRequestException("Customer not enough wallet. Need " + Math.abs(finalWallet));
+                    throw new ApiRequestException("Tài khoản này cần: "+ Math.abs(finalWallet) + " để thanh toán");
                 }
                 customerMapper.updateBalance(customer.getCustomerID(),finalWallet);
 
@@ -536,19 +536,7 @@ public class ReservationImpl implements ReservationService {
         try {
             Date currentDate = new Date();
             Timestamp currentTimestamp = new Timestamp(currentDate.getTime());
-            List<ReservationMethod> reservationMethodList = reservationMethodMapper.getMethodByTime(currentTimestamp);
-            ReservationMethod reservationMethod = new ReservationMethod();
-            if(reservationMethodList.size() >1){
-                for (ReservationMethod method:
-                        reservationMethodList) {
-                    if(method.getMethodID() != 3){
-                        reservationMethod = new ReservationMethod(method.getMethodID(), method.getMethodName(), method.getStartTime(),method.getEndTime());
-                    }
-                }
-            }else{
-                reservationMethod = reservationMethodList.get(0);
-            }
-
+            ReservationMethod reservationMethod = reservationMethodMapper.getMethodByTimeReturn1(currentTimestamp);
             List<ResponseFindParkingList> responseFindParkingLists = new ArrayList<>();
             List<ResponseCoordinates> coordinates = reservationMapper.getAllCoordinatesPLO();
             if (coordinates == null) {
@@ -563,7 +551,7 @@ public class ReservationImpl implements ReservationService {
                         Double price = parkingMethodMapper.getParkingMethodByID(plo.getPloID(), reservationMethod.getMethodID());
                         int slot = plo.getSlot() - plo.getCurrentSlot();
                         List<ResponseMethod> responseMethods = reservationMethodMapper.getMethodByID(plo.getPloID());
-                        if (price != null) {
+                        if (price != null && slot > 0) {
                             responseFindParkingLists.add(new ResponseFindParkingList(plo.getPloID(), plo.getParkingName(), plo.getAddress(), distance, price, currentTimestamp, reservationMethod.getMethodName(), slot, plo.getLongtitude().doubleValue(),plo.getLatitude().doubleValue(),responseMethods));
                         }
                     }
@@ -583,18 +571,7 @@ public class ReservationImpl implements ReservationService {
         try {
             Date currentDate = new Date();
             Timestamp currentTimestamp = new Timestamp(currentDate.getTime());
-            List<ReservationMethod> reservationMethodList = reservationMethodMapper.getMethodByTime(currentTimestamp);
-            ReservationMethod reservationMethod = new ReservationMethod();
-            if(reservationMethodList.size() >1){
-                for (ReservationMethod method:
-                        reservationMethodList) {
-                    if(method.getMethodID() != 3){
-                        reservationMethod = new ReservationMethod(method.getMethodID(), method.getMethodName(), method.getStartTime(),method.getEndTime());
-                    }
-                }
-            }else {
-                reservationMethod = reservationMethodList.get(0);
-            }
+            ReservationMethod reservationMethod = reservationMethodMapper.getMethodByTimeReturn1(currentTimestamp);
             List<ResponseFindParkingList> responseFindParkingLists = new ArrayList<>();
             List<ResponseCoordinates> coordinates = reservationMapper.getAllCoordinatesPLO();
             if (coordinates == null) {
@@ -609,7 +586,7 @@ public class ReservationImpl implements ReservationService {
                         Double price = parkingMethodMapper.getParkingMethodByID(plo.getPloID(), reservationMethod.getMethodID());
                         int slot = plo.getSlot() - plo.getCurrentSlot();
                         List<ResponseMethod> responseMethods = reservationMethodMapper.getMethodByID(plo.getPloID());
-                        if (price != null) {
+                        if (price != null && slot > 0) {
                             responseFindParkingLists.add(new ResponseFindParkingList(plo.getPloID(), plo.getParkingName(), plo.getAddress(), distance, price, currentTimestamp, reservationMethod.getMethodName(), slot,plo.getLongtitude().doubleValue(),plo.getLatitude().doubleValue(), responseMethods));
                         }
                     }
@@ -1092,11 +1069,6 @@ public class ReservationImpl implements ReservationService {
 //                // Chuyển đổi LocalDateTime thành Timestamp
 //                Timestamp  currentTime = Timestamp.valueOf(localDateTime);
                 double totalPrice = calculatePrice(reservation.getReservationID(), currentTime);
-                Customer customer = customerMapper.getCustomerById(reservation.getCustomerID());
-                double finalWallet = customer.getWalletBalance() - totalPrice;
-                if(customer.getWalletBalance() - totalPrice < 0){
-                    throw new ApiRequestException("Customer not enough wallet. Need " + Math.abs(finalWallet));
-                }
                 priceMethodMapper.updateTotalPrice(reservation.getPrice() + totalPrice, reservation.getReservationID());
                 reservationMethodMapper.updateStatusReservation(reservationID, 4);
                 long epochMilli = Instant.now().toEpochMilli();
