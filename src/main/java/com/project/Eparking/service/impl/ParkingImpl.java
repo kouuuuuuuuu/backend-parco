@@ -45,6 +45,7 @@ public class ParkingImpl implements ParkingService {
     private final ReservationMapper reservationMapper;
 
     private final MotorbikeMapper motorbikeMapper;
+    private final PriceMethodMapper priceMethodMapper;
 
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 
@@ -131,6 +132,13 @@ public class ParkingImpl implements ParkingService {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String id = authentication.getName();
             List<ResponseShowVehicleInParking> responseShowVehicleInParking = parkingMapper.showListVehicleInParking(id, statusID);
+
+            for (ResponseShowVehicleInParking vehicle : responseShowVehicleInParking) {
+                PriceMethod priceMethod = priceMethodMapper.getPriceMethodByReservationID(Integer.parseInt(vehicle.getReservationID()));
+                if (Objects.nonNull(priceMethod)){
+                    vehicle.setTotalPrice(priceMethod.getTotal());
+                }
+            }
             return responseShowVehicleInParking;
         } catch (ApiRequestException e) {
             throw e;
@@ -197,6 +205,10 @@ public class ParkingImpl implements ParkingService {
     public ResponseReservationDetail getReservationDetailByPLOID(int reservationID) {
         try{
             ResponseReservationDetail detail = parkingMapper.getReservationDetailByReservationID(reservationID);
+            PriceMethod priceMethod = priceMethodMapper.getPriceMethodByReservationID(reservationID);
+            if (Objects.nonNull(priceMethod)){
+                detail.setTotalPrice(priceMethod.getTotal());
+            }
             if(detail == null){
                 throw new ApiRequestException("There are no reservations with this id");
             }

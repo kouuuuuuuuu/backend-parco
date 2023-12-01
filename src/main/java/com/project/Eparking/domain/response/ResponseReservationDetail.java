@@ -26,4 +26,5 @@ public class ResponseReservationDetail {
     private Timestamp checkIn;
 
     private Timestamp checkOut;
+    private double totalPrice;
 }

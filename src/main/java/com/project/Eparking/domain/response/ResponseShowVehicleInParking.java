@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
-import java.time.Instant;
 
 @Data
 @AllArgsConstructor
@@ -21,4 +20,5 @@ public class ResponseShowVehicleInParking {
     private Timestamp endTime;
     private String methodName;
     private String statusName;
+    private double totalPrice;
 }
