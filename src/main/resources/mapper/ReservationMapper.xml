@@ -55,9 +55,10 @@
     </select>
 
     <select id="getSumByDateANDPLOID" resultType="Double">
-        SELECT IFNULL(SUM(price), 0) AS totalPrice
-        FROM reservation
-        WHERE startTime >= #{startTime} AND startTime <![CDATA[<= CONCAT(#{startTime2th}, ' 23:59:59') AND ploID = #{ploID}]]>
+        SELECT IFNULL(SUM(prm.total), 0) AS totalPrice
+        FROM reservation r
+        INNER JOIN pricemethodreservation prm ON r.reservationID = prm.reservationID
+        WHERE r.startTime >= #{startTime} AND r.checkOut <![CDATA[<= CONCAT(#{startTime2th}, ' 23:59:59') AND r.ploID = #{ploID}]]>
     </select>
 
     <select id="getTop5ParkingHaveMostReservation" resultMap="listResponseTop5Parking">
