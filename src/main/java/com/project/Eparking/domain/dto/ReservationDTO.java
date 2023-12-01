@@ -16,4 +16,5 @@ public class ReservationDTO {
     private String checkOut;
     private int statusID;
     private String statusName;
+    private double totalPrice;
 }

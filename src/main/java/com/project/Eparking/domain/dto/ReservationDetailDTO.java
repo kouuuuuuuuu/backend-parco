@@ -18,4 +18,5 @@ public class ReservationDetailDTO {
     private String endTime;
     private String checkIn;
     private String checkOut;
+    private double totalPrice;
 }
