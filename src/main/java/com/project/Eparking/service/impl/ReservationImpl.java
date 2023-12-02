@@ -12,17 +12,15 @@ import com.project.Eparking.dao.ReservationMethodMapper;
 import com.project.Eparking.dao.UserMapper;
 import com.project.Eparking.domain.PLO;
 import com.project.Eparking.domain.ReservationMethod;
-import com.project.Eparking.domain.request.PushNotificationRequest;
-import com.project.Eparking.domain.request.RequestFindParkingList;
-import com.project.Eparking.domain.request.RequestMonthANDYear;
+import com.project.Eparking.domain.request.*;
 
-import com.project.Eparking.domain.request.RequestUpdateStatusReservation;
 import com.project.Eparking.domain.response.*;
 import com.project.Eparking.exception.ApiRequestException;
 import com.project.Eparking.service.PushNotificationService;
 import com.project.Eparking.service.interf.ReservationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -34,9 +32,7 @@ import java.sql.Time;
 import java.sql.Timestamp;
 
 import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -62,7 +58,7 @@ public class ReservationImpl implements ReservationService {
     private final ImageMapper imageMapper;
     private final MotorbikeMapper motorbikeMapper;
     private final PriceMethodMapper priceMethodMapper;
-
+    private final ImageGuestMapper imageGuestMapper;
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss - dd/MM/yyyy");
 
     private Timestamp setDate(int year, int month,int day,int hour,int minute,int second){
@@ -147,7 +143,7 @@ public class ReservationImpl implements ReservationService {
     //region Check-out
     @Override
     @Transactional
-    public String checkOutStatusReservation(RequestUpdateStatusReservation reservation) {
+    public ResponseEntity<?> checkOutStatusReservation(RequestUpdateStatusReservation reservation) {
         String response = "";
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -157,11 +153,15 @@ public class ReservationImpl implements ReservationService {
                 throw new ApiRequestException("Dont have any reservation with license plate");
             }
             if (responseReservation.getStatusID() == 2) {
+                Customer customerGuest = customerMapper.getGuest();
+                if(responseReservation.getCustomerID().equalsIgnoreCase(customerGuest.getCustomerID())){
+
+                }
                 Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+
 //                LocalDateTime localDateTime = LocalDateTime.of(2023, 12, 5, 03, 00, 00, 0);
-//
-//                // Chuyển đổi LocalDateTime thành Timestamp
 //                Timestamp  currentTime = Timestamp.valueOf(localDateTime);
+
                 double totalPrice = calculatePrice(responseReservation.getReservationID(), currentTime);
                 Customer customer = customerMapper.getCustomerById(responseReservation.getCustomerID());
                 double finalWallet = customer.getWalletBalance() - totalPrice;
@@ -205,10 +205,10 @@ public class ReservationImpl implements ReservationService {
             } else {
                 throw new ApiRequestException("Wrong status");
             }
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
             throw new ApiRequestException("Failed checkOut user." + e.getMessage());
         }
-        return response;
     }
     //endregion
     @Transactional
@@ -220,10 +220,11 @@ public class ReservationImpl implements ReservationService {
             String id = authentication.getName();
             ResponseReservation responseReservation = reservationMapper.findReservationByLicensePlate(id, 1, reservation.getLicensePlate());
             if (responseReservation == null) {
-                throw new ApiRequestException("Dont have any reservation with license plate");
-            }
-            if (responseReservation.getStatusID() != 1) {
-                throw new ApiRequestException("Wrong status");
+                responseReservation = reservationMapper.findReservationByLicensePlate(id, 2, reservation.getLicensePlate());
+                if(responseReservation!=null){
+                    throw new ApiRequestException("Wrong status");
+                }
+                throw new ApiRequestException("Visiting Guest!");
             }
             reservationMethodMapper.updateStatusReservation(responseReservation.getReservationID(), 2);
             long epochMilli = Instant.now().toEpochMilli();
@@ -374,9 +375,10 @@ public class ReservationImpl implements ReservationService {
     }
 
     @Override
-    public ReservationInforDTO getInforReservationByLicensesPlate(String licensePlate) {
+    public ResponseEntity<?> getInforReservationByLicensesPlate(String licensePlate) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String id = authentication.getName();
+        Customer guest = customerMapper.getGuest();
         List<Integer> status = List.of(4, 5);
         Reservation reservation;
         reservation = reservationMapper.findReservationByLicensePlateAndPloId(licensePlate, id, status);
@@ -394,13 +396,37 @@ public class ReservationImpl implements ReservationService {
                 return null;
             }
         }
+        if(reservation.getCustomerID().equalsIgnoreCase(guest.getCustomerID())){
+            ResponseGuest responseGuest = new ResponseGuest();
 
-        if (reservation.getStatusID() == 2) {
-            Timestamp currentTime = new Timestamp(System.currentTimeMillis());
-            if (currentTime.after(reservation.getEndTime())) {
-                reservationMethodMapper.updateStatusReservation(reservation.getReservationID(), 3);
-                reservation = reservationMapper.findReservationByLicensePlateAndPloId(licensePlate, id, status);
-            }
+            responseGuest.setReservationID(responseGuest.getReservationID());
+            responseGuest.setType("GUEST");
+            responseGuest.setCustomerID(reservation.getCustomerID());
+            responseGuest.setPloID(reservation.getPloID());
+            responseGuest.setStatusID(reservation.getStatusID());
+            ReservationStatus reservationStatus = reservationStatusMapper.getReservationStatusByID(reservation.getStatusID());
+            responseGuest.setStatusName(reservationStatus.getStatusName());
+            responseGuest.setLicensePlate(licensePlate);
+            responseGuest.setCheckIn(Objects.nonNull(reservation.getCheckIn()) ?
+                    dateFormat.format(reservation.getCheckIn()) : "");
+            responseGuest.setEndTime(Objects.nonNull(reservation.getEndTime()) ?
+                    dateFormat.format(reservation.getEndTime()) : "");
+            responseGuest.setStartTime(Objects.nonNull(reservation.getStartTime()) ?
+                    dateFormat.format(reservation.getStartTime()) : "");
+            responseGuest.setCheckOut(Objects.nonNull(reservation.getCheckOut()) ?
+                    dateFormat.format(reservation.getCheckOut()) : "");
+            ImageGuest imageGuest = imageGuestMapper.getImageGuestByReservationID(reservation.getReservationID());
+            responseGuest.setImage(imageGuest.getImageLink());
+            responseGuest.setMethodID(reservation.getMethodID());
+            ReservationMethod reservationMethod = reservationMethodMapper.getReservationMethodById(reservation.getMethodID());
+            responseGuest.setMethodName(reservationMethod.getMethodName());
+            Date currentDate = new Date();
+            Timestamp currentTimestamp = new Timestamp(currentDate.getTime());
+            double total = calculatePrice(reservation.getReservationID(), currentTimestamp);
+            responseGuest.setPriceMethod(reservation.getPrice());
+            responseGuest.setTotal(reservation.getPrice() + total);
+            responseGuest.setReservationID(reservation.getReservationID());
+            return ResponseEntity.ok(responseGuest);
         }
 
         Customer customer = customerMapper.getCustomerById(reservation.getCustomerID());
@@ -426,8 +452,7 @@ public class ReservationImpl implements ReservationService {
                 dateFormat.format(reservation.getStartTime()) : "");
         reservationInforDTO.setEndTime(Objects.nonNull(reservation.getEndTime()) ?
                 dateFormat.format(reservation.getEndTime()) : "");
-
-        return reservationInforDTO;
+        return ResponseEntity.ok(reservationInforDTO);
     }
 
     @Override
@@ -1150,6 +1175,114 @@ public class ReservationImpl implements ReservationService {
             return responseMethodByTimePLOID;
         }catch (Exception e){
             throw new ApiRequestException("Failed to get method ploID by Time." + e.getMessage());
+        }
+    }
+    private Timestamp calculateEndtime(Timestamp currentTime, Time endTime, Time waitingTime, int method) {
+        LocalDateTime currentDateTime = currentTime.toLocalDateTime();
+        LocalTime endLocalTime = endTime.toLocalTime();
+        LocalTime waitingLocalTime = waitingTime.toLocalTime();
+        LocalDateTime result;
+        if(method == 1 || method == 2) {
+            LocalDate currentDate = currentDateTime.toLocalDate();
+            result = LocalDateTime.of(currentDate, endLocalTime);
+        } else if(method == 3) {
+            LocalDate currentDate = currentDateTime.toLocalDate().plusDays(1);
+            result = LocalDateTime.of(currentDate, endLocalTime);
+        } else {
+            throw new IllegalArgumentException("Invalid method");
+        }
+
+        Duration waitingDuration = Duration.ofHours(waitingLocalTime.getHour())
+                .plusMinutes(waitingLocalTime.getMinute())
+                .plusSeconds(waitingLocalTime.getSecond());
+        result = result.plus(waitingDuration);
+        Timestamp timestamp = Timestamp.valueOf(result);
+        return timestamp;
+    }
+    @Transactional
+    @Override
+    public String bookingByGuest(GuestBooking guestBooking) {
+        try {
+            if(Objects.isNull(guestBooking)){
+                throw new ApiRequestException("Fields is invalid");
+            }
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String id = authentication.getName();
+            PLO plo = userMapper.getPLOByPLOID(id);
+            if(plo.getSlot() - plo.getCurrentSlot() <= 0){
+                throw new ApiRequestException("Current slot is invalid");
+            }
+            ResponseReservation responseReservation = reservationMapper.findReservationByLicensePlate(id,1,guestBooking.getLicensePlate());
+            if(responseReservation != null){
+                throw new ApiRequestException("Invalid status with license plate");
+            }
+            responseReservation = reservationMapper.findReservationByLicensePlate(id,2,guestBooking.getLicensePlate());
+            if(responseReservation != null){
+                throw new ApiRequestException("Invalid status with license plate");
+            }
+
+            Date currentDate = new Date();
+            Timestamp currentTimestamp = new Timestamp(currentDate.getTime());
+            Time oneH= Time.valueOf("01:00:00");
+            Timestamp currentTimestamp1 = addTime(currentTimestamp,oneH);
+            ReservationMethod reservationMethod = reservationMethodMapper.getMethodByTimeReturn1(currentTimestamp1);
+            if(guestBooking.getMethodID() != reservationMethod.getMethodID()){
+                throw new ApiRequestException("Invalid method booking");
+            }
+            ParkingMethod method = parkingMethodMapper.getParkingMethodByIdMethod(id, reservationMethod.getMethodID());
+            if(method == null){
+                throw new ApiRequestException("Invalid method in parking");
+            }
+            Motorbike motorbike = motorbikeMapper.getLicensePlateByLicensePlateString(guestBooking.getLicensePlate());
+            if(motorbike == null){
+                motorbikeMapper.insertForGuest(guestBooking.getLicensePlate(),"guest","guest");
+                motorbike = motorbikeMapper.getLicensePlateByLicensePlateString(guestBooking.getLicensePlate());
+            }
+            Timestamp endTime = calculateEndtime(currentTimestamp,reservationMethod.getEndTime(),plo.getWaitingTime(),reservationMethod.getMethodID());
+            Customer customerGuest = customerMapper.getGuest();
+
+            Reservation reservation = new Reservation();
+            reservation.setStatusID(2);
+            reservation.setPloID(plo.getPloID());
+            reservation.setCustomerID(customerGuest.getCustomerID());
+            reservation.setPrice(method.getPrice());
+            reservation.setLicensePlateID(motorbike.getLicensePlateID());
+            reservation.setStartTime(currentTimestamp);
+            reservation.setEndTime(endTime);
+            reservation.setMethodID(reservationMethod.getMethodID());
+            reservationMapper.createReservation(reservation);
+
+            List<ParkingMethod> parkingMethods = parkingMethodMapper.getParkingMethodById(plo.getPloID());
+            PriceMethod priceMethod = new PriceMethod();
+            for (ParkingMethod parkingMethod : parkingMethods){
+                if (parkingMethod.getMethodID() == 1){
+                    priceMethod.setMethod1(parkingMethod.getPrice());
+                }
+                if (parkingMethod.getMethodID() == 2){
+                    priceMethod.setMethod2(parkingMethod.getPrice());
+                }
+                if (parkingMethod.getMethodID() == 3){
+                    priceMethod.setMethod3(parkingMethod.getPrice());
+                }
+            }
+            if (priceMethod.getMethod1() == 0){
+                priceMethod.setMethod1(3000);
+            }
+            if (priceMethod.getMethod2() == 0){
+                priceMethod.setMethod2(4000);
+            }
+            if (priceMethod.getMethod3() == 0){
+                priceMethod.setMethod3(7000);
+            }
+            priceMethod.setReservationID(reservation.getReservationID());
+            priceMethodMapper.create(priceMethod);
+            int newCurrentSlot = plo.getCurrentSlot() + 1;
+            parkingLotOwnerMapper.updatePloBalanceAndCurrentSlotById(plo.getPloID(), plo.getBalance(), newCurrentSlot);
+            imageGuestMapper.insertImageGuest(reservation.getReservationID(),guestBooking.getImage());
+            reservationMapper.updateCheckInByReservationID(currentTimestamp,reservation.getReservationID());
+            return "Booking successfully by guest!";
+        }catch (Exception e){
+            throw new ApiRequestException("Can create booking for guest." + e.getMessage());
         }
     }
 }

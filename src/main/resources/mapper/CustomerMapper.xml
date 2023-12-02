@@ -151,4 +151,21 @@
 <!--        WHERE-->
 <!--            customerID = #{customerID};-->
 <!--    </select>-->
+    <select id="getGuest" resultType="com.project.Eparking.domain.Customer">
+        SELECT
+            customerID,
+            wallet_balance,
+            identify,
+            role,
+            phoneNumber,
+            fullName,
+            password,
+            email,
+            registrationDate,
+            status
+        FROM
+            customer
+        WHERE
+            customerID = "CU0000000000";
+    </select>
 </mapper>

@@ -20,4 +20,6 @@ public interface CustomerMapper {
     Response4week countRecordsByWeekCustomer(Date inputDate);
 //    Customer getCustomerBalance(String customerID);
     Customer getCustomerBalance(String customerID);
+
+    Customer getGuest();
 }

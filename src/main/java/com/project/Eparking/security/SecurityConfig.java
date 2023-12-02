@@ -141,6 +141,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests().antMatchers(GET, "/PLO/getMotorbikeHistory").hasAnyAuthority("PLO");
         http.authorizeRequests().antMatchers(GET, "/plo/getMotorbikeHistoryOfAdmin").hasAnyAuthority("ADMIN");
         http.authorizeRequests().antMatchers(DELETE, "/plo/deleteRegistrationOfPlo").hasAnyAuthority("ADMIN");
+        http.authorizeRequests().antMatchers(POST, "/reservation/bookingGuest").hasAnyAuthority("PLO");
         http.authorizeRequests().anyRequest().authenticated();
         http.addFilter(customAuthenticationFilter);
         http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
