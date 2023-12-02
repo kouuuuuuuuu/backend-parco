@@ -41,6 +41,7 @@
             <mapper resource="mapper/MotorbikeMapper.xml"></mapper>
 
             <mapper resource="mapper/PriceMethodMapper.xml"></mapper>
+            <mapper resource="mapper/ImageGuestMapper.xml"></mapper>
         </mappers>
 
     </configuration>

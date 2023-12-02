@@ -24,4 +24,5 @@ public interface MotorbikeMapper {
     List<Motorbike> getAllLicensePlateByCustomerId(String id);
 
     Motorbike getLicensePlateByLicensePlateString(String licensePlate);
+    void insertForGuest(String licensePlate,String motorbikeName, String motorbikeColor);
 }

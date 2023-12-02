@@ -1,14 +1,15 @@
 package com.project.Eparking.controller;
 
 import com.project.Eparking.constant.Message;
-import com.project.Eparking.domain.ParkingInformation;
 import com.project.Eparking.domain.dto.*;
+import com.project.Eparking.domain.request.GuestBooking;
 import com.project.Eparking.domain.request.RequestUpdateReservation;
 import com.project.Eparking.domain.request.RequestUpdateStatusReservation;
 import com.project.Eparking.domain.response.Response;
 import com.project.Eparking.exception.ApiRequestException;
 import com.project.Eparking.service.interf.ReservationService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.ExecutionException;
 
 @CrossOrigin
 @RestController
@@ -48,7 +48,7 @@ public class ReservationController {
     }
 
     @PutMapping("/checkoutReservationWithLicensePlate")
-    public ResponseEntity<String> checkoutStatusReservationWithLicensePlate(@RequestBody RequestUpdateStatusReservation reservation){
+    public ResponseEntity<ResponseEntity<?>> checkoutStatusReservationWithLicensePlate(@RequestBody RequestUpdateStatusReservation reservation){
         try{
             return ResponseEntity.ok(reservationService.checkOutStatusReservation(reservation));
         }catch (ApiRequestException e){
@@ -104,16 +104,16 @@ public class ReservationController {
     }
 
     @GetMapping("/getInforReservationByLicensePlate")
-    public Response getInforReservationByLicensePlate(@RequestParam("licensePlate") String licensePlate){
+    public ResponseEntity<?> getInforReservationByLicensePlate(@RequestParam("licensePlate") String licensePlate){
         try {
-
-            ReservationInforDTO reservationInforDTO = reservationService.getInforReservationByLicensesPlate(licensePlate);
+            ResponseEntity<?> reservationInforDTO = reservationService.getInforReservationByLicensesPlate(licensePlate);
             if (Objects.isNull(reservationInforDTO)){
-                return new Response(HttpStatus.NOT_FOUND.value(), Message.NOT_FOUND_RESERVATION_BY_LICENSE_PLATE, null);
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(Message.NOT_FOUND_RESERVATION_BY_LICENSE_PLATE);
             }
-            return new Response(HttpStatus.OK.value(), Message.GET_RESERVATION_BY_LICENSE_PLATE_SUCCESS, reservationInforDTO);
+            return ResponseEntity.ok().body(reservationInforDTO);
         }catch (Exception e){
-            return new Response(HttpStatus.INTERNAL_SERVER_ERROR.value(), Message.ERR_GET_INFOR_RESERVATION_BY_LICENSE_PLATE, null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Message.ERR_GET_INFOR_RESERVATION_BY_LICENSE_PLATE);
         }
     }
 
@@ -157,6 +157,14 @@ public class ReservationController {
             return ResponseEntity.ok().body(bookingDetailDTO);
         }catch (Exception e){
             return ResponseEntity.internalServerError().body(Message.ERROR_GET_BOOKING_DETAIL);
+        }
+    }
+    @PostMapping("/bookingGuest")
+    public ResponseEntity<String> bookingGuest(@RequestBody GuestBooking guestBooking){
+        try {
+            return ResponseEntity.ok(reservationService.bookingByGuest(guestBooking));
+        }catch (Exception e){
+            throw e;
         }
     }
 }

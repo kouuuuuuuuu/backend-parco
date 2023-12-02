@@ -31,6 +31,6 @@
         FROM
             parkingmethod
         WHERE
-            ploId = #{ploId} AND methodID = #{methodID};
+            ploID = #{ploId} AND methodID = #{methodID};
     </select>
 </mapper>

@@ -342,4 +342,13 @@
         WHERE
             statusID = #{status}
     </select>
+    <insert id="insertReservationForGuest" parameterType="com.project.Eparking.domain.Reservation">
+        INSERT INTO reservation (customerID, ploID, statusID, licensePlateID, startTime, endTime, price, checkIn,methodID)
+        VALUES ('CU0000000000', #{ploID}, 2, #{licensePlateID}, #{startTime}, #{endTime}, #{price}, #{checkIn}, #{methodID});
+    </insert>
+    <update id="updateCheckInByReservationID" parameterType="com.project.Eparking.domain.Reservation">
+        UPDATE reservation
+        SET checkIn = #{checkIn}
+        WHERE reservationID = #{reservationID}
+    </update>
 </mapper>

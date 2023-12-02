@@ -70,6 +70,14 @@
     <select id="getMethodByTimeReturn1" resultType="com.project.Eparking.domain.ReservationMethod">
         SELECT methodID, methodName, startTime, endTime
         FROM reservationmethod
-        WHERE TIME(#{currentTime}) BETWEEN startTime AND endTime;
+        WHERE
+            (
+            (methodName = 'Ban Ngày' AND TIME(#{currentTime}) BETWEEN startTime AND endTime)
+            OR
+            (methodName = 'Ban Tối' AND TIME(#{currentTime}) BETWEEN startTime AND endTime)
+            OR
+            (methodName = 'Qua đêm' AND TIME(#{currentTime}) NOT BETWEEN '23:00:00' AND '05:59:59')
+            )
+        LIMIT 1;
     </select>
 </mapper>

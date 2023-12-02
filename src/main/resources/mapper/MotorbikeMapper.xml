@@ -118,4 +118,8 @@
         isDelete = 0
     </select>
 
+    <insert id="insertForGuest" parameterType="com.project.Eparking.domain.Motorbike">
+        INSERT INTO licenseplate (customerID, licensePlate, motorbikeName, motorbikeColor)
+        VALUES ('CU0000000000', #{licensePlate}, #{motorbikeName}, #{motorbikeColor});
+    </insert>
 </mapper>

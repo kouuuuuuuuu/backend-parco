@@ -3,18 +3,20 @@ package com.project.Eparking.service.interf;
 
 import com.project.Eparking.domain.dto.*;
 
+import com.project.Eparking.domain.request.GuestBooking;
 import com.project.Eparking.domain.request.RequestFindParkingList;
 import com.project.Eparking.domain.request.RequestMonthANDYear;
 
 import com.project.Eparking.domain.request.RequestUpdateStatusReservation;
 import com.project.Eparking.domain.response.*;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
 import java.text.ParseException;
 
 public interface ReservationService {
-    String checkOutStatusReservation(RequestUpdateStatusReservation reservation);
+    ResponseEntity<?> checkOutStatusReservation(RequestUpdateStatusReservation reservation);
     String checkInStatusReservation(RequestUpdateStatusReservation reservation);
     String checkInStatusReservationByReservationID(int reservationID);
     String checkOutStatusReservationByReservationID(int reservationID);
@@ -23,7 +25,7 @@ public interface ReservationService {
     List<Top5CustomerDTO> getTop5Customer(RequestMonthANDYear requestMonthANDYear) throws ParseException;
     List<ResponseTop5Parking> getTop5Parking(RequestMonthANDYear requestMonthANDYear);
     List<ResponseTop5Revenue> getTop5Revenue(RequestMonthANDYear requestMonthANDYear);
-    ReservationInforDTO getInforReservationByLicensesPlate(String licensePlate);
+    ResponseEntity<?> getInforReservationByLicensesPlate(String licensePlate);
     List<ResponseFindParkingList> nearestParkingList(RequestFindParkingList findParkingList);
     List<ResponseFindParkingList> cheapestParkingList(RequestFindParkingList findParkingList);
     boolean cancelReservationByID(int reservationID);
@@ -33,4 +35,5 @@ public interface ReservationService {
     BookingDetailDTO bookingDetail(String ploID);
     String checkOutWithoutCheckCondition(int reservationID);
     ResponseMethodByTimePLOID getMethodByTime(String ploID);
+    String bookingByGuest(GuestBooking guestBooking);
 }
