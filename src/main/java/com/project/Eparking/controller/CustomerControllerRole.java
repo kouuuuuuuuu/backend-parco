@@ -132,13 +132,13 @@ public class CustomerControllerRole {
             throw e;
         }
     }
-    @GetMapping("/getListMethodByTime")
-    public ResponseEntity<List<ResponseMethodByTime>> getMethodByTime(@RequestParam String ploID){
+    @GetMapping("/getMethodByTime")
+    public ResponseEntity<ResponseMethodByTimePLOID> getMethodByTime(@RequestParam String ploID){
         try {
             if(ploID.isEmpty()){
                 throw new ApiRequestException("ploID is invalid");
             }
-            return  ResponseEntity.ok(reservationService.getListMethodByTime(ploID));
+            return  ResponseEntity.ok(reservationService.getMethodByTime(ploID));
         }catch (ApiRequestException e){
             throw e;
         }

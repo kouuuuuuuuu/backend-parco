@@ -558,7 +558,8 @@ public class ReservationImpl implements ReservationService {
         try {
             Date currentDate = new Date();
             Timestamp currentTimestamp = new Timestamp(currentDate.getTime());
-            
+            Time oneH= Time.valueOf("01:00:00");
+            currentTimestamp = addTime(currentTimestamp,oneH);
             ReservationMethod reservationMethod = reservationMethodMapper.getMethodByTimeReturn1(currentTimestamp);
             List<ResponseFindParkingList> responseFindParkingLists = new ArrayList<>();
             List<ResponseCoordinates> coordinates = reservationMapper.getAllCoordinatesPLO();
@@ -594,7 +595,8 @@ public class ReservationImpl implements ReservationService {
         try {
             Date currentDate = new Date();
             Timestamp currentTimestamp = new Timestamp(currentDate.getTime());
-
+            Time oneH= Time.valueOf("01:00:00");
+            currentTimestamp = addTime(currentTimestamp,oneH);
             ReservationMethod reservationMethod = reservationMethodMapper.getMethodByTimeReturn1(currentTimestamp);
             List<ResponseFindParkingList> responseFindParkingLists = new ArrayList<>();
             List<ResponseCoordinates> coordinates = reservationMapper.getAllCoordinatesPLO();
@@ -1126,6 +1128,28 @@ public class ReservationImpl implements ReservationService {
             }
         }catch (Exception e){
             throw new ApiRequestException("Failed to checkout reservation." + e.getMessage());
+        }
+    }
+
+    @Override
+    public ResponseMethodByTimePLOID getMethodByTime(String ploID) {
+        try{
+            Date currentDate = new Date();
+            Timestamp currentTimestamp = new Timestamp(currentDate.getTime());
+            Time oneH= Time.valueOf("01:00:00");
+            currentTimestamp = addTime(currentTimestamp,oneH);
+            ReservationMethod reservationMethod = reservationMethodMapper.getMethodByTimeReturn1(currentTimestamp);
+            ParkingMethod method = parkingMethodMapper.getParkingMethodByIdMethod(ploID, reservationMethod.getMethodID());
+            if(method == null){
+                throw new ApiRequestException("Wrong method or method is correct!");
+            }
+            ResponseMethodByTimePLOID responseMethodByTimePLOID = new ResponseMethodByTimePLOID();
+            responseMethodByTimePLOID.setMethodID(method.getMethodID());
+            responseMethodByTimePLOID.setPrice(method.getPrice());
+            responseMethodByTimePLOID.setMethodName(reservationMethod.getMethodName());
+            return responseMethodByTimePLOID;
+        }catch (Exception e){
+            throw new ApiRequestException("Failed to get method ploID by Time." + e.getMessage());
         }
     }
 }
