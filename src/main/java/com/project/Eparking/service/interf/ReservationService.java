@@ -32,4 +32,5 @@ public interface ReservationService {
     List<ResponseMethodByTime> getListMethodByTime(String ploID);
     BookingDetailDTO bookingDetail(String ploID);
     String checkOutWithoutCheckCondition(int reservationID);
+    ResponseMethodByTimePLOID getMethodByTime(String ploID);
 }

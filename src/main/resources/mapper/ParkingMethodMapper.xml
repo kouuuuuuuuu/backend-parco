@@ -22,4 +22,15 @@
         WHERE ploID = #{ploID} AND methodID = #{methodID}
     </select>
 
+    <select id="getParkingMethodByIdMethod" resultType="com.project.Eparking.domain.ParkingMethod">
+        SELECT
+            parkingMethodID,
+            ploID,
+            methodID,
+            price
+        FROM
+            parkingmethod
+        WHERE
+            ploId = #{ploId} AND methodID = #{methodID};
+    </select>
 </mapper>
