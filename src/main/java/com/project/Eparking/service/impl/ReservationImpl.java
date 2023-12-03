@@ -1236,7 +1236,7 @@ public class ReservationImpl implements ReservationService {
     @Override
     public String bookingByGuest(GuestBooking guestBooking) {
         try {
-            if(Objects.isNull(guestBooking)){
+            if(guestBooking.getImage() == null || guestBooking.getLicensePlate() == null){
                 throw new ApiRequestException("Fields is invalid");
             }
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
