@@ -1256,12 +1256,7 @@ public class ReservationImpl implements ReservationService {
 
             Date currentDate = new Date();
             Timestamp currentTimestamp = new Timestamp(currentDate.getTime());
-            Time oneH= Time.valueOf("01:00:00");
-            Timestamp currentTimestamp1 = addTime(currentTimestamp,oneH);
-            ReservationMethod reservationMethod = reservationMethodMapper.getMethodByTimeReturn1(currentTimestamp1);
-            if(guestBooking.getMethodID() != reservationMethod.getMethodID()){
-                throw new ApiRequestException("Invalid method booking");
-            }
+            ReservationMethod reservationMethod = reservationMethodMapper.getMethodByTimeReturn1(currentTimestamp);
             ParkingMethod method = parkingMethodMapper.getParkingMethodByIdMethod(id, reservationMethod.getMethodID());
             if(method == null){
                 throw new ApiRequestException("Invalid method in parking");

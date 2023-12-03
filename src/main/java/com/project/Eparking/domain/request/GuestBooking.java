@@ -9,6 +9,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class GuestBooking {
     private String licensePlate;
-    private int methodID;
     private String image;
 }
