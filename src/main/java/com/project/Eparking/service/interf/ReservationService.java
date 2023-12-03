@@ -16,7 +16,7 @@ import java.util.List;
 import java.text.ParseException;
 
 public interface ReservationService {
-    ResponseEntity<?> checkOutStatusReservation(RequestUpdateStatusReservation reservation);
+    String checkOutStatusReservation(RequestUpdateStatusReservation reservation);
     String checkInStatusReservation(RequestUpdateStatusReservation reservation);
     String checkInStatusReservationByReservationID(int reservationID);
     String checkOutStatusReservationByReservationID(int reservationID);

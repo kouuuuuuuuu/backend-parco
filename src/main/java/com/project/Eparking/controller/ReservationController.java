@@ -48,7 +48,7 @@ public class ReservationController {
     }
 
     @PutMapping("/checkoutReservationWithLicensePlate")
-    public ResponseEntity<ResponseEntity<?>> checkoutStatusReservationWithLicensePlate(@RequestBody RequestUpdateStatusReservation reservation){
+    public ResponseEntity<String> checkoutStatusReservationWithLicensePlate(@RequestBody RequestUpdateStatusReservation reservation){
         try{
             return ResponseEntity.ok(reservationService.checkOutStatusReservation(reservation));
         }catch (ApiRequestException e){

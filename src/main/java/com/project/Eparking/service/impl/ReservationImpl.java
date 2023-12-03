@@ -143,7 +143,7 @@ public class ReservationImpl implements ReservationService {
     //region Check-out
     @Override
     @Transactional
-    public ResponseEntity<?> checkOutStatusReservation(RequestUpdateStatusReservation reservation) {
+    public String checkOutStatusReservation(RequestUpdateStatusReservation reservation) {
         String response = "";
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -153,16 +153,31 @@ public class ReservationImpl implements ReservationService {
                 throw new ApiRequestException("Dont have any reservation with license plate");
             }
             if (responseReservation.getStatusID() == 2) {
+                long epochMilli = Instant.now().toEpochMilli();
+                Timestamp timestamp = new Timestamp(epochMilli);
                 Customer customerGuest = customerMapper.getGuest();
-                if(responseReservation.getCustomerID().equalsIgnoreCase(customerGuest.getCustomerID())){
-
-                }
+                PLO plo = userMapper.getPLOByPLOID(responseReservation.getPloID());
                 Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+                double totalPrice = calculatePrice(responseReservation.getReservationID(), currentTime);
+                if(responseReservation.getCustomerID().equalsIgnoreCase(customerGuest.getCustomerID())){
+                    reservationMethodMapper.updateStatusReservation(responseReservation.getReservationID(), 4);
+                    reservationMethodMapper.updateCheckoutReservation(responseReservation.getReservationID(), timestamp);
+                    int currentSlot = plo.getCurrentSlot() - 1;
+                    if (currentSlot < 0) {
+                        throw new ApiRequestException("Something error with currentSlot plo");
+                    }
+                    parkingMapper.updateCurrentSlot(currentSlot, plo.getPloID());
+                    reservationMapper.updateIsRatingByReservationID(2,responseReservation.getReservationID());
+                    Motorbike motorbike = motorbikeMapper.getLicensePlateByLicensePlateString(reservation.getLicensePlate());
+                    if(motorbike.getCustomerID().equalsIgnoreCase(customerGuest.getCustomerID())){
+                        motorbikeMapper.deleteLicensePlate(motorbike.getLicensePlateID(),customerGuest.getCustomerID());
+                    }
+                    priceMethodMapper.updateTotalPrice(responseReservation.getPrice() + totalPrice, responseReservation.getReservationID());
+                    return "Check-out for guest successfully";
+                }
 
 //                LocalDateTime localDateTime = LocalDateTime.of(2023, 12, 5, 03, 00, 00, 0);
 //                Timestamp  currentTime = Timestamp.valueOf(localDateTime);
-
-                double totalPrice = calculatePrice(responseReservation.getReservationID(), currentTime);
                 Customer customer = customerMapper.getCustomerById(responseReservation.getCustomerID());
                 double finalWallet = customer.getWalletBalance() - totalPrice;
                 if(customer.getWalletBalance() - totalPrice < 0){
@@ -170,12 +185,11 @@ public class ReservationImpl implements ReservationService {
                 }
                 customerMapper.updateBalance(customer.getCustomerID(),finalWallet);
 
-                PLO plo = userMapper.getPLOByPLOID(responseReservation.getPloID());
+
                 double ploWallet = plo.getBalance() + totalPrice;
                 parkingLotOwnerMapper.updatePloBalanceById(responseReservation.getPloID(), ploWallet);
                 reservationMethodMapper.updateStatusReservation(responseReservation.getReservationID(), 4);
-                long epochMilli = Instant.now().toEpochMilli();
-                Timestamp timestamp = new Timestamp(epochMilli);
+
                 reservationMethodMapper.updateCheckoutReservation(responseReservation.getReservationID(), timestamp);
                 priceMethodMapper.updateTotalPrice(responseReservation.getPrice() + totalPrice, responseReservation.getReservationID());
                 int currentSlot = plo.getCurrentSlot() - 1;
@@ -205,7 +219,7 @@ public class ReservationImpl implements ReservationService {
             } else {
                 throw new ApiRequestException("Wrong status");
             }
-            return ResponseEntity.ok(response);
+            return response;
         } catch (Exception e) {
             throw new ApiRequestException("Failed checkOut user." + e.getMessage());
         }
@@ -306,7 +320,28 @@ public class ReservationImpl implements ReservationService {
 //
 //                // Chuyển đổi LocalDateTime thành Timestamp
 //                Timestamp  currentTime = Timestamp.valueOf(localDateTime);
+                Customer customerGuest = customerMapper.getGuest();
+                Reservation responseReservation = reservationMapper.getReservationByReservationID(reservationID);
                 double totalPrice = calculatePrice(reservation.getReservationID(), currentTime);
+                long epochMilli = Instant.now().toEpochMilli();
+                Timestamp timestamp = new Timestamp(epochMilli);
+                if(responseReservation.getCustomerID().equalsIgnoreCase(customerGuest.getCustomerID())){
+                    reservationMethodMapper.updateStatusReservation(responseReservation.getReservationID(), 4);
+                    reservationMethodMapper.updateCheckoutReservation(responseReservation.getReservationID(), timestamp);
+                    int currentSlot = plo.getCurrentSlot() - 1;
+                    if (currentSlot < 0) {
+                        throw new ApiRequestException("Something error with currentSlot plo");
+                    }
+                    parkingMapper.updateCurrentSlot(currentSlot, plo.getPloID());
+                    reservationMapper.updateIsRatingByReservationID(2,responseReservation.getReservationID());
+                    Motorbike motorbike = motorbikeMapper.getLicensePlateById(reservation.getLicensePlateID());
+                    if(motorbike.getCustomerID().equalsIgnoreCase(customerGuest.getCustomerID())){
+                        motorbikeMapper.deleteLicensePlate(motorbike.getLicensePlateID(),customerGuest.getCustomerID());
+                    }
+                    priceMethodMapper.updateTotalPrice(responseReservation.getPrice() + totalPrice, responseReservation.getReservationID());
+                    return "Check-out for guest successfully";
+                }
+
                 Customer customer = customerMapper.getCustomerById(reservation.getCustomerID());
                 double finalWallet = customer.getWalletBalance() - totalPrice;
                 if(customer.getWalletBalance() - totalPrice < 0){
@@ -318,8 +353,6 @@ public class ReservationImpl implements ReservationService {
                 parkingLotOwnerMapper.updatePloBalanceById(reservation.getPloID(), ploWallet);
                 priceMethodMapper.updateTotalPrice(reservation.getPrice() + totalPrice, reservation.getReservationID());
                 reservationMethodMapper.updateStatusReservation(reservationID, 4);
-                long epochMilli = Instant.now().toEpochMilli();
-                Timestamp timestamp = new Timestamp(epochMilli);
                 reservationMethodMapper.updateCheckoutReservation(reservationID, timestamp);
 
                 int currentSlot = plo.getCurrentSlot() - 1;

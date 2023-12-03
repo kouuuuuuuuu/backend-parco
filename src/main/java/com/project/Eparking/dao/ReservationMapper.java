@@ -38,4 +38,5 @@ public interface ReservationMapper {
     List<Reservation> getAllReservationByStatus(int status);
     void insertReservationForGuest(String ploID, String licensePlateID, Timestamp startTime,Timestamp endTime, double price, Timestamp checkIn, int methodID);
     void updateCheckInByReservationID(Timestamp checkIn, int reservationID);
+    void updateIsRatingByReservationID(int isRating, int reservationID);
 }

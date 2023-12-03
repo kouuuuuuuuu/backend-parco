@@ -351,4 +351,9 @@
         SET checkIn = #{checkIn}
         WHERE reservationID = #{reservationID}
     </update>
+    <update id="updateIsRatingByReservationID" parameterType="com.project.Eparking.domain.Reservation">
+        UPDATE reservation
+        SET isRating = #{isRating}
+        WHERE reservationID = #{reservationID}
+    </update>
 </mapper>
