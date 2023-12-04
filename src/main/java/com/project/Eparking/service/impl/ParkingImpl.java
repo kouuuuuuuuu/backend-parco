@@ -134,6 +134,9 @@ public class ParkingImpl implements ParkingService {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String id = authentication.getName();
             List<ResponseShowVehicleInParking> responseShowVehicleInParking = parkingMapper.showListVehicleInParking(id, statusID);
+            if(responseShowVehicleInParking == null){
+                throw new ApiRequestException("Do not have any reservation with: "+statusID);
+            }
             for (ResponseShowVehicleInParking vehicle : responseShowVehicleInParking) {
                 Reservation reservation = reservationMapper.getReservationByReservationID(Integer.parseInt(vehicle.getReservationID()));
                 Timestamp timestamp = new Timestamp(System.currentTimeMillis());
