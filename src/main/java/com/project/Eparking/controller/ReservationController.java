@@ -108,8 +108,9 @@ public class ReservationController {
         try {
             ResponseEntity<?> reservationInforDTO = reservationService.getInforReservationByLicensesPlate(licensePlate);
             if (Objects.isNull(reservationInforDTO)){
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(Message.NOT_FOUND_RESERVATION_BY_LICENSE_PLATE);
+                ResponseScanDTO responseScanDTO = new ResponseScanDTO(String.valueOf(HttpStatus.NOT_FOUND));
+                    return ResponseEntity.ok().body(responseScanDTO);
+//                        .body(Message.NOT_FOUND_RESERVATION_BY_LICENSE_PLATE);
             }
             return ResponseEntity.ok().body(reservationInforDTO);
         }catch (Exception e){
