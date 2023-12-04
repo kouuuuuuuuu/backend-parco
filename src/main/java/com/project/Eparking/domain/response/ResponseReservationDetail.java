@@ -27,4 +27,5 @@ public class ResponseReservationDetail {
 
     private Timestamp checkOut;
     private double totalPrice;
+    private String image;
 }
