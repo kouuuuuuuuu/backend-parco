@@ -46,7 +46,9 @@ public class ParkingImpl implements ParkingService {
 
     private final MotorbikeMapper motorbikeMapper;
     private final PriceMethodMapper priceMethodMapper;
-
+    private final ReservationImpl reservationimpl;
+    private final CustomerMapper customerMapper;
+    private final ImageGuestMapper imageGuestMapper;
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 
     @Override
@@ -132,11 +134,21 @@ public class ParkingImpl implements ParkingService {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String id = authentication.getName();
             List<ResponseShowVehicleInParking> responseShowVehicleInParking = parkingMapper.showListVehicleInParking(id, statusID);
-
             for (ResponseShowVehicleInParking vehicle : responseShowVehicleInParking) {
-                PriceMethod priceMethod = priceMethodMapper.getPriceMethodByReservationID(Integer.parseInt(vehicle.getReservationID()));
-                if (Objects.nonNull(priceMethod)){
+                Reservation reservation = reservationMapper.getReservationByReservationID(Integer.parseInt(vehicle.getReservationID()));
+                Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+                if(reservation.getStatusID() == 1 || reservation.getStatusID() == 2){
+                    double total = vehicle.getPrice() + reservationimpl.calculatePrice(Integer.parseInt(vehicle.getReservationID()),timestamp);
+                    vehicle.setTotalPrice(total);
+                }
+                if(reservation.getStatusID() == 4){
+                    PriceMethod priceMethod = priceMethodMapper.getPriceMethodByReservationID(reservation.getReservationID());
                     vehicle.setTotalPrice(priceMethod.getTotal());
+                }
+                Customer customer = customerMapper.getGuest();
+                if(vehicle.getCustomerID().equalsIgnoreCase(customer.getCustomerID())){
+                    ImageGuest imageGuest = imageGuestMapper.getImageGuestByReservationID(Integer.parseInt(vehicle.getReservationID()));
+                    vehicle.setImage(imageGuest.getImageLink());
                 }
             }
             return responseShowVehicleInParking;
@@ -205,9 +217,20 @@ public class ParkingImpl implements ParkingService {
     public ResponseReservationDetail getReservationDetailByPLOID(int reservationID) {
         try{
             ResponseReservationDetail detail = parkingMapper.getReservationDetailByReservationID(reservationID);
-            PriceMethod priceMethod = priceMethodMapper.getPriceMethodByReservationID(reservationID);
-            if (Objects.nonNull(priceMethod)){
+            Reservation reservation = reservationMapper.getReservationByReservationID(reservationID);
+            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+            Customer guest = customerMapper.getGuest();
+            if(reservation.getStatusID() == 1 || reservation.getStatusID() == 2){
+                double total = reservation.getPrice() + reservationimpl.calculatePrice(reservationID,timestamp);
+                detail.setTotalPrice(total);
+            }
+            if(reservation.getStatusID() == 4){
+                PriceMethod priceMethod = priceMethodMapper.getPriceMethodByReservationID(reservationID);
                 detail.setTotalPrice(priceMethod.getTotal());
+            }
+            if(reservation.getCustomerID().equalsIgnoreCase(guest.getCustomerID())){
+                ImageGuest imageGuest = imageGuestMapper.getImageGuestByReservationID(reservationID);
+                detail.setImage(imageGuest.getImageLink());
             }
             if(detail == null){
                 throw new ApiRequestException("There are no reservations with this id");

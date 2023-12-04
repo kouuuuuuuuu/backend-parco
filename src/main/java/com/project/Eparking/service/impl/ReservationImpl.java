@@ -75,7 +75,7 @@ public class ReservationImpl implements ReservationService {
         return Timestamp.valueOf(localDateTime);
     }
 
-    private double calculatePrice (int reservationID, Timestamp currentTime) {
+    public double calculatePrice (int reservationID, Timestamp currentTime) {
         Reservation reservation = reservationMapper.getReservationByReservationID(reservationID);
         HashMap<String, Integer> method = new HashMap<>();
         method.put("Morning", 0);

@@ -21,4 +21,5 @@ public class ResponseShowVehicleInParking {
     private String methodName;
     private String statusName;
     private double totalPrice;
+    private String image;
 }
