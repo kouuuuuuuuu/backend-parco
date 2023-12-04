@@ -699,6 +699,7 @@ public class ReservationImpl implements ReservationService {
                 PLO plo = parkingLotOwnerMapper.getPloById(reservation.getPloID());
                 int newCurrentSlot = plo.getCurrentSlot() - 1;
                 parkingLotOwnerMapper.updatePloBalanceAndCurrentSlotById(plo.getPloID(), plo.getBalance(), newCurrentSlot);
+                priceMethodMapper.updateTotalPrice(reservation.getPrice(),reservation.getReservationID());
                 //send noti
                 PushNotificationRequest request = new PushNotificationRequest();
                 request.setImage("https://fiftyfifty.b-cdn.net/eparking/Logo.png?fbclid=IwAR0Cp0mqjcD5-DCi9DvSSomsni8_gA-tg14f2GskVlpIYReh-tagSlOrb-4");

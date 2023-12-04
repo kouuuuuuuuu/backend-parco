@@ -47,7 +47,8 @@ public class CustomerServiceImpl implements CustomerService {
     private final PushNotificationService pushNotificationService;
     private final ReservationMapper reservationMapper;
     private final MotorbikeMapper motorbikeMapper;
-
+    private final PriceMethodMapper priceMethodMapper;
+    private final ReservationImpl reservationimpl;
     private SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
     @Override
     public Page<CustomerDTO> getListCustomer(int pageNum, int pageSize) {
@@ -387,6 +388,7 @@ public class CustomerServiceImpl implements CustomerService {
                     reservationMapper.updateReservationStatus(5,reservationID,1,currentTimestamp,currentTimestamp);
                     int newCurrentSlot = plo.getCurrentSlot() - 1;
                     parkingLotOwnerMapper.updatePloBalanceAndCurrentSlotById(plo.getPloID(), plo.getBalance(), newCurrentSlot);
+                    priceMethodMapper.updateTotalPrice(reservation.getPrice(),reservation.getReservationID());
                     return true;
                 }
                 return false;
