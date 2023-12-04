@@ -408,7 +408,7 @@ public class ReservationImpl implements ReservationService {
     }
 
     @Override
-    public ResponseEntity<?> getInforReservationByLicensesPlate(String licensePlate) {
+    public ReservationInforDTO getInforReservationByLicensesPlate(String licensePlate) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String id = authentication.getName();
         Customer guest = customerMapper.getGuest();
@@ -459,7 +459,7 @@ public class ReservationImpl implements ReservationService {
             responseGuest.setPriceMethod(reservation.getPrice());
             responseGuest.setTotal(reservation.getPrice() + total);
             responseGuest.setReservationID(reservation.getReservationID());
-            return ResponseEntity.ok(responseGuest);
+//            return ResponseEntity.ok(responseGuest);
         }
 
         Customer customer = customerMapper.getCustomerById(reservation.getCustomerID());
@@ -485,7 +485,7 @@ public class ReservationImpl implements ReservationService {
                 dateFormat.format(reservation.getStartTime()) : "");
         reservationInforDTO.setEndTime(Objects.nonNull(reservation.getEndTime()) ?
                 dateFormat.format(reservation.getEndTime()) : "");
-        return ResponseEntity.ok(reservationInforDTO);
+        return reservationInforDTO;
     }
 
     @Override

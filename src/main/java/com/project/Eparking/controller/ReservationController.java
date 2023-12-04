@@ -104,15 +104,15 @@ public class ReservationController {
     }
 
     @GetMapping("/getInforReservationByLicensePlate")
-    public ResponseEntity<?> getInforReservationByLicensePlate(@RequestParam("licensePlate") String licensePlate){
+    public Response getInforReservationByLicensePlate(@RequestParam("licensePlate") String licensePlate){
         try {
-            ResponseEntity<?> reservationInforDTO = reservationService.getInforReservationByLicensesPlate(licensePlate);
+            ReservationInforDTO reservationInforDTO = reservationService.getInforReservationByLicensesPlate(licensePlate);
             if (Objects.isNull(reservationInforDTO)){
                 ResponseScanDTO responseScanDTO = new ResponseScanDTO(String.valueOf(HttpStatus.NOT_FOUND));
                     return ResponseEntity.ok().body(responseScanDTO);
 //                        .body(Message.NOT_FOUND_RESERVATION_BY_LICENSE_PLATE);
             }
-            return ResponseEntity.ok().body(reservationInforDTO);
+            return reservationInforDTO;
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Message.ERR_GET_INFOR_RESERVATION_BY_LICENSE_PLATE);
         }
