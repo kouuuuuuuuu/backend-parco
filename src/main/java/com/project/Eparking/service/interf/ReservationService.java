@@ -25,7 +25,7 @@ public interface ReservationService {
     List<Top5CustomerDTO> getTop5Customer(RequestMonthANDYear requestMonthANDYear) throws ParseException;
     List<ResponseTop5Parking> getTop5Parking(RequestMonthANDYear requestMonthANDYear);
     List<ResponseTop5Revenue> getTop5Revenue(RequestMonthANDYear requestMonthANDYear);
-    ResponseEntity<?> getInforReservationByLicensesPlate(String licensePlate);
+    ReservationInforDTO getInforReservationByLicensesPlate(String licensePlate);
     List<ResponseFindParkingList> nearestParkingList(RequestFindParkingList findParkingList);
     List<ResponseFindParkingList> cheapestParkingList(RequestFindParkingList findParkingList);
     boolean cancelReservationByID(int reservationID);

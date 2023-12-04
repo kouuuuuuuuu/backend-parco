@@ -8,10 +8,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ReservationInforDTO {
+    private int reservationID;
     private String customerID;
     private String customerName;
+    private int methodID;
     private String methodName;
-    private int status;
+    private int statusID;
     private String statusName;
     private String checkIn;
     private String checkOut;
@@ -20,5 +22,6 @@ public class ReservationInforDTO {
     private String licensePlate;
     private String motorbikeName;
     private String motorbikeColor;
-    private int reservationID;
+    private double total;
+    private String image;
 }

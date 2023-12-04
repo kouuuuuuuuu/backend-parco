@@ -104,17 +104,16 @@ public class ReservationController {
     }
 
     @GetMapping("/getInforReservationByLicensePlate")
-    public ResponseEntity<?> getInforReservationByLicensePlate(@RequestParam("licensePlate") String licensePlate){
+    public Response getInforReservationByLicensePlate(@RequestParam("licensePlate") String licensePlate){
         try {
-            ResponseEntity<?> reservationInforDTO = reservationService.getInforReservationByLicensesPlate(licensePlate);
+
+            ReservationInforDTO reservationInforDTO = reservationService.getInforReservationByLicensesPlate(licensePlate);
             if (Objects.isNull(reservationInforDTO)){
-                ResponseScanDTO responseScanDTO = new ResponseScanDTO(String.valueOf(HttpStatus.NOT_FOUND));
-                    return ResponseEntity.ok().body(responseScanDTO);
-//                        .body(Message.NOT_FOUND_RESERVATION_BY_LICENSE_PLATE);
+                return new Response(HttpStatus.NOT_FOUND.value(), Message.NOT_FOUND_RESERVATION_BY_LICENSE_PLATE, null);
             }
-            return ResponseEntity.ok().body(reservationInforDTO);
+            return new Response(HttpStatus.OK.value(), Message.GET_RESERVATION_BY_LICENSE_PLATE_SUCCESS, reservationInforDTO);
         }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Message.ERR_GET_INFOR_RESERVATION_BY_LICENSE_PLATE);
+            return new Response(HttpStatus.INTERNAL_SERVER_ERROR.value(), Message.ERR_GET_INFOR_RESERVATION_BY_LICENSE_PLATE, null);
         }
     }
 

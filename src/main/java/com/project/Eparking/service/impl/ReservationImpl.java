@@ -408,7 +408,7 @@ public class ReservationImpl implements ReservationService {
     }
 
     @Override
-    public ResponseEntity<?> getInforReservationByLicensesPlate(String licensePlate) {
+    public ReservationInforDTO getInforReservationByLicensesPlate(String licensePlate) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String id = authentication.getName();
         Customer guest = customerMapper.getGuest();
@@ -429,39 +429,6 @@ public class ReservationImpl implements ReservationService {
                 return null;
             }
         }
-        if(reservation.getCustomerID().equalsIgnoreCase(guest.getCustomerID())){
-            ResponseGuest responseGuest = new ResponseGuest();
-
-            responseGuest.setReservationID(responseGuest.getReservationID());
-            responseGuest.setType("GUEST");
-            responseGuest.setCustomerID(reservation.getCustomerID());
-            responseGuest.setPloID(reservation.getPloID());
-            responseGuest.setStatusID(reservation.getStatusID());
-            ReservationStatus reservationStatus = reservationStatusMapper.getReservationStatusByID(reservation.getStatusID());
-            responseGuest.setStatusName(reservationStatus.getStatusName());
-            responseGuest.setLicensePlate(licensePlate);
-            responseGuest.setCheckIn(Objects.nonNull(reservation.getCheckIn()) ?
-                    dateFormat.format(reservation.getCheckIn()) : "");
-            responseGuest.setEndTime(Objects.nonNull(reservation.getEndTime()) ?
-                    dateFormat.format(reservation.getEndTime()) : "");
-            responseGuest.setStartTime(Objects.nonNull(reservation.getStartTime()) ?
-                    dateFormat.format(reservation.getStartTime()) : "");
-            responseGuest.setCheckOut(Objects.nonNull(reservation.getCheckOut()) ?
-                    dateFormat.format(reservation.getCheckOut()) : "");
-            ImageGuest imageGuest = imageGuestMapper.getImageGuestByReservationID(reservation.getReservationID());
-            responseGuest.setImage(imageGuest.getImageLink());
-            responseGuest.setMethodID(reservation.getMethodID());
-            ReservationMethod reservationMethod = reservationMethodMapper.getReservationMethodById(reservation.getMethodID());
-            responseGuest.setMethodName(reservationMethod.getMethodName());
-            Date currentDate = new Date();
-            Timestamp currentTimestamp = new Timestamp(currentDate.getTime());
-            double total = calculatePrice(reservation.getReservationID(), currentTimestamp);
-            responseGuest.setPriceMethod(reservation.getPrice());
-            responseGuest.setTotal(reservation.getPrice() + total);
-            responseGuest.setReservationID(reservation.getReservationID());
-            return ResponseEntity.ok(responseGuest);
-        }
-
         Customer customer = customerMapper.getCustomerById(reservation.getCustomerID());
         ReservationMethod reservationMethod = reservationMethodMapper.getReservationMethodById(reservation.getMethodID());
         ReservationStatus reservationStatus = reservationStatusMapper.getReservationStatusByID(reservation.getStatusID());
@@ -470,8 +437,9 @@ public class ReservationImpl implements ReservationService {
         ReservationInforDTO reservationInforDTO = new ReservationInforDTO();
         reservationInforDTO.setCustomerID(customer.getCustomerID());
         reservationInforDTO.setCustomerName(customer.getFullName());
+        reservationInforDTO.setMethodID(reservation.getMethodID());
         reservationInforDTO.setMethodName(reservationMethod.getMethodName());
-        reservationInforDTO.setStatus(reservationStatus.getStatusID());
+        reservationInforDTO.setStatusID(reservationStatus.getStatusID());
         reservationInforDTO.setStatusName(reservationStatus.getStatusName());
         reservationInforDTO.setLicensePlate(motorbike.getLicensePlate());
         reservationInforDTO.setMotorbikeName(motorbike.getMotorbikeName());
@@ -485,7 +453,20 @@ public class ReservationImpl implements ReservationService {
                 dateFormat.format(reservation.getStartTime()) : "");
         reservationInforDTO.setEndTime(Objects.nonNull(reservation.getEndTime()) ?
                 dateFormat.format(reservation.getEndTime()) : "");
-        return ResponseEntity.ok(reservationInforDTO);
+        if(reservation.getStatusID() == 1 || reservation.getStatusID() == 2){
+            Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+            double total = reservation.getPrice() + calculatePrice(reservation.getReservationID(),currentTime);
+            reservationInforDTO.setTotal(total);
+        }
+        if(reservation.getStatusID() == 4){
+            PriceMethod priceMethod = priceMethodMapper.getPriceMethodByReservationID(reservation.getReservationID());
+            reservationInforDTO.setTotal(priceMethod.getTotal());
+        }
+        if(reservation.getCustomerID().equalsIgnoreCase(guest.getCustomerID())){
+            ImageGuest imageGuest = imageGuestMapper.getImageGuestByReservationID(reservation.getReservationID());
+            reservationInforDTO.setImage(imageGuest.getImageLink());
+        }
+        return reservationInforDTO;
     }
 
     @Override
