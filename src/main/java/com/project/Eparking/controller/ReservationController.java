@@ -164,6 +164,8 @@ public class ReservationController {
         try {
             if(guestBooking.getLicensePlate() == null || guestBooking.getImage() == null){
                 throw new ApiRequestException("Fields is invalid");
+            }if(guestBooking.getLicensePlate().isEmpty() || guestBooking.getImage().isEmpty()){
+                throw new ApiRequestException("Fields is invalid");
             }
             return ResponseEntity.ok(reservationService.bookingByGuest(guestBooking));
         }catch (Exception e){
