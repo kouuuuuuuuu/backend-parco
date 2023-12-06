@@ -162,6 +162,9 @@ public class ReservationController {
     @PostMapping("/bookingGuest")
     public ResponseEntity<String> bookingGuest(@RequestBody GuestBooking guestBooking){
         try {
+            if(guestBooking.getLicensePlate() == null || guestBooking.getImage() == null){
+                throw new ApiRequestException("Fields is invalid");
+            }
             return ResponseEntity.ok(reservationService.bookingByGuest(guestBooking));
         }catch (Exception e){
             throw e;
