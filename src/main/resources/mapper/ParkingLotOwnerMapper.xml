@@ -208,10 +208,12 @@
             ploID = #{ploID}
     </update>
 
-    <delete id="deletePloByPloID" parameterType="string">
-        DELETE FROM
+    <update id="deletePloByPloID" parameterType="string">
+        UPDATE
             plo
+        SET
+            parkingStatusID = 1
         WHERE
             ploID = #{ploID}
-    </delete>
+    </update>
 </mapper>
